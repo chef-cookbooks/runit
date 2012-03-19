@@ -1,7 +1,7 @@
 Description
 ===========
 
-Installs runit and provides `runit_service` definition for managing new
+Installs runit and provides the `runit_service` LWRP for managing new
 services under runit.
 
 This cookbook does not use runit to replace system init, nor are there
@@ -48,15 +48,69 @@ to notify the runsvdir command.
 Older versions of Ubuntu (<= 10.04) are supported, but support may be
 removed in a future version.
 
+Resource/Provider
+=================
+
+This cookbook includes an LWRP for managing runit services.
+
+Actions:
+
+- *start* - starts the service
+- *stop* - stops the service
+- *enable* - enables the service, creating the run scripts and symlinks
+- *disable* - downs the service and removes the service symlink
+- *restart* - restarts the service
+- *reload* - reloads the service with force-reload
+- *once* - starts the service once
+- *hup* - sends the hup signal to the service
+- *cont* - sends the cont signal to the service
+- *term* - sends the term signal to the service
+- *kill* - sends the kill signal to the service
+
+Service management actions are taken with runit's "sv" program.
+
+Parameter Attributes
+
+- *service_name* - name of the service - name attribute
+- *directory* - directory where the service configuration lives
+- *control* - customize control of the service, see runsv man page
+- *options* - options passed as variables to templates, for
+   compatibility with legacy runit service definition
+- *variables* - uses the options hash to pass variables to templates
+- *env* - environment values to pass via the service's env directory
+- *log* - whether to start the service's logger with svlogd, requires
+   a template `sv-service_name-log-run.erb` to configure the logs run
+   script
+- *cookbook* - cookbook where templates should be located instead of
+   where the LWRP is used
+- *template* - name of the template, defaults to `service_name`, set
+   to false to not render a template (e.g. if a package supplies its
+   own runit scripts)
+- *finish* - whether the service has a finish script, requires a
+   template `sv-service_name-finish.erb`
+- *owner* - user that should own the templates created to enable the
+   service
+- *group* - group that should own the templates created to enable the
+   service
+
+runsv(8) man page is available online:
+
+* http://smarden.org/runit/runsv.8.html
+
+svlogd(8) man page is available online:
+
+* http://smarden.org/runit/svlogd.8.html
+
 Definitions
 ===========
 
-The definition in this cookbook will be deprecated by an LWRP in a
-future version. See
-[CHEF-154](http://tickets.opscode.com/browse/CHEF-154).
+The definition in this cookbook is deprecated by the LWRP described
+above. It is kept for compatibility and will be removed by version 1.0
+of this cookbook. Not all the features of the definition will be
+ported to the LWRP.
 
-runit\_service
---------------
+runit\_svc
+----------
 
 This definition includes `recipe[runit]` to ensure it is installed
 first. As LWRPs cannot use `include_recipe`, this will not be
@@ -135,14 +189,9 @@ Create templates for `sv-myservice-run.erb` and
 `sv-myservice-log-run.erb` that have the commands for starting
 myservice and its logger.
 
-    runit_service "myservice"
+    runit_svc "myservice"
 
 See __Usage__ for expanded examples.
-
-Resources/Providers
-===================
-
-None yet. See [CHEF-154](http://tickets.opscode.com/browse/CHEF-154).
 
 Usage
 =====
