@@ -18,19 +18,24 @@
 # limitations under the License.
 #
 
-actions :start, :stop, :enable, :disable, :restart, :reload, :once, :hup, :cont, :term, :kill
+actions :start, :stop, :enable, :disable, :restart, :reload, :once, :hup, :cont, :term, :kill, :up, :down
 
 attribute :service_name, :name_attribute => true
-attribute :directory, :kind_of => String, :required => true
+attribute :directory, :kind_of => String
 attribute :control,   :default => [], :kind_of => Array
 attribute :options,   :default => {}, :kind_of => Hash
 attribute :variables, :kind_of => Hash, :default => :options
 attribute :env,       :default => {}, :kind_of => Hash
-attribute :log,       :kind_of => [TrueClass, FalseClass]
+attribute :log,       :kind_of => [TrueClass, FalseClass], :default => true
 attribute :cookbook,  :kind_of => String
-attribute :template,  :kind_of => [String, FalseClass], :default => :service_name
+attribute :template,  :kind_of => [String, TrueClass, FalseClass], :default => true
 attribute :finish,    :kind_of => [TrueClass, FalseClass]
 attribute :owner,     :regex => Chef::Config[:user_valid_regex]
 attribute :group,     :regex => Chef::Config[:group_valid_regex]
 attribute :enabled,   :default => false
 attribute :running,   :default => false
+
+def initialize(name,run_context=nil)
+  super
+  @action = :enable
+end
