@@ -133,21 +133,24 @@ end
 
 action :start do
   unless running?
-    execute "#{node['runit']['sv_bin']} start #{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} start #{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :up do
   unless running?
-    execute "#{node['runit']['sv_bin']} up #{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} up #{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :disable do
   if @svc.enabled
-    execute "#{node['runit']['sv_bin']} down #{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} down #{new_resource.service_name}"
+    e.run_action(:run)
 
     link "#{node['runit']['service_dir']}/#{new_resource.service_name}" do
       action :delete
@@ -158,70 +161,84 @@ end
 
 action :stop do
   if running?
-    execute "#{node['runit']['sv_bin']} stop #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} stop #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :down do
   if running?
-    execute "#{node['runit']['sv_bin']} down #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} down #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :restart do
   if running?
-    execute "#{node['runit']['sv_bin']} restart #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} restart #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
+    new_resource.updated_by_last_action(true)
+  else
+    e = execute "#{node['runit']['sv_bin']} up #{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :reload do
   if running?
-    execute "#{node['runit']['sv_bin']} force-reload #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} force-reload #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :once do
   if running?
-    execute "#{node['runit']['sv_bin']} once #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} once #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :cont do
   if running?
-    execute "#{node['runit']['sv_bin']} cont #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} cont #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :hup do
   if running?
-    execute "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} hup #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :int do
   if running?
-    execute "#{node['runit']['sv_bin']} int #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} int #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :term do
   if running?
-    execute "#{node['runit']['sv_bin']} term #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} term #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
 
 action :kill do
   if running?
-    execute "#{node['runit']['sv_bin']} kill #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e = execute "#{node['runit']['sv_bin']} kill #{node['runit']['service_dir']}/#{new_resource.service_name}"
+    e.run_action(:run)
     new_resource.updated_by_last_action(true)
   end
 end
