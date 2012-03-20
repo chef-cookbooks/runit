@@ -18,9 +18,9 @@
 # limitations under the License.
 #
 
-require 'chef/mixin/command'
+require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
-include Chef::Mixin::Command
+include Chef::Mixin::ShellOut
 
 action :enable do
   new_resource.directory("#{node['runit']['sv_dir']}/#{new_resource.service_name}") unless new_resource.directory
