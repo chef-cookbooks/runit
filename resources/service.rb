@@ -32,6 +32,7 @@ attribute :template,  :kind_of => [String, TrueClass, FalseClass], :default => t
 attribute :finish,    :kind_of => [TrueClass, FalseClass]
 attribute :owner,     :regex => Chef::Config[:user_valid_regex]
 attribute :group,     :regex => Chef::Config[:group_valid_regex]
+attribute :down,      :kind_of => [TrueClass, FalseClass], :default => false
 attribute :enabled,   :default => false
 attribute :running,   :default => false
 

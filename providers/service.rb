@@ -30,6 +30,13 @@ action :enable do
     mode 0755
   end
 
+  if new_resource.down
+    file "#{new_resource.directory}/down" do
+      mode 00644
+      action :create
+    end
+  end
+
   if new_resource.template
     template "#{new_resource.directory}/run" do
       source "sv-#{new_resource.service_name}-run.erb"
