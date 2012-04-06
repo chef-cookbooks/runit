@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-actions :start, :stop, :enable, :disable, :restart, :reload, :once, :hup, :cont, :term, :kill, :up, :down
+actions :start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down
 
 attribute :service_name, :name_attribute => true
 attribute :directory, :kind_of => String
@@ -39,4 +39,5 @@ attribute :running,   :default => false
 def initialize(name,run_context=nil)
   super
   @action = :enable
+  @supports = { :restart => true, :reload => true, :status => true }
 end
