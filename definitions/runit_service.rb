@@ -61,14 +61,6 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
     action :create
   end
 
-  # Create the down-file so the service doesn't automatically start 
-  # before we can set permission on the named pipes
-  file "#{sv_dir_name}/down" do
-    owner params[:owner]
-    group params[:group]
-    mode 0755
-  end  
-
   template "#{sv_dir_name}/run" do
     owner params[:owner]
     group params[:group]
@@ -177,7 +169,6 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
         access_control.set_all
       end
     end
-    notifies :delete, "file[#{sv_dir_name}/down]", :immediately # Remove down file when we're all set for permissions
   end
 
   service params[:name] do
