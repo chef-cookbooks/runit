@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-define :runit_service, :directory => nil, :only_if => false, :finish_script => false, :control => [], :run_restart => true, :active_directory => nil, :owner => "root", :group => "root", :template_name => nil, :log_template_name => nil, :control_template_names => {}, :finish_script_template_name => nil, :start_command => "start", :stop_command => "stop", :restart_command => "restart", :status_command => "status", :options => Hash.new, :env => Hash.new do
+define :runit_service, :directory => nil, :only_if => false, :finish_script => false, :control => [], :run_restart => true, :active_directory => nil, :owner => "root", :group => "root", :control_user => nil, :template_name => nil, :log_template_name => nil, :control_template_names => {}, :finish_script_template_name => nil, :start_command => "start", :stop_command => "stop", :restart_command => "restart", :status_command => "status", :options => Hash.new, :env => Hash.new do
   include_recipe "runit"
 
   params[:directory] ||= node[:runit][:sv_dir]
@@ -142,6 +142,23 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
       (1..10).each {|i| sleep 1 unless ::FileTest.pipe?("#{sv_dir_name}/supervise/ok") }
     end
     not_if { FileTest.pipe?("#{sv_dir_name}/supervise/ok") }
+  end
+
+  if params[:control_user]
+    directory "#{sv_dir_name}/supervise" do
+      owner params[:control_user]
+      group params[:group]
+      mode 0700
+      action :create
+    end
+
+    %w{ok control}.each do |control_file|
+      file "#{sv_dir_name}/supervise/#{control_file}" do
+        action :touch
+        owner params[:control_user]
+        only_if { File.exists? "#{sv_dir_name}/supervise/#{control_file}" }
+      end
+    end
   end
 
   service params[:name] do
