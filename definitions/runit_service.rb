@@ -47,6 +47,13 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
     action :create
   end
 
+  directory "#{sv_dir_name}/supervise" do
+    owner params[:owner]
+    group params[:group]
+    mode 0755
+    action :create
+  end
+
   directory "#{sv_dir_name}/log/main" do
     owner params[:owner]
     group params[:group]
@@ -126,12 +133,16 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
 
   if params[:active_directory] == node[:runit][:service_dir]
     link "/etc/init.d/#{params[:name]}" do
+      owner params[:owner]
+      group params[:group]
       to node[:runit][:sv_bin]
     end
   end
 
   unless node[:platform] == "gentoo"
     link service_dir_name do
+      owner params[:owner]
+      group params[:group]
       to sv_dir_name
     end
   end
@@ -142,6 +153,22 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
       (1..10).each {|i| sleep 1 unless ::FileTest.pipe?("#{sv_dir_name}/supervise/ok") }
     end
     not_if { FileTest.pipe?("#{sv_dir_name}/supervise/ok") }
+    notifies :create, "ruby_block[supervise_#{params[:name]}_pipes_set_ownership]", :immediately
+  end
+
+  ruby_block "supervise_#{params[:name]}_pipes_set_ownership" do
+    block do
+      Chef::Log.debug("Setting ownership on named pipes in '#{sv_dir_name}/supervise/'...")
+      ::Dir.glob("#{sv_dir_name}/supervise/*").each do | supervise_file | 
+        file_resource = Chef::Resource::File.new(supervise_file)
+        file_resource.owner(params[:owner])
+        file_resource.group(params[:group])
+
+        access_control = Chef::FileAccessControl.new(file_resource, file_resource.path)
+        Chef::Log.debug("Setting ownership for named pipe '#{supervise_file}' to #{file_resource.owner}:#{file_resource.group}...")
+        access_control.set_all
+      end
+    end
   end
 
   service params[:name] do
