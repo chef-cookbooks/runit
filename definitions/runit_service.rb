@@ -127,6 +127,7 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
   if params[:active_directory] == node[:runit][:service_dir]
     link "/etc/init.d/#{params[:name]}" do
       to node[:runit][:sv_bin]
+      not_if { node["platform"] == "debian" }
     end
   end
 
