@@ -129,6 +129,15 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
       to node[:runit][:sv_bin]
       not_if { node["platform"] == "debian" }
     end
+    template "/etc/init.d/#{params[:name]}" do
+      owner "root"
+      group "root"
+      mode 0755
+      source "init.d.erb"
+      cookbook "runit"
+      variables :params => params
+      only_if { node["platform"] == "debian" } 
+    end
   end
 
   unless node[:platform] == "gentoo"
