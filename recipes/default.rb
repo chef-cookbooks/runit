@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-case node[:platform]
+case node["platform"]
 when "debian","ubuntu", "gentoo"
   execute "start-runsvdir" do
     command value_for_platform(
@@ -61,7 +61,7 @@ when "debian","ubuntu", "gentoo"
     ), resources(:execute => "runit-hup-init"), :immediately
   end
 
-  if node[:platform] =~ /ubuntu/i && node[:platform_version].to_f <= 8.04
+  if node["platform"] =~ /ubuntu/i && node["platform_version"].to_f <= 8.04
     cookbook_file "/etc/event.d/runsvdir" do
       source "runsvdir"
       mode 0644
