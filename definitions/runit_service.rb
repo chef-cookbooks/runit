@@ -41,6 +41,29 @@
     action :create
   end
 
+  directory sv_dir_name + "/supervise" do
+    owner params[:owner]
+    group params[:group]
+    mode 0755
+    action :create
+  end
+
+  file sv_dir_name + "/supervise/ok" do
+    owner params[:owner]
+    group params[:group]
+    mode 0644
+    action :create
+    only_if { File.exists? sv_dir_name + "/supervise/ok" }
+  end
+
+  file sv_dir_name + "/supervise/control" do
+    owner params[:owner]
+    group params[:group]
+    mode 0600
+    action :create
+    only_if { File.exists? sv_dir_name + "/supervise/control" }
+  end
+
   unless params[:nolog]
     directory "#{sv_dir_name}/log" do
       owner params[:owner]
