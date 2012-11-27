@@ -26,7 +26,6 @@ execute "start-runsvdir" do
     "debian" => { "default" => "runsvdir-start" },
     "ubuntu" => { "default" => "start runsvdir" },
     "gentoo" => { "default" => "/etc/init.d/runit-start start" },
-    "centos" => { "default" => "/etc/init.d/runit-start start" }
   )
   action :nothing
 end
