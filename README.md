@@ -170,7 +170,7 @@ than in that cookbook. First, create the required run template,
     exec /usr/bin/env chef-client -i 1800 -s 30
 
 Then create the required log/run template,
-`chef-client/templates/default/sv-chef-client-run.erb`.
+`chef-client/templates/default/sv-chef-client-log-run.erb`.
 
     #!/bin/sh
     exec svlogd -tt ./main
