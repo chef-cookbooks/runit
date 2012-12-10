@@ -176,6 +176,16 @@ EOF
   if params[:active_directory] == node[:runit][:service_dir]
     link "/etc/init.d/#{params[:name]}" do
       to node[:runit][:sv_bin]
+      not_if { node["platform"] == "debian" }
+    end
+    template "/etc/init.d/#{params[:name]}" do
+      owner "root"
+      group "root"
+      mode 0755
+      source "init.d.erb"
+      cookbook "runit"
+      variables :params => params
+      only_if { node["platform"] == "debian" } 
     end
   end
 
