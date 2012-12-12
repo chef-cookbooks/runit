@@ -114,17 +114,6 @@ EOF
     end
   end
 
-  template "#{sv_dir_name}/log/run" do
-    owner params[:owner]
-    group params[:group]
-    mode 0755
-    source "sv-#{params[:log_template_name]}-log-run.erb"
-    cookbook params[:cookbook] if params[:cookbook]
-    if params[:options].respond_to?(:has_key?)
-      variables :options => params[:options]
-    end
-  end
-
   unless params[:env].empty?
     directory "#{sv_dir_name}/env" do
       mode 0755
