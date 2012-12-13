@@ -83,7 +83,7 @@ EOF
   directory "#{sv_dir_name}/supervise" do
     owner params[:owner]
     group params[:group]
-    mode 0700
+    mode 0750
     action :create
   end
 
