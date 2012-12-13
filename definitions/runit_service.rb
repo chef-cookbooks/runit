@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-  define :runit_service, :directory => nil, :only_if => false, :finish_script => false, :control => [], :run_restart => true, :active_directory => nil, :owner => "root", :group => "root", :control_user => nil, :template_name => nil, :log_template_name => nil, :control_template_names => {}, :finish_script_template_name => nil, :start_command => "start", :stop_command => "stop", :restart_command => "restart", :status_command => "status", :options => Hash.new, :env => Hash.new , :default_logger => false, :nolog => false do
+  define :runit_service, :directory => nil, :only_if => false, :finish_script => false, :control => [], :run_restart => true, :active_directory => nil, :owner => "root", :group => "root", :template_name => nil, :log_template_name => nil, :control_template_names => {}, :finish_script_template_name => nil, :start_command => "start", :stop_command => "stop", :restart_command => "restart", :status_command => "status", :options => Hash.new, :env => Hash.new , :default_logger => false, :nolog => false do
 
   include_recipe "runit"
 
@@ -78,6 +78,13 @@ EOF
         end
       end
     end
+  end
+
+  directory "#{sv_dir_name}/supervise" do
+    owner params[:owner]
+    group params[:group]
+    mode 0750
+    action :create
   end
 
   template "#{sv_dir_name}/run" do
@@ -141,6 +148,8 @@ EOF
 
   if params[:active_directory] == node[:runit][:service_dir]
     link "/etc/init.d/#{params[:name]}" do
+      owner params[:owner]
+      group params[:group]
       to node[:runit][:sv_bin]
       not_if { node["platform"] == "debian" }
     end
@@ -151,12 +160,14 @@ EOF
       source "init.d.erb"
       cookbook "runit"
       variables :params => params
-      only_if { node["platform"] == "debian" } 
+      only_if { node["platform"] == "debian" }
     end
   end
 
   unless node[:platform] == "gentoo"
     link service_dir_name do
+      owner params[:owner]
+      group params[:group]
       to sv_dir_name
     end
   end
@@ -167,21 +178,20 @@ EOF
       (1..10).each {|i| sleep 1 unless ::FileTest.pipe?("#{sv_dir_name}/supervise/ok") }
     end
     not_if { FileTest.pipe?("#{sv_dir_name}/supervise/ok") }
+    notifies :create, "ruby_block[supervise_#{params[:name]}_pipes_set_ownership]", :immediately
   end
 
-  if params[:control_user]
-    directory "#{sv_dir_name}/supervise" do
-      owner params[:control_user]
-      group params[:group]
-      mode 0700
-      action :create
-    end
+  ruby_block "supervise_#{params[:name]}_pipes_set_ownership" do
+    block do
+      Chef::Log.debug("Setting ownership on named pipes in '#{sv_dir_name}/supervise/'...")
+      ::Dir.glob("#{sv_dir_name}/supervise/*").each do | supervise_file |
+        file_resource = Chef::Resource::File.new(supervise_file)
+        file_resource.owner(params[:owner])
+        file_resource.group(params[:group])
 
-    %w{ok control}.each do |control_file|
-      file "#{sv_dir_name}/supervise/#{control_file}" do
-        action :touch
-        owner params[:control_user]
-        only_if { File.exists? "#{sv_dir_name}/supervise/#{control_file}" }
+        access_control = Chef::FileAccessControl.new(file_resource, file_resource.path)
+        Chef::Log.debug("Setting ownership for named pipe '#{supervise_file}' to #{file_resource.owner}:#{file_resource.group}...")
+        access_control.set_all
       end
     end
   end
