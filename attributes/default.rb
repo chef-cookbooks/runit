@@ -17,17 +17,45 @@
 # limitations under the License.
 #
 
-case platform
-when "ubuntu","debian"
+case platform_family
+when "debian"
   set["runit"]["sv_bin"] = "/usr/bin/sv"
   set["runit"]["chpst_bin"] = "/usr/bin/chpst"
   set["runit"]["service_dir"] = "/etc/service"
   set["runit"]["sv_dir"] = "/etc/sv"
   set["runit"]["executable"] = "/sbin/runit"
+  if platform=="debian"
+    set["runit"]["start"] = "runsvdir-start"
+    set["runit"]["stop"] = ""
+    set["runit"]["reload"] = ""
+  elsif platform=="ubuntu"
+    set["runit"]["start"] = "start runsvdir"
+    set["runit"]["stop"] = "stop runsvdir"
+    set["runit"]["reload"] = "reload runsvdir"
+  end
 when "gentoo"
   set["runit"]["sv_bin"] = "/usr/bin/sv"
   set["runit"]["chpst_bin"] = "/usr/bin/chpst"
   set["runit"]["service_dir"] = "/etc/service"
   set["runit"]["sv_dir"] = "/var/service"
   set["runit"]["executable"] = "/sbin/runit"
+  set["runit"]["start"] = "/etc/init.d/runit-start start"
+  set["runit"]["stop"] = "/etc/init.d/runit-start stop"
+  set["runit"]["reload"] = "/etc/init.d/runit-start reload"
+when "rhel"
+  set["runit"]["sv_bin"] = "/usr/bin/sv"
+  set["runit"]["chpst_bin"] = "/usr/bin/chpst"
+  set["runit"]["service_dir"] = "/etc/service"
+  set["runit"]["sv_dir"] = "/var/service"
+  set["runit"]["executable"] = "/sbin/runit"
+  if platform_version.to_i < 6
+    set["runit"]["start"] = "/etc/init.d/runit-start start"
+    set["runit"]["stop"] = "/etc/init.d/runit-start stop"
+    set["runit"]["reload"] = "/etc/init.d/runit-start reload"
+  else
+    set["runit"]["start"] = "/etc/init.d/runit-start start"
+    set["runit"]["stop"] = "/etc/init.d/runit-start stop"
+    set["runit"]["reload"] = "/etc/init.d/runit-start reload"
+  end
 end
+
