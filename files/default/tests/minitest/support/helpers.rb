@@ -5,7 +5,7 @@ module Helpers
         include MiniTest::Chef::Resources
 
         def assert_package_installed
-            case node[:platform_family]
+            case node["platform_family"]
             when "debian"
                 assert system('apt-cache policy runit | grep Installed | grep -v none')
             when "rhel"
