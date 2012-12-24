@@ -17,10 +17,10 @@
 # limitations under the License.
 #
 
-# TODO: Try to make this operate on a value_for_platform_family basis
-# Note: Debian and Ubuntu handle it differently
-# Consider: moving to an attribute?
-
+service "runit" do
+    action :nothing
+end
+    
 execute "start-runsvdir" do
   command value_for_platform(
     "debian" => { "default" => "runsvdir-start" },
@@ -38,7 +38,6 @@ end
 
 case node["platform_family"]
 when "rhel"
-  # Prepare build environment
   packages = %w{rpm-build rpmdevtools unzip}
   packages.each do |p|
     package p
@@ -58,7 +57,7 @@ when "rhel"
 
   bash "rhel_build_install" do
     user "root"
-    cwd "#{Chef::Config[:file_cache_path]}" 
+    cwd Chef::Config[:file_cache_path]
     code <<-EOH
       unzip master
       cd runit-rpm-master
@@ -75,7 +74,6 @@ when "debian","gentoo"
     if platform?("ubuntu", "debian")
       response_file "runit.seed"
     end
-# This is ugly!  Maybe make it an attribute?
     notifies value_for_platform(
       "debian" => { "4.0" => :run, "default" => :nothing  },
       "ubuntu" => {
@@ -84,16 +82,13 @@ when "debian","gentoo"
         "8.10" => :run,
         "8.04" => :run },
       "gentoo" => { "default" => :run }
-    ), resources(:execute => "start-runsvdir"), :immediately
-# Same here? Why nothing for non squeeze/sid? Gentoo?
+    ), "execute[start-runsvdir]", :immediately
     notifies value_for_platform(
       "debian" => { "squeeze/sid" => :run, "default" => :nothing },
       "default" => :nothing
-    ), resources(:execute => "runit-hup-init"), :immediately
+    ), "execute[runit-hup-init]", :immediately
   end
 
-# 8.04 is last supported LTS, versions previous are out of Canonical support.
-# Do we want to maintain this support forever?
   if node["platform"] =~ /ubuntu/i && node["platform_version"].to_f <= 8.04
     cookbook_file "/etc/event.d/runsvdir" do
       source "runsvdir"
@@ -102,7 +97,6 @@ when "debian","gentoo"
       only_if do ::File.directory?("/etc/event.d") end
     end
   end
-# TODO: Move or not move?
   if platform? "gentoo"
     template "/etc/init.d/runit-start" do
       source "runit-start.sh.erb"
