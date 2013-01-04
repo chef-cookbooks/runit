@@ -1,3 +1,4 @@
 cookbook "runit" do
-
+  configuration "default"
+  configuration "lwrp"
 end
