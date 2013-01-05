@@ -38,6 +38,7 @@ class Chef
         @options = {}
         @env = {}
         @log = true
+        @cookbook = nil
         @enabled = false
         @running = false
         @default_logger = false

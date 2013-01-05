@@ -36,19 +36,19 @@ describe "Chef::Resource::RunitService" do
   end
 
   it 'should set the resource_name to :runit_service' do
-    @resource.resource_name.should eql(:runit_service)
+    @resource.resource_name.should == :runit_service
   end
 
   it 'should set the provider to Chef::Provider::Service::Runit' do
-    @resource.provider.should eql(Chef::Provider::Service::Runit)
+    @resource.provider.should == Chef::Provider::Service::Runit
   end
 
   it 'sets the service_name to the name attribute' do
-    @resource.service_name.should eql('getty.service')
+    @resource.service_name.should == 'getty.service'
   end
 
   it 'has an sv_dir parameter set to /etc/sv by default' do
-    @resource.sv_dir.should eql('/etc/sv')
+    @resource.sv_dir.should == '/etc/sv'
   end
 
   it 'has an sv_dir parameter that can be set' do
@@ -62,23 +62,23 @@ describe "Chef::Resource::RunitService" do
   end
 
   it 'has a service_dir parameter set to /etc/service by default' do
-    @resource.service_dir.should eql('/etc/service')
+    @resource.service_dir.should == '/etc/service'
   end
 
   it 'has a service_dir parameter that can be set' do
     @resource.service_dir('/var/service')
-    @resource.service_dir.should eql('/var/service')
+    @resource.service_dir.should == '/var/service'
   end
 
   it 'has a control parameter that can be set as an array of service control characters' do
     @resource.control(['s', 'u'])
-    @resource.control.should eql(['s', 'u'])
+    @resource.control.should == ['s', 'u']
   end
 
   it 'has an options parameter that can be set as a hash of arbitrary options' do
     @resource.options({:binary => '/usr/bin/noodles'})
     @resource.options.should have_key(:binary)
-    @resource.options[:binary].should eql('/usr/bin/noodles')
+    @resource.options[:binary].should == '/usr/bin/noodles'
   end
 
   it 'has an env parameter that can be set as a hash of environment variables' do
@@ -90,7 +90,7 @@ describe "Chef::Resource::RunitService" do
   it 'adds :env_dir to options if env is set' do
     @resource.env({'PATH' => '/bin'})
     @resource.options.should have_key(:env_dir)
-    @resource.options[:env_dir].should eql(::File.join(@resource.sv_dir, @resource.service_name, 'env'))
+    @resource.options[:env_dir].should == ::File.join(@resource.sv_dir, @resource.service_name, 'env')
   end
 
   it 'has a log parameter to control whether a log service is setup' do
@@ -109,7 +109,7 @@ describe "Chef::Resource::RunitService" do
 
   it 'has a cookbook parameter that can be set' do
     @resource.cookbook('noodles')
-    @resource.cookbook.should eql('noodles')
+    @resource.cookbook.should == 'noodles'
   end
 
   it 'has a finish parameter that is false by default' do
@@ -123,12 +123,12 @@ describe "Chef::Resource::RunitService" do
 
   it 'has an owner parameter that can be set' do
     @resource.owner('monkey')
-    @resource.owner.should eql('monkey')
+    @resource.owner.should == 'monkey'
   end
 
   it 'has a group parameter that can be set' do
     @resource.group('primates')
-    @resource.group.should eql('primates')
+    @resource.group.should == 'primates'
   end
 
   it 'has an enabled parameter to determine if the current resource is enabled' do
@@ -145,24 +145,24 @@ describe "Chef::Resource::RunitService" do
 
   it 'has a default_logger parameter that controls whether a default log template should be created' do
     @resource.default_logger(true)
-    @resource.default_logger.should eql(true)
+    @resource.default_logger.should == true
   end
 
   it 'sets the log_template_name to the service_name by default' do
-    @resource.log_template_name.should eql(@resource.service_name)
+    @resource.log_template_name.should == @resource.service_name
   end
 
   it 'has a log_template_name parameter to allow a custom template name for the log run script' do
     @resource.log_template_name('write_noodles')
-    @resource.log_template_name.should eql('write_noodles')
+    @resource.log_template_name.should == 'write_noodles'
   end
 
   it 'sets the control_template_names for each control character to the service_name by default' do
     @resource.control(['s', 'u'])
     @resource.control_template_names.should have_key('s')
     @resource.control_template_names.should have_key('u')
-    @resource.control_template_names['s'].should eql(@resource.service_name)
-    @resource.control_template_names['u'].should eql(@resource.service_name)
+    @resource.control_template_names['s'].should == @resource.service_name
+    @resource.control_template_names['u'].should == @resource.service_name
   end
 
   it 'has a control_template_names parameter to allow custom template names for the control scripts' do
@@ -172,17 +172,17 @@ describe "Chef::Resource::RunitService" do
       })
     @resource.control_template_names.should have_key('s')
     @resource.control_template_names.should have_key('u')
-    @resource.control_template_names['s'].should eql('banana_start')
-    @resource.control_template_names['u'].should eql('noodle_up')
+    @resource.control_template_names['s'].should == 'banana_start'
+    @resource.control_template_names['u'].should == 'noodle_up'
   end
 
   it 'sets the finish_script_template_name to the service_name by default' do
-    @resource.finish_script_template_name.should eql(@resource.service_name)
+    @resource.finish_script_template_name.should == @resource.service_name
   end
 
   it 'has a finish_script_template_name parameter to allow a custom template name for the finish script' do
     @resource.finish_script_template_name('eat_bananas')
-    @resource.finish_script_template_name.should eql('eat_bananas')
+    @resource.finish_script_template_name.should == 'eat_bananas'
   end
 
 end
@@ -306,49 +306,109 @@ describe "Chef::Provider::Service::Runit" do
     describe "action_enable" do
       before(:each) do
         @current_resource.stub!(:enabled).and_return(true)
+        @sv_dir_name = ::File.join(@new_resource.sv_dir, @new_resource.service_name)
+        @service_dir_name = ::File.join(@new_resource.service_dir, @new_resource.service_name)
       end
 
       it 'creates the sv_dir directory' do
-        pending
+        @provider.sv_dir.path.should == ::File.join(@sv_dir_name)
+        @provider.sv_dir.recursive.should be_true
+        @provider.sv_dir.owner.should == @new_resource.owner
+        @provider.sv_dir.group.should == @new_resource.group
+        @provider.sv_dir.mode.should == 00755
       end
 
-      it 'creates the log directory if log parameter is true' do
-        pending
+      it 'creates the run script template' do
+        @provider.run_script.path.should == ::File.join(@sv_dir_name, 'run')
+        @provider.run_script.owner.should == @new_resource.owner
+        @provider.run_script.group.should == @new_resource.group
+        @provider.run_script.mode.should == 00755
+        @provider.run_script.source.should == "sv-#{@new_resource.service_name}-run.erb"
+        @provider.run_script.cookbook.should be_nil
       end
 
-      it 'creates the log/run script if log parameter is true' do
-        pending
+      it 'sets up the supervised log directory and run script' do
+        @provider.log_dir.path.should == ::File.join(@sv_dir_name, 'log')
+        @provider.log_dir.recursive.should be_true
+        @provider.log_dir.owner.should == @new_resource.owner
+        @provider.log_dir.group.should == @new_resource.group
+        @provider.log_dir.mode.should == 00755
+        @provider.log_run_script.path.should == ::File.join(@sv_dir_name, 'log', 'run')
+        @provider.log_run_script.owner.should == @new_resource.owner
+        @provider.log_run_script.group.should == @new_resource.group
+        @provider.log_run_script.mode.should == 00755
+        @provider.log_run_script.source.should == "sv-#{@new_resource.log_template_name}-log-run.erb"
+        @provider.log_run_script.cookbook.should be_nil
       end
 
       it 'creates log/run with default content if default_logger parameter is true' do
-        pending
+        script_content = "exec svlogd -tt /var/log/#{@new_resource.service_name}"
+        @new_resource.default_logger(true)
+        @provider.log_run_script.path.should == ::File.join(@sv_dir_name, 'log', 'run')
+        @provider.log_run_script.owner.should == @new_resource.owner
+        @provider.log_run_script.group.should == @new_resource.group
+        @provider.log_run_script.mode.should == 00755
+        @provider.log_run_script.content.should include(script_content)
       end
 
-      it 'creates log/run as a template if default_logger parameter is false' do
-        pending
-      end
-
-      it 'creates the run script as a template' do
-        pending
-      end
-
-      it 'creates env directory and files if the env parameter is not empty' do
-        pending
+      it 'creates env directory and files' do
+        @provider.env_dir.path.should == ::File.join(@sv_dir_name, 'env')
+        @provider.env_dir.owner.should == @new_resource.owner
+        @provider.env_dir.group.should == @new_resource.group
+        @provider.env_dir.mode.should == 00755
+        @new_resource.env({'PATH' => '$PATH:/usr/local/bin'})
+        @provider.env_files[0].path.should == ::File.join(@sv_dir_name, 'env', 'PATH')
+        @provider.env_files[0].owner.should == @new_resource.owner
+        @provider.env_files[0].group.should == @new_resource.group
+        @provider.env_files[0].content.should == '$PATH:/usr/local/bin'
       end
 
       it 'creates a finish script as a template if finish_script parameter is true' do
-        pending
+        @provider.finish_script.path.should == ::File.join(@sv_dir_name, 'finish')
+        @provider.finish_script.owner.should == @new_resource.owner
+        @provider.finish_script.group.should == @new_resource.group
+        @provider.finish_script.mode.should == 00755
+        @provider.finish_script.source.should == "sv-#{@new_resource.finish_script_template_name}-finish.erb"
+        @provider.finish_script.cookbook.should be_nil
+      end
+
+      it 'creates control directory and signal files' do
+        @provider.control_dir.path.should == ::File.join(@sv_dir_name, 'control')
+        @provider.control_dir.owner.should == @new_resource.owner
+        @provider.control_dir.group.should == @new_resource.group
+        @provider.control_dir.mode.should == 00755
+        @new_resource.control(['s'])
+        @provider.control_signal_files[0].path.should == ::File.join(@sv_dir_name, 'control', 's')
+        @provider.control_signal_files[0].owner.should == @new_resource.owner
+        @provider.control_signal_files[0].group.should == @new_resource.group
+        @provider.control_signal_files[0].source.should == "sv-#{@new_resource.control_template_names['s']}-s.erb"
+        @provider.control_signal_files[0].cookbook.should be_nil
       end
 
       it 'creates a symlink for LSB script compliance unless the platform is debian' do
-        pending
+        @node.automatic['platform'] = 'not_debian'
+        @provider.lsb_init.path.should == ::File.join('/etc', 'init.d', @new_resource.service_name)
+        @provider.lsb_init.to.should == ::File.join(@node['runit']['sv_bin'])
       end
 
       it 'creates an init script as a template for LSB compliance if the platform is debian' do
-        pending
+        @node.automatic['platform'] = 'debian'
+        @provider.lsb_init.path.should == ::File.join('/etc', 'init.d', @new_resource.service_name)
+        @provider.lsb_init.owner.should == 'root'
+        @provider.lsb_init.group.should == 'root'
+        @provider.lsb_init.mode.should == 00755
+        @provider.lsb_init.cookbook.should == 'runit'
+        @provider.lsb_init.source.should == 'init.d.erb'
+        @provider.lsb_init.variables.should have_key(:options)
+        @provider.lsb_init.variables[:options].should == @new_resource.options
       end
 
-      it 'creates a symlink from the sv dir to the service dir unless the platform is gentoo' do
+      it 'creates a symlink from the sv dir to the service' do
+        @provider.service_link.path.should == ::File.join(@service_dir_name)
+        @provider.service_link.to.should == ::File.join(@sv_dir_name)
+      end
+
+      it 'creates the sv dir and service dir symlink using resource creation methods' do
         pending
       end
 
