@@ -18,6 +18,7 @@ Requirements
 
 * Debian/Ubuntu
 * Gentoo
+* RHEL
 
 Attributes
 ==========
