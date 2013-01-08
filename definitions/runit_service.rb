@@ -152,7 +152,6 @@ EOF
       cookbook "runit"
       variables :params => params
       only_if { node["platform"] == "debian" }
->>>>>>> upstream/master
     end
   end
 
