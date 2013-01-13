@@ -81,7 +81,7 @@ class Chef
                 env_files.each {|file| file.run_action(:create)}
               end
 
-              if new_resource.finish_script
+              if new_resource.finish
                 finish_script.run_action(:create)
               end
 

@@ -408,8 +408,53 @@ describe "Chef::Provider::Service::Runit" do
         @provider.service_link.to.should == ::File.join(@sv_dir_name)
       end
 
-      it 'creates the sv dir and service dir symlink using resource creation methods' do
-        pending
+      it 'enables the service with memoized resource creation methods' do
+        @current_resource.stub!(:enabled).and_return(false)
+        @provider.sv_dir.should_receive(:run_action).with(:create)
+        @provider.run_script.should_receive(:run_action).with(:create)
+        @provider.log_dir.should_receive(:run_action).with(:create)
+        @provider.log_run_script.should_receive(:run_action).with(:create)
+        @provider.lsb_init.should_receive(:run_action).with(:create)
+        @provider.service_link.should_receive(:run_action).with(:create)
+        @provider.run_action(:enable)
+      end
+
+      context 'new resource conditionals' do
+        before(:each) do
+          @current_resource.stub!(:enabled).and_return(false)
+          @provider.sv_dir.stub!(:run_action).with(:create)
+          @provider.run_script.stub!(:run_action).with(:create)
+          @provider.lsb_init.stub!(:run_action).with(:create)
+          @provider.service_link.stub!(:run_action).with(:create)
+          @provider.log_dir.stub!(:run_action).with(:create)
+          @provider.log_run_script.stub!(:run_action).with(:create)
+        end
+
+        it 'doesnt create the log dir or run script if log is false' do
+          @new_resource.stub!(:log).and_return(false)
+          @provider.should_not_receive(:log)
+          @provider.run_action(:enable)
+        end
+
+        it 'creates the env dir and config files if env is set' do
+          @new_resource.stub!(:env).and_return({'PATH' => '/bin'})
+          @provider.env_dir.should_receive(:run_action).with(:create)
+          @provider.env_files.should_receive(:each).once
+          @provider.run_action(:enable)
+        end
+
+        it 'creates the control dir and signal files if control is set' do
+          @new_resource.stub!(:control).and_return(['s', 'u'])
+          @provider.control_dir.should_receive(:run_action).with(:create)
+          @provider.control_signal_files.should_receive(:each).once
+          @provider.run_action(:enable)
+        end
+
+        it 'does not create the service_link on gentoo' do
+          @node.automatic['platform'] = 'gentoo'
+          @provider.should_not_receive(:service_link)
+          @provider.run_action(:enable)
+        end
       end
 
     end
