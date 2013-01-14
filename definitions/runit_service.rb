@@ -21,8 +21,8 @@ define :runit_service, :directory => nil, :only_if => false, :finish_script => f
 
   include_recipe "runit"
 
-  params[:directory] ||= node[:runit][:sv_dir]
-  params[:active_directory] ||= node[:runit][:service_dir]
+  params[:directory] ||= node["runit"]["sv_dir"]
+  params[:active_directory] ||= node["runit"]["service_dir"]
   params[:template_name] ||= params[:name]
   params[:log_template_name] ||= params[:template_name]
   params[:control].each do |signal|
@@ -139,9 +139,9 @@ EOF
     end
   end
 
-  if params[:active_directory] == node[:runit][:service_dir]
+  if params[:active_directory] == node["runit"]["service_dir"]
     link "/etc/init.d/#{params[:name]}" do
-      to node[:runit][:sv_bin]
+      to node["runit"]["sv_bin"]
       not_if { node["platform"] == "debian" }
     end
     template "/etc/init.d/#{params[:name]}" do
@@ -155,7 +155,7 @@ EOF
     end
   end
 
-  unless node[:platform] == "gentoo"
+  unless node["platform"] == "gentoo"
     link service_dir_name do
       to sv_dir_name
     end
@@ -170,9 +170,9 @@ EOF
   end
 
   service params[:name] do
-    control_cmd = node[:runit][:sv_bin]
+    control_cmd = node["runit"]["sv_bin"]
     if params[:owner]
-      control_cmd = "#{node[:runit][:chpst_bin]} -u #{params[:owner]} #{control_cmd}"
+      control_cmd = "#{node["runit"]["chpst_bin"]} -u #{params[:owner]} #{control_cmd}"
     end
     provider Chef::Provider::Service::Init
     supports :restart => true, :status => true
