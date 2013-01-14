@@ -1,9 +1,10 @@
-require File.expand_path('../support/helpers.rb', __FILE__)
-
-describe "runit::default" do
-    include Helpers::Runit
-
+describe_recipe 'runit::default' do
+  include MiniTest::Chef::Assertions
+  include MiniTest::Chef::Context
+  include MiniTest::Chef::Resources
+  describe "packages" do
     it 'has been installed' do
-        assert_package_installed
+      package("runit").must_be_installed
     end
+  end
 end
