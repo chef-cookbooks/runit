@@ -227,28 +227,28 @@ describe "Chef::Provider::Service::Runit" do
       @provider.load_current_resource
     end
 
-    it 'should set running to true if the service is running' do
-      @provider.stub!(:running?).and_return(true)
-      @current_resource.should_receive(:running).with(true)
+    it 'should set running to false if the service is not running' do
       @provider.load_current_resource
+      @current_resource.running.should be_false
     end
 
-    it 'should set running to false if the service is not running' do
-      @provider.stub!(:running?).and_return(false)
-      @current_resource.should_receive(:running).with(false)
+    it 'should set running to true if the service is running' do
+      @provider.stub!(:running?).and_return(true)
+      @provider.stub!(:enabled?).and_return(true)
       @provider.load_current_resource
+      @current_resource.running.should be_true
     end
 
     it 'should set enabled to false if the run script is not present' do
-      @provider.stub!(:enabled?).and_return(false)
-      @current_resource.should_receive(:enabled).with(false)
       @provider.load_current_resource
+      @current_resource.enabled.should be_false
     end
 
     it 'should set enabled to true if the run script is present in the service_dir' do
+      @provider.stub!(:running?).and_return(true)
       @provider.stub!(:enabled?).and_return(true)
-      @current_resource.should_receive(:enabled).with(true)
       @provider.load_current_resource
+      @current_resource.enabled.should be_true
     end
 
     describe "actions that start the service" do
