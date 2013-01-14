@@ -38,7 +38,7 @@ end
 
 case node["platform_family"]
 when "rhel"
-  packages = %w{rpm-build rpmdevtools unzip}
+  packages = %w{rpm-build rpmdevtools tar gzip}
   packages.each do |p|
     package p
   end
@@ -49,8 +49,8 @@ when "rhel"
     package "buildsys-macros"
   end
 
-  remote_file "#{Chef::Config[:file_cache_path]}/master.zip" do
-    source "https://github.com/imeyer/runit-rpm/archive/master.zip"
+  cookbook_file "#{Chef::Config[:file_cache_path]}/runit-2.1.1.tar.gz" do
+    source "runit-2.1.1.tar.gz"
     not_if "rpm -qa | grep -q '^runit'"
     notifies :run, "bash[rhel_build_install]", :immediately
   end
@@ -59,11 +59,16 @@ when "rhel"
     user "root"
     cwd Chef::Config[:file_cache_path]
     code <<-EOH
-      unzip master
-      cd runit-rpm-master
+      tar xzf runit-2.1.1.tar.gz
+      cd runit-2.1.1
       ./build.sh
-      rpm -i ~/rpmbuild/RPMS/*/*.rpm
     EOH
+    notifies :install, "rpm_package[runit-211]", :immediately
+    action :nothing
+  end
+
+  rpm_package "runit-211" do
+    source "/root/rpmbuild/RPMS/runit-2.1.1.rpm"
     action :nothing
   end
 
