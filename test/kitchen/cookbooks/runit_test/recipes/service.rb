@@ -19,6 +19,10 @@
 
 include_recipe "runit::default"
 
+package "netcat" do
+  package_name "nc" if platform_family?('redhat', 'fedora')
+end
+
 # Create a normal user to run services later
 group "floyd"
 
@@ -31,46 +35,56 @@ user "floyd" do
   supports :manage_home => true
 end
 
+["sv", "service"].each do |dir|
+
+  directory "/home/floyd/#{dir}" do
+    owner "floyd"
+    group "floyd"
+    recursive true
+  end
+
+end
+
 # Create a service with all the fixin's
-runit_service "potpie"
+runit_service "plain-defaults"
 
 # Create a service that doesn't use the svlog
-runit_service "not-logging" do
+runit_service "no-svlog" do
   log false
 end
 
 # Create a service that uses the default svlog
-runit_service "beaver" do
+runit_service "default-svlog" do
   default_logger true
 end
 
 # Create a service that has a finish script
-runit_service "kombat" do
+runit_service "finisher" do
   finish true
 end
 
 # Create a service that uses env files
-runit_service "greenpeace" do
+runit_service "env-files" do
   env({"PATH" => "$PATH:/opt/chef/embedded/bin"})
 end
 
 # Create a service that sets options for the templates
-runit_service "berries" do
+runit_service "template-options" do
   options({:raspberry => "delicious"})
 end
 
 # Create a service that uses control signal files
-runit_service "milkshake" do
+runit_service "control-signals" do
   control ["u"]
 end
 
 # Create a runsvdir service for a normal user
-runit_service "runsvdir-floyd" do
-  service_dir "/home/floyd/service"
-end
+runit_service "runsvdir-floyd"
 
-# Create a service running by a normal user in its runsvdir
+# # Create a service running by a normal user in its runsvdir
 runit_service "floyds-app" do
+  sv_dir "/home/floyd/sv"
+  service_dir "/home/floyd/service"
   owner "floyd"
   group "floyd"
 end
@@ -81,21 +95,15 @@ runit_service "yerba" do
   finish_script_template_name "yerba-matte"
 end
 
-# Create a service with runit as the provider
-service "cashews" do
-  provider Chef::Provider::Service::Runit
-end
-
-# Create a service that will be down
-runit_service "abbey" do
-  action :down
-end
-
 # Create a service that should exist but be disabled
-runit_service "pug"
+runit_service "exist-disabled"
 
-log "Created the pug service, now disable it"
+log "Created the exist-disabled service, now disable it"
 
-runit_service "pug" do
+runit_service "exist-disabled" do
   action :disable
+end
+
+runit_service "other-cookbook-templates" do
+  cookbook "runit-other_test"
 end

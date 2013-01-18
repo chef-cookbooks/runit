@@ -308,6 +308,7 @@ describe "Chef::Provider::Service::Runit" do
         @current_resource.stub!(:enabled).and_return(true)
         @sv_dir_name = ::File.join(@new_resource.sv_dir, @new_resource.service_name)
         @service_dir_name = ::File.join(@new_resource.service_dir, @new_resource.service_name)
+        FileTest.stub!(:pipe?).with("#{@service_dir_name}/supervise/ok").and_return(true)
       end
 
       it 'creates the sv_dir directory' do
@@ -324,7 +325,7 @@ describe "Chef::Provider::Service::Runit" do
         @provider.run_script.group.should == @new_resource.group
         @provider.run_script.mode.should == 00755
         @provider.run_script.source.should == "sv-#{@new_resource.service_name}-run.erb"
-        @provider.run_script.cookbook.should be_nil
+        @provider.run_script.cookbook.should == ""
       end
 
       it 'sets up the supervised log directory and run script' do
@@ -333,12 +334,17 @@ describe "Chef::Provider::Service::Runit" do
         @provider.log_dir.owner.should == @new_resource.owner
         @provider.log_dir.group.should == @new_resource.group
         @provider.log_dir.mode.should == 00755
+        @provider.log_main_dir.path.should == ::File.join(@sv_dir_name, 'log', 'main')
+        @provider.log_main_dir.recursive.should be_true
+        @provider.log_main_dir.owner.should == @new_resource.owner
+        @provider.log_main_dir.group.should == @new_resource.group
+        @provider.log_main_dir.mode.should == 00755
         @provider.log_run_script.path.should == ::File.join(@sv_dir_name, 'log', 'run')
         @provider.log_run_script.owner.should == @new_resource.owner
         @provider.log_run_script.group.should == @new_resource.group
         @provider.log_run_script.mode.should == 00755
         @provider.log_run_script.source.should == "sv-#{@new_resource.log_template_name}-log-run.erb"
-        @provider.log_run_script.cookbook.should be_nil
+        @provider.log_run_script.cookbook.should == ""
       end
 
       it 'creates log/run with default content if default_logger parameter is true' do
@@ -349,6 +355,11 @@ describe "Chef::Provider::Service::Runit" do
         @provider.log_run_script.group.should == @new_resource.group
         @provider.log_run_script.mode.should == 00755
         @provider.log_run_script.content.should include(script_content)
+        @provider.default_log_dir.path.should == ::File.join('/var', 'log', @new_resource.service_name)
+        @provider.default_log_dir.recursive.should be_true
+        @provider.default_log_dir.owner.should == @new_resource.owner
+        @provider.default_log_dir.group.should == @new_resource.group
+        @provider.default_log_dir.mode.should == 00755
       end
 
       it 'creates env directory and files' do
@@ -369,7 +380,7 @@ describe "Chef::Provider::Service::Runit" do
         @provider.finish_script.group.should == @new_resource.group
         @provider.finish_script.mode.should == 00755
         @provider.finish_script.source.should == "sv-#{@new_resource.finish_script_template_name}-finish.erb"
-        @provider.finish_script.cookbook.should be_nil
+        @provider.finish_script.cookbook.should == ""
       end
 
       it 'creates control directory and signal files' do
@@ -381,8 +392,9 @@ describe "Chef::Provider::Service::Runit" do
         @provider.control_signal_files[0].path.should == ::File.join(@sv_dir_name, 'control', 's')
         @provider.control_signal_files[0].owner.should == @new_resource.owner
         @provider.control_signal_files[0].group.should == @new_resource.group
+        @provider.control_signal_files[0].mode.should == 00755
         @provider.control_signal_files[0].source.should == "sv-#{@new_resource.control_template_names['s']}-s.erb"
-        @provider.control_signal_files[0].cookbook.should be_nil
+        @provider.control_signal_files[0].cookbook.should == ""
       end
 
       it 'creates a symlink for LSB script compliance unless the platform is debian' do
@@ -413,6 +425,7 @@ describe "Chef::Provider::Service::Runit" do
         @provider.sv_dir.should_receive(:run_action).with(:create)
         @provider.run_script.should_receive(:run_action).with(:create)
         @provider.log_dir.should_receive(:run_action).with(:create)
+        @provider.log_main_dir.should_receive(:run_action).with(:create)
         @provider.log_run_script.should_receive(:run_action).with(:create)
         @provider.lsb_init.should_receive(:run_action).with(:create)
         @provider.service_link.should_receive(:run_action).with(:create)
@@ -427,6 +440,7 @@ describe "Chef::Provider::Service::Runit" do
           @provider.lsb_init.stub!(:run_action).with(:create)
           @provider.service_link.stub!(:run_action).with(:create)
           @provider.log_dir.stub!(:run_action).with(:create)
+          @provider.log_main_dir.stub!(:run_action).with(:create)
           @provider.log_run_script.stub!(:run_action).with(:create)
         end
 

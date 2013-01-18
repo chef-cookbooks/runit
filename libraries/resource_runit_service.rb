@@ -46,6 +46,7 @@ class Chef
         @log_template_name = @service_name
         @finish_script_template_name = @service_name
         @control_template_names = {}
+        @status_command = "/usr/bin/sv status #{@service_dir}"
       end
 
       def sv_dir(arg=nil)
