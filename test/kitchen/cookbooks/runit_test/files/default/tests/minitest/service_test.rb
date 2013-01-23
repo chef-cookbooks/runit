@@ -27,7 +27,7 @@ describe "runit_test::service" do
     file('/etc/service/plain-defaults/run').must_exist
     file('/etc/service/plain-defaults/log/run').must_exist
     link('/etc/init.d/plain-defaults').must_exist.with(
-      :link_type, :symbolic).and(:to, '/usr/bin/sv')
+      :link_type, :symbolic).and(:to, node['runit']['sv_bin'])
     unless node['platform'] == 'gentoo'
       link('/etc/service/plain-defaults').must_exist.with(
         :link_type, :symbolic).and(:to, '/etc/sv/plain-defaults')
@@ -73,11 +73,16 @@ describe "runit_test::service" do
   end
 
   it 'creates a service running by a normal user in its runsvdir' do
-    service('floyds-app').must_be_running
+    floyds_app = shell_out(
+      "#{node['runit']['sv_bin']} status /home/floyd/service/floyds-app",
+      :user => "floyd",
+      :cwd => "/home/floyd"
+    )
+    assert floyds_app.stdout.include?('run:')
     file('/home/floyd/service/floyds-app/run').must_exist.with(:owner, 'floyd')
     file('/home/floyd/service/floyds-app/log/run').must_exist.with(:owner, 'floyd')
     link('/etc/init.d/floyds-app').must_exist.with(
-      :link_type, :symbolic).and(:to, '/usr/bin/sv')
+      :link_type, :symbolic).and(:to, node['runit']['sv_bin'])
     unless node['platform'] == 'gentoo'
       link('/home/floyd/service/floyds-app').must_exist.with(
         :link_type, :symbolic).and(:to, '/home/floyd/sv/floyds-app')

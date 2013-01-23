@@ -22,7 +22,9 @@ require File.expand_path('../support/helpers', __FILE__)
 describe "runit_test::default" do
   include Helpers::RunitTest
 
-  it 'has a behavior to test' do
-    # some assertion or other tests
+  describe "packages" do
+    it 'has been installed' do
+      package("runit").must_be_installed
+    end
   end
 end

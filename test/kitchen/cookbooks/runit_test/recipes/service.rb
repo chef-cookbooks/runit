@@ -20,7 +20,7 @@
 include_recipe "runit::default"
 
 package "netcat" do
-  package_name "nc" if platform_family?('redhat', 'fedora')
+  package_name "nc" if platform_family?('rhel', 'fedora')
 end
 
 # Create a normal user to run services later

@@ -17,45 +17,61 @@
 # limitations under the License.
 #
 
-case platform_family
+case node["platform_family"]
 when "debian"
-  set["runit"]["sv_bin"] = "/usr/bin/sv"
-  set["runit"]["chpst_bin"] = "/usr/bin/chpst"
-  set["runit"]["service_dir"] = "/etc/service"
-  set["runit"]["sv_dir"] = "/etc/sv"
-  set["runit"]["executable"] = "/sbin/runit"
-  if platform=="debian"
-    set["runit"]["start"] = "runsvdir-start"
-    set["runit"]["stop"] = ""
-    set["runit"]["reload"] = ""
-  elsif platform=="ubuntu"
-    set["runit"]["start"] = "start runsvdir"
-    set["runit"]["stop"] = "stop runsvdir"
-    set["runit"]["reload"] = "reload runsvdir"
+
+  default["runit"]["sv_bin"] = "/usr/bin/sv"
+  default["runit"]["chpst_bin"] = "/usr/bin/chpst"
+  default["runit"]["service_dir"] = "/etc/service"
+  default["runit"]["sv_dir"] = "/etc/sv"
+  default["runit"]["executable"] = "/sbin/runit"
+
+  if node["platform"] == "debian"
+
+    default["runit"]["start"] = "runsvdir-start"
+    default["runit"]["stop"] = ""
+    default["runit"]["reload"] = ""
+
+  elsif node["platform"] == "ubuntu"
+
+    default["runit"]["start"] = "start runsvdir"
+    default["runit"]["stop"] = "stop runsvdir"
+    default["runit"]["reload"] = "reload runsvdir"
+
   end
-when "gentoo"
-  set["runit"]["sv_bin"] = "/usr/bin/sv"
-  set["runit"]["chpst_bin"] = "/usr/bin/chpst"
-  set["runit"]["service_dir"] = "/etc/service"
-  set["runit"]["sv_dir"] = "/var/service"
-  set["runit"]["executable"] = "/sbin/runit"
-  set["runit"]["start"] = "/etc/init.d/runit-start start"
-  set["runit"]["stop"] = "/etc/init.d/runit-start stop"
-  set["runit"]["reload"] = "/etc/init.d/runit-start reload"
+
 when "rhel"
-  set["runit"]["sv_bin"] = "/usr/bin/sv"
-  set["runit"]["chpst_bin"] = "/usr/bin/chpst"
-  set["runit"]["service_dir"] = "/etc/service"
-  set["runit"]["sv_dir"] = "/var/service"
-  set["runit"]["executable"] = "/sbin/runit"
-  if platform_version.to_i < 6
-    set["runit"]["start"] = "/etc/init.d/runit-start start"
-    set["runit"]["stop"] = "/etc/init.d/runit-start stop"
-    set["runit"]["reload"] = "/etc/init.d/runit-start reload"
+
+  default["runit"]["sv_bin"] = "/sbin/sv"
+  default["runit"]["chpst_bin"] = "/sbin/chpst"
+  default["runit"]["service_dir"] = "/etc/service"
+  default["runit"]["sv_dir"] = "/etc/sv"
+  default["runit"]["executable"] = "/sbin/runit"
+
+  if node["platform_version"].to_i < 6
+
+    default["runit"]["start"] = "/etc/init.d/runit-start start"
+    default["runit"]["stop"] = "/etc/init.d/runit-start stop"
+    default["runit"]["reload"] = "/etc/init.d/runit-start reload"
+
   else
-    set["runit"]["start"] = "/etc/init.d/runit-start start"
-    set["runit"]["stop"] = "/etc/init.d/runit-start stop"
-    set["runit"]["reload"] = "/etc/init.d/runit-start reload"
+
+    default["runit"]["start"] = "/etc/init.d/runit-start start"
+    default["runit"]["stop"] = "/etc/init.d/runit-start stop"
+    default["runit"]["reload"] = "/etc/init.d/runit-start reload"
+
   end
+
+when "gentoo"
+
+  default["runit"]["sv_bin"] = "/usr/bin/sv"
+  default["runit"]["chpst_bin"] = "/usr/bin/chpst"
+  default["runit"]["service_dir"] = "/etc/service"
+  default["runit"]["sv_dir"] = "/var/service"
+  default["runit"]["executable"] = "/sbin/runit"
+  default["runit"]["start"] = "/etc/init.d/runit-start start"
+  default["runit"]["stop"] = "/etc/init.d/runit-start stop"
+  default["runit"]["reload"] = "/etc/init.d/runit-start reload"
+
 end
 
