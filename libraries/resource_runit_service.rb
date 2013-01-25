@@ -50,6 +50,26 @@ class Chef
         @control_template_names = {}
         @status_command = "/usr/bin/sv status #{@service_dir}"
         @sv_templates = true
+
+        #
+        # Backward Compat Hack
+        #
+        # This ensures a 'service' resource exists for all 'runit_service' resources.
+        # This should allow all recipes using the previous 'runit_service' definition to
+        # continue operating.
+        #
+        unless run_context.nil?
+          service_dir_name = ::File.join(@service_dir, @name)
+          @service_mirror = Chef::Resource::Service.new(name, run_context)
+          @service_mirror.provider(Chef::Provider::Service::Simple)
+          @service_mirror.supports(@supports)
+          @service_mirror.start_command("/usr/bin/sv start #{service_dir_name}")
+          @service_mirror.stop_command("/usr/bin/sv stop #{service_dir_name}")
+          @service_mirror.restart_command("/usr/bin/sv restart #{service_dir_name}")
+          @service_mirror.status_command("/usr/bin/sv status #{service_dir_name}")
+          @service_mirror.action(:nothing)
+          run_context.resource_collection.insert(@service_clone)
+        end
       end
 
       def sv_dir(arg=nil)
