@@ -29,12 +29,12 @@ require 'chef/provider/file'
 require 'chef/resource/file'
 require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
-include Chef::Mixin::ShellOut
 
 class Chef
   class Provider
     class Service
       class Runit < Chef::Provider::Service
+        include Chef::Mixin::ShellOut
 
         def initialize(*args)
           super
@@ -126,26 +126,26 @@ class Chef
         end
 
         def disable_service
-          shell_out("#{node['runit']['sv_bin']} down #{service_dir_name}")
+          shell_out("#{new_resource.sv_bin} down #{service_dir_name}")
           Chef::Log.debug("#{new_resource} down")
           FileUtils.rm(service_dir_name)
           Chef::Log.debug("#{new_resource} service symlink removed")
         end
 
         def start_service
-          shell_out!("#{node['runit']['sv_bin']} start #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} start #{service_dir_name}")
         end
 
         def stop_service
-          shell_out!("#{node['runit']['sv_bin']} stop #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} stop #{service_dir_name}")
         end
 
         def restart_service
-          shell_out!("#{node['runit']['sv_bin']} restart #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} restart #{service_dir_name}")
         end
 
         def reload_service
-          shell_out!("#{node['runit']['sv_bin']} force-reload #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} force-reload #{service_dir_name}")
         end
 
         #
@@ -194,7 +194,7 @@ class Chef
         end
 
         def running?
-          cmd = shell_out("#{node['runit']['sv_bin']} status #{new_resource.service_name}")
+          cmd = shell_out("#{new_resource.sv_bin} status #{new_resource.service_name}")
           (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
         end
 
@@ -388,7 +388,7 @@ EOF
                                                               'init.d',
                                                               new_resource.service_name),
                                                   run_context)
-            @lsb_init.to(node['runit']['sv_bin'])
+            @lsb_init.to(new_resource.sv_bin)
           end
           @lsb_init
         end
