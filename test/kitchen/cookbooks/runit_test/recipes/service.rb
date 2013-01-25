@@ -107,3 +107,18 @@ end
 runit_service "other-cookbook-templates" do
   cookbook "runit-other_test"
 end
+
+# Create a service that has a package with its own service directory
+package "git-daemon-run"
+
+runit_service "git-daemon" do
+  sv_templates false
+end
+
+# Despite waiting for runit to create supervise/ok, sometimes services
+# are supervised, but not actually fully started
+ruby_block "sleep 5s to allow services to be fully started" do
+  block do
+    sleep 5
+  end
+end

@@ -71,43 +71,45 @@ class Chef
           else
             converge_by("enable service #{new_resource}") do
 
-              Chef::Log.debug("Creating sv_dir for #{new_resource.service_name}")
-              sv_dir.run_action(:create)
-              Chef::Log.debug("Creating run_script for #{new_resource.service_name}")
-              run_script.run_action(:create)
+              if new_resource.sv_templates
+                Chef::Log.debug("Creating sv_dir for #{new_resource.service_name}")
+                sv_dir.run_action(:create)
+                Chef::Log.debug("Creating run_script for #{new_resource.service_name}")
+                run_script.run_action(:create)
 
-              if new_resource.log
-                Chef::Log.debug("Setting up svlog for #{new_resource.service_name}")
-                log_dir.run_action(:create)
-                log_main_dir.run_action(:create)
-                default_log_dir.run_action(:create) if new_resource.default_logger
-                log_run_script.run_action(:create)
-              else
-                Chef::Log.debug("log not specified for #{new_resource.service_name}, continuing")
-              end
+                if new_resource.log
+                  Chef::Log.debug("Setting up svlog for #{new_resource.service_name}")
+                  log_dir.run_action(:create)
+                  log_main_dir.run_action(:create)
+                  default_log_dir.run_action(:create) if new_resource.default_logger
+                  log_run_script.run_action(:create)
+                else
+                  Chef::Log.debug("log not specified for #{new_resource.service_name}, continuing")
+                end
 
-              unless new_resource.env.empty?
-                Chef::Log.debug("Setting up environment files for #{new_resource.service_name}")
-                env_dir.run_action(:create)
-                env_files.each {|file| file.run_action(:create)}
-              else
-                Chef::Log.debug("Environment not specified for #{new_resource.service_name}, continuing")
+                unless new_resource.env.empty?
+                  Chef::Log.debug("Setting up environment files for #{new_resource.service_name}")
+                  env_dir.run_action(:create)
+                  env_files.each {|file| file.run_action(:create)}
+                else
+                  Chef::Log.debug("Environment not specified for #{new_resource.service_name}, continuing")
 
-              end
+                end
 
-              if new_resource.finish
-                Chef::Log.debug("Creating finish script for #{new_resource.service_name}")
-                finish_script.run_action(:create)
-              else
-                Chef::Log.debug("Finish script not specified for #{new_resource.service_name}, continuing")
-              end
+                if new_resource.finish
+                  Chef::Log.debug("Creating finish script for #{new_resource.service_name}")
+                  finish_script.run_action(:create)
+                else
+                  Chef::Log.debug("Finish script not specified for #{new_resource.service_name}, continuing")
+                end
 
-              unless new_resource.control.empty?
-                Chef::Log.debug("Creating control signal scripts for #{new_resource.service_name}")
-                control_dir.run_action(:create)
-                control_signal_files.each {|file| file.run_action(:create)}
-              else
-                Chef::Log.debug("Control signals not specified for #{new_resource.service_name}, continuing")
+                unless new_resource.control.empty?
+                  Chef::Log.debug("Creating control signal scripts for #{new_resource.service_name}")
+                  control_dir.run_action(:create)
+                  control_signal_files.each {|file| file.run_action(:create)}
+                else
+                  Chef::Log.debug("Control signals not specified for #{new_resource.service_name}, continuing")
+                end
               end
 
               Chef::Log.debug("Creating lsb_init compatible interface #{new_resource.service_name}")

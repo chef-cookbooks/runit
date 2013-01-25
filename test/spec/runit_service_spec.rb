@@ -185,6 +185,10 @@ describe "Chef::Resource::RunitService" do
     @resource.finish_script_template_name.should == 'eat_bananas'
   end
 
+  it 'has a sv_templates parameter to control whether the sv_dir templates are created' do
+    @resource.sv_templates(false)
+    @resource.sv_templates.should be_false
+  end
 end
 
 describe "Chef::Provider::Service::Runit" do
@@ -297,7 +301,7 @@ describe "Chef::Provider::Service::Runit" do
     describe 'action_disable' do
       it 'disables the service by running the down command and removing the symlink' do
         @current_resource.stub!(:enabled).and_return(true)
-        @provider.should_receive(:shell_out!).with("#{@node['runit']['sv_bin']} down #{@service_dir_name}")
+        @provider.should_receive(:shell_out).with("#{@node['runit']['sv_bin']} down #{@service_dir_name}")
         FileUtils.should_receive(:rm).with(@service_dir_name)
         @provider.run_action(:disable)
       end
@@ -413,6 +417,19 @@ describe "Chef::Provider::Service::Runit" do
         @provider.lsb_init.source.should == 'init.d.erb'
         @provider.lsb_init.variables.should have_key(:options)
         @provider.lsb_init.variables[:options].should == @new_resource.options
+      end
+
+      it 'does not create anything in the sv_dir if it is nil or false' do
+        @current_resource.stub!(:enabled).and_return(false)
+        @new_resource.stub!(:sv_templates).and_return(false)
+        @provider.should_not_receive(:sv_dir)
+        @provider.should_not_receive(:run_script)
+        @provider.should_not_receive(:log)
+        @provider.should_not_receive(:log_main_dir)
+        @provider.should_not_receive(:log_run_script)
+        @provider.lsb_init.should_receive(:run_action).with(:create)
+        @provider.service_link.should_receive(:run_action).with(:create)
+        @provider.run_action(:enable)
       end
 
       it 'creates a symlink from the sv dir to the service' do

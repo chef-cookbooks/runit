@@ -40,6 +40,8 @@ class Chef
         @log = true
         @cookbook = nil
         @finish = false
+        @owner = nil
+        @group = nil
         @enabled = false
         @running = false
         @default_logger = false
@@ -47,6 +49,7 @@ class Chef
         @finish_script_template_name = @service_name
         @control_template_names = {}
         @status_command = "/usr/bin/sv status #{@service_dir}"
+        @sv_templates = true
       end
 
       def sv_dir(arg=nil)
@@ -133,6 +136,10 @@ class Chef
           @control_template_names[signal] ||= @service_name
         end
         @control_template_names
+      end
+
+      def sv_templates(arg=nil)
+        set_or_return(:sv_templates, arg, :kind_of => [TrueClass, FalseClass])
       end
 
     end

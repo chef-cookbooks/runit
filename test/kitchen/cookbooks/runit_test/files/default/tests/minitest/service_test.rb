@@ -104,4 +104,10 @@ describe "runit_test::service" do
     service('other-cookbook-templates').must_be_running
   end
 
+  it 'creates a service that has its own run scripts' do
+    git_daemon = shell_out("#{node['runit']['sv_bin']} status /etc/service/git-daemon")
+    assert git_daemon.stdout.include?('run:')
+    link('/etc/service/git-daemon').must_exist.with(
+      :link_type, :symbolic).and(:to, '/etc/sv/git-daemon')
+  end
 end
