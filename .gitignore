@@ -1,4 +1,15 @@
-.bundle
-.cache
+metadata.json
+.vagrant
 .kitchen
-bin
+Berksfile.lock
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+/cookbooks
+# Bundler
+Gemfile.lock
+bin/*
+.bundle/*
