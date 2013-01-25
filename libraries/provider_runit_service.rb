@@ -151,126 +151,79 @@ class Chef
         #
         # Addtional Runit-only actions
         #
-        def action_up
-          if @current_resource.running
-            Chef::Log.debug("#{new_resource} already running - nothing to do")
-          else
-            converge_by("start service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} up #{service_dir_name}")
-              Chef::Log.info("#{new_resource} started")
-              new_resource.updated_by_last_action(true)
+
+        # only take action if the service is running
+        [:down, :hup, :int, :term, :kill].each do |signal|
+          define_method "action_#{signal}".to_sym do
+            if @current_resource.running
+              runit_send_signal(signal)
+            else
+              Chef::Log.debug("#{new_resource} not running - nothing to do")
             end
           end
         end
 
-        def action_down
-          if @current_resource.running
-            converge_by("down service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} down #{service_dir_name}")
-              Chef::Log.info("#{new_resource} down")
-              new_resource.updated_by_last_action(true)
+        # only take action if service is *not* running
+        [:up, :once, :cont].each do |signal|
+          define_method "action_#{signal}".to_sym do
+            if @current_resource.running
+              Chef::Log.debug("#{new_resource} already running - nothing to do")
+            else
+              runit_send_signal(signal)
             end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_once
-          if @current_resource.running
-            Chef::Log.debug("#{new_resource} is running - nothing to do")
-          else
-            converge_by("start service #{new_resource} once") do
-              shell_out!("#{node['runit']['sv_bin']} once #{service_dir_name}")
-              Chef::Log.info("#{new_resource} started once")
-              new_resource.updated_by_last_action(true)
-            end
-          end
-        end
-
-        def action_cont
-          if @current_resource.running
-            Chef::Log.debug("#{new_resource} is running - nothing to do")
-          else
-            converge_by("continue service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} cont #{service_dir_name}")
-              Chef::Log.info("#{new_resource} continued")
-              new_resource.updated_by_last_action(true)
-            end
-          end
-        end
-
-        def action_hup
-          if @current_resource.running
-            converge_by("send hup to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} hup #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent hup")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_int
-          if @current_resource.running
-            converge_by("send int to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} int #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent int")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_term
-          if @current_resource.running
-            converge_by("send term to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} term #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent term")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_kill
-          if @current_resource.running
-            converge_by("send kill to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} kill #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent kill")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
           end
         end
 
         def action_usr1
-          if @current_resource.running
-            converge_by("send usr1 to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} 1 #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent usr1")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
+          runit_send_signal(1, :usr1)
         end
 
         def action_usr2
-          if @current_resource.running
-            converge_by("send usr2 to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} 2 #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent usr2")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
+          runit_send_signal(2, :usr2)
+        end
+
+        private
+
+        def runit_send_signal(signal, friendly_name=nil)
+          friendly_name ||= signal
+          converge_by("send #{friendly_name} to #{new_resource}") do
+            shell_out!("#{new_resource.sv_bin} #{signal} #{service_dir_name}")
+            Chef::Log.info("#{new_resource} sent #{friendly_name}")
+            new_resource.updated_by_last_action(true)
           end
         end
 
+        def running?
+          cmd = shell_out("#{node['runit']['sv_bin']} status #{new_resource.service_name}")
+          (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
+        end
+
+        def enabled?
+          ::File.exists?(::File.join(service_dir_name, "run"))
+        end
+
+        def sv_dir_name
+          ::File.join(new_resource.sv_dir, new_resource.service_name)
+        end
+
+        def service_dir_name
+          ::File.join(new_resource.service_dir, new_resource.service_name)
+        end
+
+        def template_cookbook
+          new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
+        end
+
+        def default_logger_content
+          return <<-EOF
+#!/bin/sh
+exec svlogd -tt /var/log/#{new_resource.service_name}
+EOF
+        end
+
+        #
+        # Helper Resources
+        #
         def sv_dir
           return @sv_dir unless @sv_dir.nil?
           @sv_dir = Chef::Resource::Directory.new(sv_dir_name, run_context)
@@ -445,35 +398,6 @@ class Chef
           @service_link = Chef::Resource::Link.new(::File.join(service_dir_name), run_context)
           @service_link.to(sv_dir_name)
           @service_link
-        end
-
-        private
-        def running?
-          cmd = shell_out("#{node['runit']['sv_bin']} status #{new_resource.service_name}")
-          (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
-        end
-
-        def enabled?
-          ::File.exists?(::File.join(service_dir_name, "run"))
-        end
-
-        def sv_dir_name
-          ::File.join(new_resource.sv_dir, new_resource.service_name)
-        end
-
-        def service_dir_name
-          ::File.join(new_resource.service_dir, new_resource.service_name)
-        end
-
-        def template_cookbook
-          new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
-        end
-
-        def default_logger_content
-          return <<-EOF
-#!/bin/sh
-exec svlogd -tt /var/log/#{new_resource.service_name}
-EOF
         end
       end
     end
