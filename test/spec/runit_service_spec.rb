@@ -316,107 +316,107 @@ describe "Chef::Provider::Service::Runit" do
       end
 
       it 'creates the sv_dir directory' do
-        @provider.sv_dir.path.should == ::File.join(@sv_dir_name)
-        @provider.sv_dir.recursive.should be_true
-        @provider.sv_dir.owner.should == @new_resource.owner
-        @provider.sv_dir.group.should == @new_resource.group
-        @provider.sv_dir.mode.should == 00755
+        @provider.send(:sv_dir).path.should eq(::File.join(@sv_dir_name))
+        @provider.send(:sv_dir).recursive.should be_true
+        @provider.send(:sv_dir).owner.should eq(@new_resource.owner)
+        @provider.send(:sv_dir).group.should eq(@new_resource.group)
+        @provider.send(:sv_dir).mode.should == 00755
       end
 
       it 'creates the run script template' do
-        @provider.run_script.path.should == ::File.join(@sv_dir_name, 'run')
-        @provider.run_script.owner.should == @new_resource.owner
-        @provider.run_script.group.should == @new_resource.group
-        @provider.run_script.mode.should == 00755
-        @provider.run_script.source.should == "sv-#{@new_resource.service_name}-run.erb"
-        @provider.run_script.cookbook.should == ""
+        @provider.send(:run_script).path.should eq(::File.join(@sv_dir_name, 'run'))
+        @provider.send(:run_script).owner.should eq(@new_resource.owner)
+        @provider.send(:run_script).group.should eq(@new_resource.group)
+        @provider.send(:run_script).mode.should eq(00755)
+        @provider.send(:run_script).source.should eq("sv-#{@new_resource.service_name}-run.erb")
+        @provider.send(:run_script).cookbook.should be_empty
       end
 
       it 'sets up the supervised log directory and run script' do
-        @provider.log_dir.path.should == ::File.join(@sv_dir_name, 'log')
-        @provider.log_dir.recursive.should be_true
-        @provider.log_dir.owner.should == @new_resource.owner
-        @provider.log_dir.group.should == @new_resource.group
-        @provider.log_dir.mode.should == 00755
-        @provider.log_main_dir.path.should == ::File.join(@sv_dir_name, 'log', 'main')
-        @provider.log_main_dir.recursive.should be_true
-        @provider.log_main_dir.owner.should == @new_resource.owner
-        @provider.log_main_dir.group.should == @new_resource.group
-        @provider.log_main_dir.mode.should == 00755
-        @provider.log_run_script.path.should == ::File.join(@sv_dir_name, 'log', 'run')
-        @provider.log_run_script.owner.should == @new_resource.owner
-        @provider.log_run_script.group.should == @new_resource.group
-        @provider.log_run_script.mode.should == 00755
-        @provider.log_run_script.source.should == "sv-#{@new_resource.log_template_name}-log-run.erb"
-        @provider.log_run_script.cookbook.should == ""
+        @provider.send(:log_dir).path.should eq(::File.join(@sv_dir_name, 'log'))
+        @provider.send(:log_dir).recursive.should be_true
+        @provider.send(:log_dir).owner.should eq(@new_resource.owner)
+        @provider.send(:log_dir).group.should eq(@new_resource.group)
+        @provider.send(:log_dir).mode.should eq(00755)
+        @provider.send(:log_main_dir).path.should eq(::File.join(@sv_dir_name, 'log', 'main'))
+        @provider.send(:log_main_dir).recursive.should be_true
+        @provider.send(:log_main_dir).owner.should eq(@new_resource.owner)
+        @provider.send(:log_main_dir).group.should eq(@new_resource.group)
+        @provider.send(:log_main_dir).mode.should eq(00755)
+        @provider.send(:log_run_script).path.should eq(::File.join(@sv_dir_name, 'log', 'run'))
+        @provider.send(:log_run_script).owner.should eq(@new_resource.owner)
+        @provider.send(:log_run_script).group.should eq(@new_resource.group)
+        @provider.send(:log_run_script).mode.should eq(00755)
+        @provider.send(:log_run_script).source.should eq("sv-#{@new_resource.log_template_name}-log-run.erb")
+        @provider.send(:log_run_script).cookbook.should be_empty
       end
 
       it 'creates log/run with default content if default_logger parameter is true' do
         script_content = "exec svlogd -tt /var/log/#{@new_resource.service_name}"
         @new_resource.default_logger(true)
-        @provider.log_run_script.path.should == ::File.join(@sv_dir_name, 'log', 'run')
-        @provider.log_run_script.owner.should == @new_resource.owner
-        @provider.log_run_script.group.should == @new_resource.group
-        @provider.log_run_script.mode.should == 00755
-        @provider.log_run_script.content.should include(script_content)
-        @provider.default_log_dir.path.should == ::File.join('/var', 'log', @new_resource.service_name)
-        @provider.default_log_dir.recursive.should be_true
-        @provider.default_log_dir.owner.should == @new_resource.owner
-        @provider.default_log_dir.group.should == @new_resource.group
-        @provider.default_log_dir.mode.should == 00755
+        @provider.send(:log_run_script).path.should eq(::File.join(@sv_dir_name, 'log', 'run'))
+        @provider.send(:log_run_script).owner.should eq(@new_resource.owner)
+        @provider.send(:log_run_script).group.should eq(@new_resource.group)
+        @provider.send(:log_run_script).mode.should eq(00755)
+        @provider.send(:log_run_script).content.should include(script_content)
+        @provider.send(:default_log_dir).path.should eq(::File.join('/var', 'log', @new_resource.service_name))
+        @provider.send(:default_log_dir).recursive.should be_true
+        @provider.send(:default_log_dir).owner.should eq(@new_resource.owner)
+        @provider.send(:default_log_dir).group.should eq(@new_resource.group)
+        @provider.send(:default_log_dir).mode.should eq(00755)
       end
 
       it 'creates env directory and files' do
-        @provider.env_dir.path.should == ::File.join(@sv_dir_name, 'env')
-        @provider.env_dir.owner.should == @new_resource.owner
-        @provider.env_dir.group.should == @new_resource.group
-        @provider.env_dir.mode.should == 00755
+        @provider.send(:env_dir).path.should eq(::File.join(@sv_dir_name, 'env'))
+        @provider.send(:env_dir).owner.should eq(@new_resource.owner)
+        @provider.send(:env_dir).group.should eq(@new_resource.group)
+        @provider.send(:env_dir).mode.should eq(00755)
         @new_resource.env({'PATH' => '$PATH:/usr/local/bin'})
-        @provider.env_files[0].path.should == ::File.join(@sv_dir_name, 'env', 'PATH')
-        @provider.env_files[0].owner.should == @new_resource.owner
-        @provider.env_files[0].group.should == @new_resource.group
-        @provider.env_files[0].content.should == '$PATH:/usr/local/bin'
+        @provider.send(:env_files)[0].path.should eq(::File.join(@sv_dir_name, 'env', 'PATH'))
+        @provider.send(:env_files)[0].owner.should eq(@new_resource.owner)
+        @provider.send(:env_files)[0].group.should eq(@new_resource.group)
+        @provider.send(:env_files)[0].content.should eq('$PATH:/usr/local/bin')
       end
 
       it 'creates a finish script as a template if finish_script parameter is true' do
-        @provider.finish_script.path.should == ::File.join(@sv_dir_name, 'finish')
-        @provider.finish_script.owner.should == @new_resource.owner
-        @provider.finish_script.group.should == @new_resource.group
-        @provider.finish_script.mode.should == 00755
-        @provider.finish_script.source.should == "sv-#{@new_resource.finish_script_template_name}-finish.erb"
-        @provider.finish_script.cookbook.should == ""
+        @provider.send(:finish_script).path.should eq(::File.join(@sv_dir_name, 'finish'))
+        @provider.send(:finish_script).owner.should eq(@new_resource.owner)
+        @provider.send(:finish_script).group.should eq(@new_resource.group)
+        @provider.send(:finish_script).mode.should eq(00755)
+        @provider.send(:finish_script).source.should eq("sv-#{@new_resource.finish_script_template_name}-finish.erb")
+        @provider.send(:finish_script).cookbook.should be_empty
       end
 
       it 'creates control directory and signal files' do
-        @provider.control_dir.path.should == ::File.join(@sv_dir_name, 'control')
-        @provider.control_dir.owner.should == @new_resource.owner
-        @provider.control_dir.group.should == @new_resource.group
-        @provider.control_dir.mode.should == 00755
+        @provider.send(:control_dir).path.should eq(::File.join(@sv_dir_name, 'control'))
+        @provider.send(:control_dir).owner.should eq(@new_resource.owner)
+        @provider.send(:control_dir).group.should eq(@new_resource.group)
+        @provider.send(:control_dir).mode.should eq(00755)
         @new_resource.control(['s'])
-        @provider.control_signal_files[0].path.should == ::File.join(@sv_dir_name, 'control', 's')
-        @provider.control_signal_files[0].owner.should == @new_resource.owner
-        @provider.control_signal_files[0].group.should == @new_resource.group
-        @provider.control_signal_files[0].mode.should == 00755
-        @provider.control_signal_files[0].source.should == "sv-#{@new_resource.control_template_names['s']}-s.erb"
-        @provider.control_signal_files[0].cookbook.should == ""
+        @provider.send(:control_signal_files)[0].path.should eq(::File.join(@sv_dir_name, 'control', 's'))
+        @provider.send(:control_signal_files)[0].owner.should eq(@new_resource.owner)
+        @provider.send(:control_signal_files)[0].group.should eq(@new_resource.group)
+        @provider.send(:control_signal_files)[0].mode.should eq(00755)
+        @provider.send(:control_signal_files)[0].source.should eq("sv-#{@new_resource.control_template_names['s']}-s.erb")
+        @provider.send(:control_signal_files)[0].cookbook.should be_empty
       end
 
       it 'creates a symlink for LSB script compliance unless the platform is debian' do
         @node.automatic['platform'] = 'not_debian'
-        @provider.lsb_init.path.should == ::File.join('/etc', 'init.d', @new_resource.service_name)
-        @provider.lsb_init.to.should == ::File.join(@node['runit']['sv_bin'])
+        @provider.send(:lsb_init).path.should eq(::File.join('/etc', 'init.d', @new_resource.service_name))
+        @provider.send(:lsb_init).to.should eq(::File.join(@node['runit']['sv_bin']))
       end
 
       it 'creates an init script as a template for LSB compliance if the platform is debian' do
         @node.automatic['platform'] = 'debian'
-        @provider.lsb_init.path.should == ::File.join('/etc', 'init.d', @new_resource.service_name)
-        @provider.lsb_init.owner.should == 'root'
-        @provider.lsb_init.group.should == 'root'
-        @provider.lsb_init.mode.should == 00755
-        @provider.lsb_init.cookbook.should == 'runit'
-        @provider.lsb_init.source.should == 'init.d.erb'
-        @provider.lsb_init.variables.should have_key(:options)
-        @provider.lsb_init.variables[:options].should == @new_resource.options
+        @provider.send(:lsb_init).path.should eq(::File.join('/etc', 'init.d', @new_resource.service_name))
+        @provider.send(:lsb_init).owner.should eq('root')
+        @provider.send(:lsb_init).group.should eq('root')
+        @provider.send(:lsb_init).mode.should eq(00755)
+        @provider.send(:lsb_init).cookbook.should eq('runit')
+        @provider.send(:lsb_init).source.should eq('init.d.erb')
+        @provider.send(:lsb_init).variables.should have_key(:options)
+        @provider.send(:lsb_init).variables[:options].should eq(@new_resource.options)
       end
 
       it 'does not create anything in the sv_dir if it is nil or false' do
@@ -427,38 +427,38 @@ describe "Chef::Provider::Service::Runit" do
         @provider.should_not_receive(:log)
         @provider.should_not_receive(:log_main_dir)
         @provider.should_not_receive(:log_run_script)
-        @provider.lsb_init.should_receive(:run_action).with(:create)
-        @provider.service_link.should_receive(:run_action).with(:create)
+        @provider.send(:lsb_init).should_receive(:run_action).with(:create)
+        @provider.send(:service_link).should_receive(:run_action).with(:create)
         @provider.run_action(:enable)
       end
 
       it 'creates a symlink from the sv dir to the service' do
-        @provider.service_link.path.should == ::File.join(@service_dir_name)
-        @provider.service_link.to.should == ::File.join(@sv_dir_name)
+        @provider.send(:service_link).path.should eq(::File.join(@service_dir_name))
+        @provider.send(:service_link).to.should eq(::File.join(@sv_dir_name))
       end
 
       it 'enables the service with memoized resource creation methods' do
         @current_resource.stub!(:enabled).and_return(false)
-        @provider.sv_dir.should_receive(:run_action).with(:create)
-        @provider.run_script.should_receive(:run_action).with(:create)
-        @provider.log_dir.should_receive(:run_action).with(:create)
-        @provider.log_main_dir.should_receive(:run_action).with(:create)
-        @provider.log_run_script.should_receive(:run_action).with(:create)
-        @provider.lsb_init.should_receive(:run_action).with(:create)
-        @provider.service_link.should_receive(:run_action).with(:create)
+        @provider.send(:sv_dir).should_receive(:run_action).with(:create)
+        @provider.send(:run_script).should_receive(:run_action).with(:create)
+        @provider.send(:log_dir).should_receive(:run_action).with(:create)
+        @provider.send(:log_main_dir).should_receive(:run_action).with(:create)
+        @provider.send(:log_run_script).should_receive(:run_action).with(:create)
+        @provider.send(:lsb_init).should_receive(:run_action).with(:create)
+        @provider.send(:service_link).should_receive(:run_action).with(:create)
         @provider.run_action(:enable)
       end
 
       context 'new resource conditionals' do
         before(:each) do
           @current_resource.stub!(:enabled).and_return(false)
-          @provider.sv_dir.stub!(:run_action).with(:create)
-          @provider.run_script.stub!(:run_action).with(:create)
-          @provider.lsb_init.stub!(:run_action).with(:create)
-          @provider.service_link.stub!(:run_action).with(:create)
-          @provider.log_dir.stub!(:run_action).with(:create)
-          @provider.log_main_dir.stub!(:run_action).with(:create)
-          @provider.log_run_script.stub!(:run_action).with(:create)
+          @provider.send(:sv_dir).stub!(:run_action).with(:create)
+          @provider.send(:run_script).stub!(:run_action).with(:create)
+          @provider.send(:lsb_init).stub!(:run_action).with(:create)
+          @provider.send(:service_link).stub!(:run_action).with(:create)
+          @provider.send(:log_dir).stub!(:run_action).with(:create)
+          @provider.send(:log_main_dir).stub!(:run_action).with(:create)
+          @provider.send(:log_run_script).stub!(:run_action).with(:create)
         end
 
         it 'doesnt create the log dir or run script if log is false' do
@@ -469,15 +469,15 @@ describe "Chef::Provider::Service::Runit" do
 
         it 'creates the env dir and config files if env is set' do
           @new_resource.stub!(:env).and_return({'PATH' => '/bin'})
-          @provider.env_dir.should_receive(:run_action).with(:create)
-          @provider.env_files.should_receive(:each).once
+          @provider.send(:env_dir).should_receive(:run_action).with(:create)
+          @provider.send(:env_files).should_receive(:each).once
           @provider.run_action(:enable)
         end
 
         it 'creates the control dir and signal files if control is set' do
           @new_resource.stub!(:control).and_return(['s', 'u'])
-          @provider.control_dir.should_receive(:run_action).with(:create)
-          @provider.control_signal_files.should_receive(:each).once
+          @provider.send(:control_dir).should_receive(:run_action).with(:create)
+          @provider.send(:control_signal_files).should_receive(:each).once
           @provider.run_action(:enable)
         end
 
