@@ -29,12 +29,12 @@ require 'chef/provider/file'
 require 'chef/resource/file'
 require 'chef/mixin/shell_out'
 require 'chef/mixin/language'
-include Chef::Mixin::ShellOut
 
 class Chef
   class Provider
     class Service
       class Runit < Chef::Provider::Service
+        include Chef::Mixin::ShellOut
 
         def initialize(*args)
           super
@@ -65,257 +65,165 @@ class Chef
           @current_resource
         end
 
-        def action_enable
-          if @current_resource.enabled
-            Chef::Log.debug("#{new_resource} already enabled - nothing to do")
-          else
-            converge_by("enable service #{new_resource}") do
+        #
+        # Chef::Provider::Service overrides
+        #
+        def enable_service
+          if new_resource.sv_templates
+            Chef::Log.debug("Creating sv_dir for #{new_resource.service_name}")
+            sv_dir.run_action(:create)
+            Chef::Log.debug("Creating run_script for #{new_resource.service_name}")
+            run_script.run_action(:create)
 
-              if new_resource.sv_templates
-                Chef::Log.debug("Creating sv_dir for #{new_resource.service_name}")
-                sv_dir.run_action(:create)
-                Chef::Log.debug("Creating run_script for #{new_resource.service_name}")
-                run_script.run_action(:create)
+            if new_resource.log
+              Chef::Log.debug("Setting up svlog for #{new_resource.service_name}")
+              log_dir.run_action(:create)
+              log_main_dir.run_action(:create)
+              default_log_dir.run_action(:create) if new_resource.default_logger
+              log_run_script.run_action(:create)
+            else
+              Chef::Log.debug("log not specified for #{new_resource.service_name}, continuing")
+            end
 
-                if new_resource.log
-                  Chef::Log.debug("Setting up svlog for #{new_resource.service_name}")
-                  log_dir.run_action(:create)
-                  log_main_dir.run_action(:create)
-                  default_log_dir.run_action(:create) if new_resource.default_logger
-                  log_run_script.run_action(:create)
-                else
-                  Chef::Log.debug("log not specified for #{new_resource.service_name}, continuing")
-                end
+            unless new_resource.env.empty?
+              Chef::Log.debug("Setting up environment files for #{new_resource.service_name}")
+              env_dir.run_action(:create)
+              env_files.each {|file| file.run_action(:create)}
+            else
+              Chef::Log.debug("Environment not specified for #{new_resource.service_name}, continuing")
 
-                unless new_resource.env.empty?
-                  Chef::Log.debug("Setting up environment files for #{new_resource.service_name}")
-                  env_dir.run_action(:create)
-                  env_files.each {|file| file.run_action(:create)}
-                else
-                  Chef::Log.debug("Environment not specified for #{new_resource.service_name}, continuing")
+            end
 
-                end
+            if new_resource.finish
+              Chef::Log.debug("Creating finish script for #{new_resource.service_name}")
+              finish_script.run_action(:create)
+            else
+              Chef::Log.debug("Finish script not specified for #{new_resource.service_name}, continuing")
+            end
 
-                if new_resource.finish
-                  Chef::Log.debug("Creating finish script for #{new_resource.service_name}")
-                  finish_script.run_action(:create)
-                else
-                  Chef::Log.debug("Finish script not specified for #{new_resource.service_name}, continuing")
-                end
+            unless new_resource.control.empty?
+              Chef::Log.debug("Creating control signal scripts for #{new_resource.service_name}")
+              control_dir.run_action(:create)
+              control_signal_files.each {|file| file.run_action(:create)}
+            else
+              Chef::Log.debug("Control signals not specified for #{new_resource.service_name}, continuing")
+            end
+          end
 
-                unless new_resource.control.empty?
-                  Chef::Log.debug("Creating control signal scripts for #{new_resource.service_name}")
-                  control_dir.run_action(:create)
-                  control_signal_files.each {|file| file.run_action(:create)}
-                else
-                  Chef::Log.debug("Control signals not specified for #{new_resource.service_name}, continuing")
-                end
-              end
+          Chef::Log.debug("Creating lsb_init compatible interface #{new_resource.service_name}")
+          lsb_init.run_action(:create)
 
-              Chef::Log.debug("Creating lsb_init compatible interface #{new_resource.service_name}")
-              lsb_init.run_action(:create)
+          unless node['platform'] == 'gentoo'
+            Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
+            service_link.run_action(:create)
+          end
 
-              unless node['platform'] == 'gentoo'
-                Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
-                service_link.run_action(:create)
-              end
+          Chef::Log.debug("waiting until named pipe #{service_dir_name}/supervise/ok exists.")
+          until ::FileTest.pipe?("#{service_dir_name}/supervise/ok") do
+            sleep 1
+            Chef::Log.debug(".")
+          end
+        end
 
-              Chef::Log.debug("waiting until named pipe #{service_dir_name}/supervise/ok exists.")
-              until ::FileTest.pipe?("#{service_dir_name}/supervise/ok") do
-                sleep 1
-                Chef::Log.debug(".")
-              end
+        def disable_service
+          shell_out("#{new_resource.sv_bin} down #{service_dir_name}")
+          Chef::Log.debug("#{new_resource} down")
+          FileUtils.rm(service_dir_name)
+          Chef::Log.debug("#{new_resource} service symlink removed")
+        end
+
+        def start_service
+          shell_out!("#{new_resource.sv_bin} start #{service_dir_name}")
+        end
+
+        def stop_service
+          shell_out!("#{new_resource.sv_bin} stop #{service_dir_name}")
+        end
+
+        def restart_service
+          shell_out!("#{new_resource.sv_bin} restart #{service_dir_name}")
+        end
+
+        def reload_service
+          shell_out!("#{new_resource.sv_bin} force-reload #{service_dir_name}")
+        end
+
+        #
+        # Addtional Runit-only actions
+        #
+
+        # only take action if the service is running
+        [:down, :hup, :int, :term, :kill].each do |signal|
+          define_method "action_#{signal}".to_sym do
+            if @current_resource.running
+              runit_send_signal(signal)
+            else
+              Chef::Log.debug("#{new_resource} not running - nothing to do")
             end
           end
         end
 
-        def action_start
-          if @current_resource.running
-            Chef::Log.debug("#{new_resource} already running - nothing to do")
-          else
-            converge_by("start service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} start #{service_dir_name}")
-              Chef::Log.info("#{new_resource} started")
-              new_resource.updated_by_last_action(true)
+        # only take action if service is *not* running
+        [:up, :once, :cont].each do |signal|
+          define_method "action_#{signal}".to_sym do
+            if @current_resource.running
+              Chef::Log.debug("#{new_resource} already running - nothing to do")
+            else
+              runit_send_signal(signal)
             end
-          end
-        end
-
-        def action_up
-          if @current_resource.running
-            Chef::Log.debug("#{new_resource} already running - nothing to do")
-          else
-            converge_by("start service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} up #{service_dir_name}")
-              Chef::Log.info("#{new_resource} started")
-              new_resource.updated_by_last_action(true)
-            end
-          end
-        end
-
-        def action_disable
-          if @current_resource.enabled
-            converge_by("down #{new_resource} and remove symlink") do
-
-              shell_out("#{node['runit']['sv_bin']} down #{service_dir_name}")
-
-              Chef::Log.debug("#{new_resource} down")
-
-              FileUtils.rm(service_dir_name)
-
-              Chef::Log.debug("#{new_resource} service symlink removed")
-              Chef::Log.info("#{new_resource} disabled")
-            end
-          else
-            Chef::Log.debug("#{new_resource} not enabled - nothing to do")
-          end
-        end
-
-        def action_stop
-          if @current_resource.running
-            converge_by("stop service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} stop #{service_dir_name}")
-              Chef::Log.info("#{new_resource} stopped")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_down
-          if @current_resource.running
-            converge_by("down service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} down #{service_dir_name}")
-              Chef::Log.info("#{new_resource} down")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_restart
-          if @current_resource.running
-            converge_by("restart service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} restart #{service_dir_name}")
-              Chef::Log.info("#{new_resource} was not running, sent restart")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            converge_by("start service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} up #{service_dir_name}")
-              Chef::Log.info("#{new_resource} was not running, sent 'up' to start")
-              new_resource.updated_by_last_action(true)
-            end
-          end
-        end
-
-        def action_reload
-          if @current_resource.running
-            shell_out!("#{node['runit']['sv_bin']} force-reload #{service_dir_name}")
-            new_resource.updated_by_last_action(true)
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_once
-          if @current_resource.running
-            Chef::Log.debug("#{new_resource} is running - nothing to do")
-          else
-            converge_by("start service #{new_resource} once") do
-              shell_out!("#{node['runit']['sv_bin']} once #{service_dir_name}")
-              Chef::Log.info("#{new_resource} started once")
-              new_resource.updated_by_last_action(true)
-            end
-          end
-        end
-
-        def action_cont
-          if @current_resource.running
-            Chef::Log.debug("#{new_resource} is running - nothing to do")
-          else
-            converge_by("continue service #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} cont #{service_dir_name}")
-              Chef::Log.info("#{new_resource} continued")
-              new_resource.updated_by_last_action(true)
-            end
-          end
-        end
-
-        def action_hup
-          if @current_resource.running
-            converge_by("send hup to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} hup #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent hup")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_int
-          if @current_resource.running
-            converge_by("send int to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} int #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent int")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_term
-          if @current_resource.running
-            converge_by("send term to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} term #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent term")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
-        end
-
-        def action_kill
-          if @current_resource.running
-            converge_by("send kill to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} kill #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent kill")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
           end
         end
 
         def action_usr1
-          if @current_resource.running
-            converge_by("send usr1 to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} 1 #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent usr1")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
-          end
+          runit_send_signal(1, :usr1)
         end
 
         def action_usr2
-          if @current_resource.running
-            converge_by("send usr2 to #{new_resource}") do
-              shell_out!("#{node['runit']['sv_bin']} 2 #{service_dir_name}")
-              Chef::Log.info("#{new_resource} sent usr2")
-              new_resource.updated_by_last_action(true)
-            end
-          else
-            Chef::Log.debug("#{new_resource} not running - nothing to do")
+          runit_send_signal(2, :usr2)
+        end
+
+        private
+
+        def runit_send_signal(signal, friendly_name=nil)
+          friendly_name ||= signal
+          converge_by("send #{friendly_name} to #{new_resource}") do
+            shell_out!("#{new_resource.sv_bin} #{signal} #{service_dir_name}")
+            Chef::Log.info("#{new_resource} sent #{friendly_name}")
+            new_resource.updated_by_last_action(true)
           end
         end
 
+        def running?
+          cmd = shell_out("#{new_resource.sv_bin} status #{new_resource.service_name}")
+          (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
+        end
+
+        def enabled?
+          ::File.exists?(::File.join(service_dir_name, "run"))
+        end
+
+        def sv_dir_name
+          ::File.join(new_resource.sv_dir, new_resource.service_name)
+        end
+
+        def service_dir_name
+          ::File.join(new_resource.service_dir, new_resource.service_name)
+        end
+
+        def template_cookbook
+          new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
+        end
+
+        def default_logger_content
+          return <<-EOF
+#!/bin/sh
+exec svlogd -tt /var/log/#{new_resource.service_name}
+EOF
+        end
+
+        #
+        # Helper Resources
+        #
         def sv_dir
           return @sv_dir unless @sv_dir.nil?
           @sv_dir = Chef::Resource::Directory.new(sv_dir_name, run_context)
@@ -480,7 +388,7 @@ class Chef
                                                               'init.d',
                                                               new_resource.service_name),
                                                   run_context)
-            @lsb_init.to(node['runit']['sv_bin'])
+            @lsb_init.to(new_resource.sv_bin)
           end
           @lsb_init
         end
@@ -490,35 +398,6 @@ class Chef
           @service_link = Chef::Resource::Link.new(::File.join(service_dir_name), run_context)
           @service_link.to(sv_dir_name)
           @service_link
-        end
-
-        private
-        def running?
-          cmd = shell_out("#{node['runit']['sv_bin']} status #{new_resource.service_name}")
-          (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
-        end
-
-        def enabled?
-          ::File.exists?(::File.join(service_dir_name, "run"))
-        end
-
-        def sv_dir_name
-          ::File.join(new_resource.sv_dir, new_resource.service_name)
-        end
-
-        def service_dir_name
-          ::File.join(new_resource.service_dir, new_resource.service_name)
-        end
-
-        def template_cookbook
-          new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
-        end
-
-        def default_logger_content
-          return <<-EOF
-#!/bin/sh
-exec svlogd -tt /var/log/#{new_resource.service_name}
-EOF
         end
       end
     end

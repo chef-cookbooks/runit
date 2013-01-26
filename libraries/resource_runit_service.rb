@@ -27,13 +27,18 @@ class Chef
 
       def initialize(name, run_context=nil)
         super
+        runit_node = runit_attributes_from_node(run_context)
         @resource_name = :runit_service
         @provider = Chef::Provider::Service::Runit
         @supports = { :restart => true, :reload => true, :status => true }
         @action = :enable
         @allowed_actions = [:start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2]
-        @sv_dir = '/etc/sv'
-        @service_dir = '/etc/service'
+
+        # sv_bin, sv_dir and service_dir may have been set in the node attributes
+        @sv_bin = runit_node[:sv_bin] || '/usr/bin/sv'
+        @sv_dir = runit_node[:sv_dir] || '/etc/sv'
+        @service_dir = runit_node[:service_dir] || '/etc/service'
+
         @control = []
         @options = {}
         @env = {}
@@ -48,8 +53,32 @@ class Chef
         @log_template_name = @service_name
         @finish_script_template_name = @service_name
         @control_template_names = {}
-        @status_command = "/usr/bin/sv status #{@service_dir}"
+        @status_command = "#{@sv_bin} status #{@service_dir}"
         @sv_templates = true
+
+        #
+        # Backward Compat Hack
+        #
+        # This ensures a 'service' resource exists for all 'runit_service' resources.
+        # This should allow all recipes using the previous 'runit_service' definition to
+        # continue operating.
+        #
+        unless run_context.nil?
+          service_dir_name = ::File.join(@service_dir, @name)
+          @service_mirror = Chef::Resource::Service.new(name, run_context)
+          @service_mirror.provider(Chef::Provider::Service::Simple)
+          @service_mirror.supports(@supports)
+          @service_mirror.start_command("#{@sv_bin} start #{service_dir_name}")
+          @service_mirror.stop_command("#{@sv_bin} stop #{service_dir_name}")
+          @service_mirror.restart_command("#{@sv_bin} restart #{service_dir_name}")
+          @service_mirror.status_command("#{@sv_bin} status #{service_dir_name}")
+          @service_mirror.action(:nothing)
+          run_context.resource_collection.insert(@service_mirror)
+        end
+      end
+
+      def sv_bin(arg=nil)
+        set_or_return(:sv_bin, arg, :kind_of => [String])
       end
 
       def sv_dir(arg=nil)
@@ -142,6 +171,12 @@ class Chef
         set_or_return(:sv_templates, arg, :kind_of => [TrueClass, FalseClass])
       end
 
+      def runit_attributes_from_node(run_context)
+        runit_attr = if run_context && run_context.node
+          run_context.node[:runit]
+        end
+        runit_attr || {}
+      end
     end
   end
 end

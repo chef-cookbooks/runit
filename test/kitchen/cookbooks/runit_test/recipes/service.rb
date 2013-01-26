@@ -124,3 +124,9 @@ ruby_block "sleep 5s to allow services to be fully started" do
     sleep 5
   end
 end
+
+# Notify the plain defaults service as a normal service resource
+file "/tmp/notifier" do
+  content Time.now.to_s
+  notifies :restart, 'service[plain-defaults]', :immediately
+end
