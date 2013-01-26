@@ -3,16 +3,29 @@
 * [COOK-2254] - (formerly CHEF-154) Convert `runit_service` definition
   to a service resource named `runit_service`.
 
-This is a backwards incompatible version. Changes of Note:
+This version has some backwards incompatible changes (hence the major
+version bump). It is recommended that users pin the cookbook to the
+previous version where it is a dependency until this version has been
+tested (use version 0.16.2):
+
+    depends "runit", "<= 0.16.2"
+
+If you use Chef environments, pin the version in the appropriate
+environment(s).
+
+**Changes of note**
 
 1. The "runit" recipe must be included before the runit_service resource
 can be used.
-2. runit_service definition created a "service" resource. This is now a
-"runit_service" resource, for the purposes of notifications.
-3. enable action blocks waiting for supervise/ok after the service symlink
-is created.
-4. Create user-controlled services per the runit documentation.
-5. Some parameters in the definition have changed names in the resource.
+2. The `runit_service` definition created a separate `service`
+resource for notification purposes. This is still available, but the
+only actions that can be notified are `:start`, `:stop`, and `:restart`.
+3. The `:enable` action blocks waiting for supervise/ok after the
+service symlink is created.
+4. User-controlled services should be created per the runit
+documentation; see README.md for an example.
+5. Some parameters in the definition have changed names in the
+resource. See below.
 
 The following parameters in the definition are renamed in the resource
 to clarify their intent.

@@ -108,17 +108,23 @@ more information on the `sv` program.
 
 ## Parameter Attributes
 
-The first two parameters, `sv_dir` and `service_dir`, have hardcoded
-default values instead of using the node attributes because of the way
-that Chef loads cookbook components, the attributes will not be
-available. See __Usage__ for examples.
+The first three parameters, `sv_dir`, `service_dir`, and `sv_bin` will
+attempt to use the corresponding node attributes, and fall back to
+hardcoded default values that match the settings used on Debian
+platform systems.
 
 Many of these parameters are only used in the `:enable` action.
 
 - **sv_dir** - The base "service directory" for the services managed by
-   the resource. Default is `/etc/sv`.
+   the resource. By default, this will attempt to use the
+   `node['runit']['sv_dir']` attribute, and falls back to `/etc/sv`.
 - **service_dir** - The directory where services are symlinked to be
-   supervised by `runsvdir`. Default is `/etc/service`.
+   supervised by `runsvdir`. By default, this will attempt to use the
+   `node['runit']['service_dir']` attribute, and falls back to
+   `/etc/service`.
+- **sv_bin** - The path to the `sv` program binary. This will attempt
+    to use the `node['runit']['sv_bin']` attribute, and falls back to
+    `/usr/bin/sv`.
 - **service_name** - *Name attribute*. The name of the service. This
    will be used in the directory of the managed service in the
    `sv_dir` and `service_dir`.
@@ -165,7 +171,6 @@ Many of these parameters are only used in the `:enable` action.
 Unlike previous versions of the cookbook using the `runit_service`
 definition, the `runit_service` resource can be notified. See
 __Usage__ examples below.
-
 
 Usage
 =====
