@@ -25,7 +25,7 @@ execute "start-runsvdir" do
   command value_for_platform(
     "debian" => { "default" => "runsvdir-start" },
     "ubuntu" => { "default" => "start runsvdir" },
-    "gentoo" => { "default" => "/etc/init.d/runit-start start" },
+    "gentoo" => { "default" => "/etc/init.d/runit-start start" }
   )
   action :nothing
 end
