@@ -38,6 +38,9 @@ end
 
 case node["platform_family"]
 when "rhel"
+
+  include_recipe "build-essential"
+
   packages = %w{rpm-build rpmdevtools tar gzip}
   packages.each do |p|
     package p

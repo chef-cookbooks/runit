@@ -12,47 +12,4 @@ recipe "runit", "Installs and configures runit"
   supports os
 end
 
-attribute "runit",
-  :display_name => "Runit",
-  :description => "Hash of runit attributes",
-  :type => "hash"
-
-attribute "runit/sv_bin",
-  :display_name => "Runit sv bin",
-  :description => "Location of the sv binary",
-  :default => "/usr/bin/sv"
-
-attribute "runit/chpst_bin",
-  :display_name => "Runit chpst bin",
-  :description => "Location of the chpst binary",
-  :default => "/usr/bin/chpst"
-
-attribute "runit/service_dir",
-  :display_name => "Runit service directory",
-  :description => "Symlinks to services managed under runit",
-  :default => "/etc/service"
-
-attribute "runit/sv_dir",
-  :display_name => "Runit sv directory",
-  :description => "Location of services managed by runit",
-  :default => "/etc/sv"
-
-attribute "runit/executable",
-  :display_name => "Runit executable",
-  :description => "Location of the 'runit' binary",
-  :default => "/sbin/runit"
-
-attribute "runit/start",
-  :display_name => "Runit Start",
-  :description => "Command to start the master runit (runsvdir) service",
-  :calculated => true
-
-attribute "runit/stop",
-  :display_name => "Runit Stop",
-  :description => "Command to stop the master runit (runsvdir) service",
-  :calculated => true
-
-attribute "runit/reload",
-  :display_name => "Runit Reload",
-  :description => "Command to reload the master runit (runsvdir) service",
-  :calculated => true
+depends "build-essential"
