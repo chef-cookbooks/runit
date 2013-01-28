@@ -60,6 +60,14 @@ class Chef
 
           Chef::Log.debug("Checking status of service #{new_resource.service_name}")
 
+          # verify Runit was installed properly
+          unless ::File.exist?(new_resource.sv_bin) && ::File.executable?(new_resource.sv_bin)
+            no_runit_message = "Could not locate main runit sv_bin at \"#{new_resource.sv_bin}\". "
+            no_runit_message << "Did you remember to install runit before declaring a \"runit_service\" resource? "
+            no_runit_message << "\n\nTry adding the following to the top of your recipe:\n\ninclude_recipe \"runit\""
+            raise no_runit_message
+          end
+
           @current_resource.running(running?)
           @current_resource.enabled(enabled?)
           @current_resource

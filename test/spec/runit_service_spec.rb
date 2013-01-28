@@ -212,6 +212,8 @@ describe "Chef::Provider::Service::Runit" do
       @service_dir_name = "#{@current_resource.service_dir}/#{@current_resource.service_name}"
       Chef::Resource::RunitService.stub!(:new).and_return(@current_resource)
 
+      File.stub!(:exist?).with(@current_resource.sv_bin).and_return(true)
+      File.stub!(:executable?).with(@current_resource.sv_bin).and_return(true)
       @provider.stub!(:running?).and_return(false)
       @provider.stub!(:enabled?).and_return(false)
     end
