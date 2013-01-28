@@ -6,7 +6,7 @@
 This version has some backwards incompatible changes (hence the major
 version bump). It is recommended that users pin the cookbook to the
 previous version where it is a dependency until this version has been
-tested (use version 0.16.2):
+tested in a non-production environment (use version 0.16.2):
 
     depends "runit", "<= 0.16.2"
 
