@@ -1,4 +1,8 @@
+require 'rubygems'
+require 'bundler'
+Bundler.setup
+
 desc "Run specs"
 task :spec do
-  sh "bundle exec rspec -c -b -f d test/spec/runit_service_spec.rb"
+  sh "rspec -c -b -f d spec"
 end
