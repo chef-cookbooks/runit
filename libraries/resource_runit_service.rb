@@ -131,14 +131,6 @@ class Chef
         set_or_return(:group, arg, :regex => [Chef::Config[:group_valid_regex]])
       end
 
-      def enabled(arg=nil)
-        set_or_return(:enabled, arg, :kind_of => [TrueClass, FalseClass])
-      end
-
-      def running(arg=nil)
-        set_or_return(:enabled, arg, :kind_of => [TrueClass, FalseClass])
-      end
-
       def default_logger(arg=nil)
         set_or_return(:default_logger, arg, :kind_of => [TrueClass, FalseClass])
       end
