@@ -21,8 +21,9 @@ require 'spec_helper'
 
 describe Chef::Resource::RunitService do
 
-  subject(:resource) { Chef::Resource::RunitService.new('getty.service', run_context) }
+  subject(:resource) { Chef::Resource::RunitService.new(service_name, run_context) }
 
+  let(:service_name) { 'getty.service' }
   let(:node) { Chef::Node.new }
   let(:events) { Chef::EventDispatch::Dispatcher.new }
   let(:run_context) { Chef::RunContext.new(node, {}, events) }
@@ -49,6 +50,20 @@ describe Chef::Resource::RunitService do
     its(:sv_bin) { should eq sv_bin }
     its(:sv_dir) { should eq sv_dir }
     its(:service_dir) { should eq service_dir }
+  end
+
+  describe "backward compatiblility hack" do
+
+    let(:simple_service_name) { "service[#{service_name}]" }
+
+    it "creates a simple service with the same name" do
+      resource_collection = resource.run_context.resource_collection
+      simple_service = resource_collection.find(simple_service_name)
+      simple_service.to_s.should eq(simple_service_name)
+      simple_service.class.should be Chef::Resource::Service
+      simple_service.provider.should be Chef::Provider::Service::Simple
+    end
+
   end
 
   it 'has an sv_dir parameter that can be set' do
