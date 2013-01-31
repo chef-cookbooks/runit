@@ -2,7 +2,14 @@ require 'rubygems'
 require 'bundler'
 Bundler.setup
 
-desc "Run specs"
-task :spec do
-  sh "rspec -c -b -f d spec"
+require 'rake'
+require 'foodcritic'
+require 'rspec/core/rake_task'
+
+task :default => [:spec]
+
+RSpec::Core::RakeTask.new(:spec)
+
+FoodCritic::Rake::LintTask.new do |t|
+  t.options = {:fail_tags => ['correctness']}
 end
