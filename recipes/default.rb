@@ -92,7 +92,7 @@ when "debian","gentoo"
       "gentoo" => { "default" => :run }
     ), "execute[start-runsvdir]", :immediately
     notifies value_for_platform(
-      "debian" => { "squeeze/sid" => :run, "default" => :nothing },
+      "debian" => { "squeeze/sid" => :run, "wheezy/sid" => :run, "default" => :nothing },
       "default" => :nothing
     ), "execute[runit-hup-init]", :immediately
   end
