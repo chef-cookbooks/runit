@@ -1,3 +1,8 @@
+## v1.0.2:
+
+* [COOK-2299] - runit_service resource does not properly start a
+  non-running service
+
 ## v1.0.0:
 
 * [COOK-2254] - (formerly CHEF-154) Convert `runit_service` definition
