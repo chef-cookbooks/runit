@@ -163,8 +163,22 @@ describe Chef::Resource::RunitService do
     resource.default_logger.should be_true
   end
 
+  it 'sets the run_template_name to the service_name by default' do
+    resource.run_template_name.should eq(resource.service_name)
+  end
+
   it 'sets the log_template_name to the service_name by default' do
     resource.log_template_name.should eq(resource.service_name)
+  end
+
+  it 'has a run_template_name parameter to allow a custom template name for the run run script' do
+    resource.run_template_name('foo_bar')
+    resource.run_template_name.should eq('foo_bar')
+  end
+
+  it 'has a template_name parameter to allow a custom template name for the run run script for backwards compatiblility' do
+    resource.template_name('foo_baz')
+    resource.run_template_name.should eq('foo_baz')
   end
 
   it 'has a log_template_name parameter to allow a custom template name for the log run script' do
