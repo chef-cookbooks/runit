@@ -156,6 +156,8 @@ Many of these parameters are only used in the `:enable` action.
    service
 - **group** - group that should own the templates created to enable the
    service
+- **run_template_name** - alternate filename of the run run script to
+   use replacing `service_name`.
 - **log_template_name** - alternate filename of the log run script to
    use replacing `service_name`.
 - **finish_script_template_name** - alternate filename of the finish
