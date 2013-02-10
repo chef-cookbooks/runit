@@ -50,6 +50,7 @@ class Chef
         @enabled = false
         @running = false
         @default_logger = false
+        @run_template_name = @service_name
         @log_template_name = @service_name
         @finish_script_template_name = @service_name
         @control_template_names = {}
@@ -134,6 +135,11 @@ class Chef
       def default_logger(arg=nil)
         set_or_return(:default_logger, arg, :kind_of => [TrueClass, FalseClass])
       end
+
+      def run_template_name(arg=nil)
+        set_or_return(:run_template_name, arg, :kind_of => [String])
+      end
+      alias :template_name :run_template_name
 
       def log_template_name(arg=nil)
         set_or_return(:log_template_name, arg, :kind_of => [String])
