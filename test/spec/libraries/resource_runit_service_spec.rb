@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 
+$:.unshift(File.join(File.dirname(__FILE__), '..'))
 require 'spec_helper'
 
 describe Chef::Resource::RunitService do

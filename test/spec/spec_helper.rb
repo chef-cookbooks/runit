@@ -5,7 +5,7 @@ require 'chef/resource'
 require 'chef/resource/service'
 require 'chef/provider/service/simple'
 
-$:.unshift(File.join(File.dirname(__FILE__), "..", "libraries"))
+$:.unshift(File.join(File.dirname(__FILE__), "..", "..", "libraries"))
 require 'provider_runit_service'
 require 'resource_runit_service'
 
