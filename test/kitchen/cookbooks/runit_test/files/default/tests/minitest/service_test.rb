@@ -93,6 +93,10 @@ describe "runit_test::service" do
     service('yerba').must_be_running
   end
 
+  it 'creates a service with differently named run script template' do
+    service('yerba-alt').must_be_running
+  end
+
   it 'creates a service that should exist but be disabled' do
     file('/etc/sv/exist-disabled/run').must_exist
     unless node['platform'] == 'gentoo'
