@@ -1,3 +1,8 @@
+## v1.0.4
+
+* [COOK-2351] - add `run_template_name` to allow alternate run script
+  template
+
 ## v1.0.2:
 
 * [COOK-2299] - runit_service resource does not properly start a
