@@ -161,7 +161,7 @@ class Chef
         #
 
         # only take action if the service is running
-        [:down, :hup, :int, :term, :kill].each do |signal|
+        [:down, :hup, :int, :term, :kill, :quit].each do |signal|
           define_method "action_#{signal}".to_sym do
             if @current_resource.running
               runit_send_signal(signal)
