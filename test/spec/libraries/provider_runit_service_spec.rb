@@ -155,7 +155,7 @@ describe Chef::Provider::Service::Runit do
         provider.stub(:running?).and_return(true)
       end
 
-      %w{stop down restart hup int term kill}.each do |action|
+      %w{stop down restart hup int term kill quit}.each do |action|
         it "sends the '#{action}' command to the sv binary" do
           provider.should_receive(:shell_out!).with("#{sv_bin} #{action} #{service_dir_name}")
           provider.run_action(action.to_sym)
