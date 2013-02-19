@@ -79,7 +79,7 @@ class Chef
 
         def action_enable
           converge_by("configure service #{@new_resource}") do
-            configure_service # Do this every run
+            configure_service # Do this every run, even if service is already enabled and running
             Chef::Log.info("#{@new_resource} configured")
           end
           if @current_resource.enabled
@@ -270,6 +270,7 @@ EOF
           @run_script.source("sv-#{new_resource.run_template_name}-run.erb")
           @run_script.cookbook(template_cookbook)
           @run_script.mode(00755)
+          @run_script.notifies(:restart, "service[#{new_resource.service_name}]")
           if new_resource.options.respond_to?(:has_key?)
             @run_script.variables(:options => new_resource.options)
           end
