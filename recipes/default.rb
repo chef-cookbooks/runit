@@ -77,6 +77,13 @@ when "rhel"
 
 when "debian","gentoo"
 
+  if platform?("gentoo")
+    template "/etc/init.d/runit-start" do
+      source "runit-start.sh.erb"
+      mode 0755
+    end
+  end
+
   package "runit" do
     action :install
     if platform?("ubuntu", "debian")
@@ -103,12 +110,6 @@ when "debian","gentoo"
       mode 0644
       notifies :run, "execute[start-runsvdir]", :immediately
       only_if do ::File.directory?("/etc/event.d") end
-    end
-  end
-  if platform?("gentoo")
-    template "/etc/init.d/runit-start" do
-      source "runit-start.sh.erb"
-      mode 0755
     end
   end
 end
