@@ -164,6 +164,15 @@ describe Chef::Resource::RunitService do
     resource.default_logger.should be_true
   end
 
+  it 'has a restart_on_update parameter that is true by default' do
+    resource.restart_on_update.should be_true
+  end
+
+  it 'has a restart_on_update parameter that controls whether a the service is restarted when the run script is updated' do
+    resource.restart_on_update(false)
+    resource.restart_on_update.should be_false
+  end
+
   it 'sets the run_template_name to the service_name by default' do
     resource.run_template_name.should eq(resource.service_name)
   end
