@@ -92,6 +92,7 @@ class Chef
           end
           load_new_resource_state
           @new_resource.enabled(true)
+          restart_service if @new_resource.restart_on_update and run_script.updated_by_last_action?
         end
 
         def configure_service
@@ -270,7 +271,6 @@ EOF
           @run_script.source("sv-#{new_resource.run_template_name}-run.erb")
           @run_script.cookbook(template_cookbook)
           @run_script.mode(00755)
-          @run_script.notifies(:restart, "service[#{new_resource.service_name}]")
           if new_resource.options.respond_to?(:has_key?)
             @run_script.variables(:options => new_resource.options)
           end
