@@ -13,3 +13,4 @@ recipe "runit", "Installs and configures runit"
 end
 
 depends "build-essential"
+depends "yum"
