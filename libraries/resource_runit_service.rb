@@ -32,7 +32,7 @@ class Chef
         @provider = Chef::Provider::Service::Runit
         @supports = { :restart => true, :reload => true, :status => true }
         @action = :enable
-        @allowed_actions = [:start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2]
+        @allowed_actions = [:nothing, :start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2]
 
         # sv_bin, sv_dir and service_dir may have been set in the node attributes
         @sv_bin = runit_node[:sv_bin] || '/usr/bin/sv'
