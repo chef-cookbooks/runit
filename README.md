@@ -169,6 +169,9 @@ Many of these parameters are only used in the `:enable` action.
    service to see if it is enabled/running (if it's running, it's
    enabled). This hardcodes the location of the sv program to
    `/usr/bin/sv` due to the aforementioned cookbook load order.
+- **restart_on_update** - Whether the service should be restarted when
+    the run script is updated. Defaults to `true`. Set to `false` if
+    the service shouldn't be restarted when the run script is updated.
 
 Unlike previous versions of the cookbook using the `runit_service`
 definition, the `runit_service` resource can be notified. See
