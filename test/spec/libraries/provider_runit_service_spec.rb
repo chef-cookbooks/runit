@@ -299,7 +299,7 @@ describe Chef::Provider::Service::Runit do
         current_resource.stub!(:enabled).and_return(false)
         new_resource.stub!(:sv_templates).and_return(false)
         provider.should_not_receive(:sv_dir)
-        provider.should_not_receive(:run_script)
+        provider.send(:run_script).should_not_receive(:run_action).with(:create)
         provider.should_not_receive(:log)
         provider.should_not_receive(:log_main_dir)
         provider.should_not_receive(:log_run_script)

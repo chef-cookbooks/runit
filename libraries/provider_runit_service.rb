@@ -76,7 +76,26 @@ class Chef
         #
         # Chef::Provider::Service overrides
         #
-        def enable_service
+
+        def action_enable
+          converge_by("configure service #{@new_resource}") do
+            configure_service # Do this every run, even if service is already enabled and running
+            Chef::Log.info("#{@new_resource} configured")
+          end
+          if @current_resource.enabled
+            Chef::Log.debug("#{@new_resource} already enabled - nothing to do")
+          else
+            converge_by("enable service #{@new_resource}") do
+              enable_service
+              Chef::Log.info("#{@new_resource} enabled")
+            end
+          end
+          load_new_resource_state
+          @new_resource.enabled(true)
+          restart_service if @new_resource.restart_on_update and run_script.updated_by_last_action?
+        end
+
+        def configure_service
           if new_resource.sv_templates
             Chef::Log.debug("Creating sv_dir for #{new_resource.service_name}")
             sv_dir.run_action(:create)
@@ -120,7 +139,9 @@ class Chef
 
           Chef::Log.debug("Creating lsb_init compatible interface #{new_resource.service_name}")
           lsb_init.run_action(:create)
+        end
 
+        def enable_service
           unless node['platform'] == 'gentoo'
             Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
             service_link.run_action(:create)
