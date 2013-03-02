@@ -322,6 +322,57 @@ describe Chef::Provider::Service::Runit do
         provider.run_action(:enable)
       end
 
+      describe "run_script template changes" do
+        before do
+          provider.stub(:configure_service)
+          provider.stub(:enable_service)
+        end
+
+        context "run_script is updated" do
+          before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(true) }
+
+          context "restart_on_update attributre is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "restarts the service" do
+              provider.should_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+
+        context "run script is unchanged" do
+          before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(false) }
+
+          context "restart_on_update attributre is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+      end
+
       context 'new resource conditionals' do
         before(:each) do
           current_resource.stub(:enabled).and_return(false)
