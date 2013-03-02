@@ -44,88 +44,86 @@ describe Chef::Provider::Service::Runit do
   let(:current_resource) { Chef::Resource::RunitService.new('getty.service') }
 
   before do
-    File.stub(:exist?).with(sv_bin).and_return(true)
-    File.stub(:executable?).with(sv_bin).and_return(true)
+    provider.stub(:load_current_resource).and_return(current_resource)
+    provider.new_resource = new_resource
+    provider.current_resource = current_resource
   end
 
   describe "#load_current_resource" do
 
-    describe "runit is not installed" do
-      before do
-        File.unstub(:exist?)
-        File.unstub(:executable?)
-      end
+    before do
+      provider.unstub(:load_current_resource)
+    end
 
+    describe "runit is not installed" do
       it "raises an exception" do
         lambda { provider.load_current_resource }.should raise_error
       end
     end
 
-    describe "parsing sv status output" do
+    context "runit is installed" do
+
+      let(:status_output) { "run: #{service_name}: (pid 29018) 3s; run: log: (pid 24470) 46882s" }
+
       before do
+        File.stub(:exist?).with(sv_bin).and_return(true)
+        File.stub(:executable?).with(sv_bin).and_return(true)
         provider.stub(:shell_out)
           .with(service_status_command)
           .and_return(mock("ouput", :stdout => status_output, :exitstatus => 0))
         provider.load_current_resource
       end
 
-      context "returns a pid" do
-        let(:status_output) { "run: #{service_name}: (pid 29018) 3s; run: log: (pid 24470) 46882s" }
+      describe "parsing sv status output" do
 
-        it "sets resource running state to true" do
-          provider.current_resource.running.should be_true
+        context "returns a pid" do
+          let(:status_output) { "run: #{service_name}: (pid 29018) 3s; run: log: (pid 24470) 46882s" }
+
+          it "sets resource running state to true" do
+            provider.current_resource.running.should be_true
+          end
+        end
+
+        context "returns an empty pid" do
+          let(:status_output) { "down: #{service_name}: 2s, normally up; run: log: (pid 24470) 46250s" }
+
+          it "sets resource running state to false" do
+            provider.current_resource.running.should be_false
+          end
         end
       end
 
-      context "returns an empty pid" do
-        let(:status_output) { "down: #{service_name}: 2s, normally up; run: log: (pid 24470) 46250s" }
+      describe "checking for service run script" do
+        context "service run script is present in service_dir" do
+          before do
+            File.stub!(:exists?).with(run_script).and_return(true)
+            provider.load_current_resource
+          end
 
-        it "sets resource running state to false" do
-          provider.current_resource.running.should be_false
-        end
-      end
-    end
-
-    describe "checking for service run script" do
-      before do
-        provider.stub(:running?).and_return(true)
-      end
-
-      context "service run script is present in service_dir" do
-        before do
-          File.stub!(:exists?).with(run_script).and_return(true)
-          provider.load_current_resource
+          it "sets resource enabled state to true" do
+            provider.current_resource.enabled.should be_true
+          end
         end
 
-        it "sets resource enabled state to true" do
-          provider.current_resource.enabled.should be_true
-        end
-      end
+        context "service run script is missing" do
+          before do
+            File.stub!(:exists?).with(run_script).and_return(false)
+            provider.load_current_resource
+          end
 
-      context "service run script is missing" do
-        before do
-          File.stub!(:exists?).with(run_script).and_return(false)
-          provider.load_current_resource
-        end
-
-        it "sets resource enabled state to false" do
-          provider.current_resource.enabled.should be_false
+          it "sets resource enabled state to false" do
+            provider.current_resource.enabled.should be_false
+          end
         end
       end
     end
   end
 
   describe "actions" do
-    before do
-      provider.stub(:running?).and_return(true)
-      provider.stub(:enabled?).and_return(true)
-      provider.load_current_resource
-    end
-
     describe "start" do
 
       before do
-        provider.stub(:running?).and_return(false)
+        provider.current_resource.running(false)
       end
 
       %w{start up once cont}.each do |action|
@@ -152,7 +150,7 @@ describe Chef::Provider::Service::Runit do
 
     describe 'actions that manage a running service' do
       before do
-        provider.stub(:running?).and_return(true)
+        provider.current_resource.running(true)
       end
 
       %w{stop down restart hup int term kill quit}.each do |action|
@@ -172,7 +170,7 @@ describe Chef::Provider::Service::Runit do
 
     describe 'action_disable' do
       before do
-        provider.stub(:enabled?).and_return(true)
+        provider.current_resource.enabled(true)
       end
 
       it 'disables the service by running the down command and removing the symlink' do
@@ -186,9 +184,8 @@ describe Chef::Provider::Service::Runit do
       let(:sv_dir_name) { ::File.join(new_resource.sv_dir, new_resource.service_name) }
 
       before(:each) do
-        provider.stub(:enabled?).and_return(false)
-        current_resource.stub!(:enabled).and_return(true)
-        FileTest.stub!(:pipe?).with("#{service_dir_name}/supervise/ok").and_return(true)
+        provider.current_resource.enabled(false)
+        FileTest.stub(:pipe?).with("#{service_dir_name}/supervise/ok").and_return(true)
       end
 
       it 'creates the sv_dir directory' do
