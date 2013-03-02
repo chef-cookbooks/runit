@@ -96,7 +96,7 @@ describe Chef::Provider::Service::Runit do
       describe "checking for service run script" do
         context "service run script is present in service_dir" do
           before do
-            File.stub!(:exists?).with(run_script).and_return(true)
+            File.stub(:exists?).with(run_script).and_return(true)
             provider.load_current_resource
           end
 
@@ -107,7 +107,7 @@ describe Chef::Provider::Service::Runit do
 
         context "service run script is missing" do
           before do
-            File.stub!(:exists?).with(run_script).and_return(false)
+            File.stub(:exists?).with(run_script).and_return(false)
             provider.load_current_resource
           end
 
@@ -293,8 +293,8 @@ describe Chef::Provider::Service::Runit do
       end
 
       it 'does not create anything in the sv_dir if it is nil or false' do
-        current_resource.stub!(:enabled).and_return(false)
-        new_resource.stub!(:sv_templates).and_return(false)
+        current_resource.stub(:enabled).and_return(false)
+        new_resource.stub(:sv_templates).and_return(false)
         provider.should_not_receive(:sv_dir)
         provider.send(:run_script).should_not_receive(:run_action).with(:create)
         provider.should_not_receive(:log)
@@ -311,7 +311,7 @@ describe Chef::Provider::Service::Runit do
       end
 
       it 'enables the service with memoized resource creation methods' do
-        current_resource.stub!(:enabled).and_return(false)
+        current_resource.stub(:enabled).and_return(false)
         provider.send(:sv_dir).should_receive(:run_action).with(:create)
         provider.send(:run_script).should_receive(:run_action).with(:create)
         provider.send(:log_dir).should_receive(:run_action).with(:create)
@@ -324,31 +324,31 @@ describe Chef::Provider::Service::Runit do
 
       context 'new resource conditionals' do
         before(:each) do
-          current_resource.stub!(:enabled).and_return(false)
-          provider.send(:sv_dir).stub!(:run_action).with(:create)
-          provider.send(:run_script).stub!(:run_action).with(:create)
-          provider.send(:lsb_init).stub!(:run_action).with(:create)
-          provider.send(:service_link).stub!(:run_action).with(:create)
-          provider.send(:log_dir).stub!(:run_action).with(:create)
-          provider.send(:log_main_dir).stub!(:run_action).with(:create)
-          provider.send(:log_run_script).stub!(:run_action).with(:create)
+          current_resource.stub(:enabled).and_return(false)
+          provider.send(:sv_dir).stub(:run_action).with(:create)
+          provider.send(:run_script).stub(:run_action).with(:create)
+          provider.send(:lsb_init).stub(:run_action).with(:create)
+          provider.send(:service_link).stub(:run_action).with(:create)
+          provider.send(:log_dir).stub(:run_action).with(:create)
+          provider.send(:log_main_dir).stub(:run_action).with(:create)
+          provider.send(:log_run_script).stub(:run_action).with(:create)
         end
 
         it 'doesnt create the log dir or run script if log is false' do
-          new_resource.stub!(:log).and_return(false)
+          new_resource.stub(:log).and_return(false)
           provider.should_not_receive(:log)
           provider.run_action(:enable)
         end
 
         it 'creates the env dir and config files if env is set' do
-          new_resource.stub!(:env).and_return({'PATH' => '/bin'})
+          new_resource.stub(:env).and_return({'PATH' => '/bin'})
           provider.send(:env_dir).should_receive(:run_action).with(:create)
           provider.send(:env_files).should_receive(:each).once
           provider.run_action(:enable)
         end
 
         it 'creates the control dir and signal files if control is set' do
-          new_resource.stub!(:control).and_return(['s', 'u'])
+          new_resource.stub(:control).and_return(['s', 'u'])
           provider.send(:control_dir).should_receive(:run_action).with(:create)
           provider.send(:control_signal_files).should_receive(:each).once
           provider.run_action(:enable)
