@@ -44,88 +44,86 @@ describe Chef::Provider::Service::Runit do
   let(:current_resource) { Chef::Resource::RunitService.new('getty.service') }
 
   before do
-    File.stub(:exist?).with(sv_bin).and_return(true)
-    File.stub(:executable?).with(sv_bin).and_return(true)
+    provider.stub(:load_current_resource).and_return(current_resource)
+    provider.new_resource = new_resource
+    provider.current_resource = current_resource
   end
 
   describe "#load_current_resource" do
 
-    describe "runit is not installed" do
-      before do
-        File.unstub(:exist?)
-        File.unstub(:executable?)
-      end
+    before do
+      provider.unstub(:load_current_resource)
+    end
 
+    describe "runit is not installed" do
       it "raises an exception" do
         lambda { provider.load_current_resource }.should raise_error
       end
     end
 
-    describe "parsing sv status output" do
+    context "runit is installed" do
+
+      let(:status_output) { "run: #{service_name}: (pid 29018) 3s; run: log: (pid 24470) 46882s" }
+
       before do
+        File.stub(:exist?).with(sv_bin).and_return(true)
+        File.stub(:executable?).with(sv_bin).and_return(true)
         provider.stub(:shell_out)
           .with(service_status_command)
           .and_return(mock("ouput", :stdout => status_output, :exitstatus => 0))
         provider.load_current_resource
       end
 
-      context "returns a pid" do
-        let(:status_output) { "run: #{service_name}: (pid 29018) 3s; run: log: (pid 24470) 46882s" }
+      describe "parsing sv status output" do
 
-        it "sets resource running state to true" do
-          provider.current_resource.running.should be_true
+        context "returns a pid" do
+          let(:status_output) { "run: #{service_name}: (pid 29018) 3s; run: log: (pid 24470) 46882s" }
+
+          it "sets resource running state to true" do
+            provider.current_resource.running.should be_true
+          end
+        end
+
+        context "returns an empty pid" do
+          let(:status_output) { "down: #{service_name}: 2s, normally up; run: log: (pid 24470) 46250s" }
+
+          it "sets resource running state to false" do
+            provider.current_resource.running.should be_false
+          end
         end
       end
 
-      context "returns an empty pid" do
-        let(:status_output) { "down: #{service_name}: 2s, normally up; run: log: (pid 24470) 46250s" }
+      describe "checking for service run script" do
+        context "service run script is present in service_dir" do
+          before do
+            File.stub(:exists?).with(run_script).and_return(true)
+            provider.load_current_resource
+          end
 
-        it "sets resource running state to false" do
-          provider.current_resource.running.should be_false
-        end
-      end
-    end
-
-    describe "checking for service run script" do
-      before do
-        provider.stub(:running?).and_return(true)
-      end
-
-      context "service run script is present in service_dir" do
-        before do
-          File.stub!(:exists?).with(run_script).and_return(true)
-          provider.load_current_resource
+          it "sets resource enabled state to true" do
+            provider.current_resource.enabled.should be_true
+          end
         end
 
-        it "sets resource enabled state to true" do
-          provider.current_resource.enabled.should be_true
-        end
-      end
+        context "service run script is missing" do
+          before do
+            File.stub(:exists?).with(run_script).and_return(false)
+            provider.load_current_resource
+          end
 
-      context "service run script is missing" do
-        before do
-          File.stub!(:exists?).with(run_script).and_return(false)
-          provider.load_current_resource
-        end
-
-        it "sets resource enabled state to false" do
-          provider.current_resource.enabled.should be_false
+          it "sets resource enabled state to false" do
+            provider.current_resource.enabled.should be_false
+          end
         end
       end
     end
   end
 
   describe "actions" do
-    before do
-      provider.stub(:running?).and_return(true)
-      provider.stub(:enabled?).and_return(true)
-      provider.load_current_resource
-    end
-
     describe "start" do
 
       before do
-        provider.stub(:running?).and_return(false)
+        provider.current_resource.running(false)
       end
 
       %w{start up once cont}.each do |action|
@@ -152,7 +150,7 @@ describe Chef::Provider::Service::Runit do
 
     describe 'actions that manage a running service' do
       before do
-        provider.stub(:running?).and_return(true)
+        provider.current_resource.running(true)
       end
 
       %w{stop down restart hup int term kill quit}.each do |action|
@@ -172,7 +170,7 @@ describe Chef::Provider::Service::Runit do
 
     describe 'action_disable' do
       before do
-        provider.stub(:enabled?).and_return(true)
+        provider.current_resource.enabled(true)
       end
 
       it 'disables the service by running the down command and removing the symlink' do
@@ -186,9 +184,8 @@ describe Chef::Provider::Service::Runit do
       let(:sv_dir_name) { ::File.join(new_resource.sv_dir, new_resource.service_name) }
 
       before(:each) do
-        provider.stub(:enabled?).and_return(false)
-        current_resource.stub!(:enabled).and_return(true)
-        FileTest.stub!(:pipe?).with("#{service_dir_name}/supervise/ok").and_return(true)
+        provider.current_resource.enabled(false)
+        FileTest.stub(:pipe?).with("#{service_dir_name}/supervise/ok").and_return(true)
       end
 
       it 'creates the sv_dir directory' do
@@ -296,8 +293,8 @@ describe Chef::Provider::Service::Runit do
       end
 
       it 'does not create anything in the sv_dir if it is nil or false' do
-        current_resource.stub!(:enabled).and_return(false)
-        new_resource.stub!(:sv_templates).and_return(false)
+        current_resource.stub(:enabled).and_return(false)
+        new_resource.stub(:sv_templates).and_return(false)
         provider.should_not_receive(:sv_dir)
         provider.send(:run_script).should_not_receive(:run_action).with(:create)
         provider.should_not_receive(:log)
@@ -314,7 +311,7 @@ describe Chef::Provider::Service::Runit do
       end
 
       it 'enables the service with memoized resource creation methods' do
-        current_resource.stub!(:enabled).and_return(false)
+        current_resource.stub(:enabled).and_return(false)
         provider.send(:sv_dir).should_receive(:run_action).with(:create)
         provider.send(:run_script).should_receive(:run_action).with(:create)
         provider.send(:log_dir).should_receive(:run_action).with(:create)
@@ -325,33 +322,84 @@ describe Chef::Provider::Service::Runit do
         provider.run_action(:enable)
       end
 
+      describe "run_script template changes" do
+        before do
+          provider.stub(:configure_service)
+          provider.stub(:enable_service)
+        end
+
+        context "run_script is updated" do
+          before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(true) }
+
+          context "restart_on_update attributre is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "restarts the service" do
+              provider.should_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+
+        context "run script is unchanged" do
+          before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(false) }
+
+          context "restart_on_update attributre is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+      end
+
       context 'new resource conditionals' do
         before(:each) do
-          current_resource.stub!(:enabled).and_return(false)
-          provider.send(:sv_dir).stub!(:run_action).with(:create)
-          provider.send(:run_script).stub!(:run_action).with(:create)
-          provider.send(:lsb_init).stub!(:run_action).with(:create)
-          provider.send(:service_link).stub!(:run_action).with(:create)
-          provider.send(:log_dir).stub!(:run_action).with(:create)
-          provider.send(:log_main_dir).stub!(:run_action).with(:create)
-          provider.send(:log_run_script).stub!(:run_action).with(:create)
+          current_resource.stub(:enabled).and_return(false)
+          provider.send(:sv_dir).stub(:run_action).with(:create)
+          provider.send(:run_script).stub(:run_action).with(:create)
+          provider.send(:lsb_init).stub(:run_action).with(:create)
+          provider.send(:service_link).stub(:run_action).with(:create)
+          provider.send(:log_dir).stub(:run_action).with(:create)
+          provider.send(:log_main_dir).stub(:run_action).with(:create)
+          provider.send(:log_run_script).stub(:run_action).with(:create)
         end
 
         it 'doesnt create the log dir or run script if log is false' do
-          new_resource.stub!(:log).and_return(false)
+          new_resource.stub(:log).and_return(false)
           provider.should_not_receive(:log)
           provider.run_action(:enable)
         end
 
         it 'creates the env dir and config files if env is set' do
-          new_resource.stub!(:env).and_return({'PATH' => '/bin'})
+          new_resource.stub(:env).and_return({'PATH' => '/bin'})
           provider.send(:env_dir).should_receive(:run_action).with(:create)
           provider.send(:env_files).should_receive(:each).once
           provider.run_action(:enable)
         end
 
         it 'creates the control dir and signal files if control is set' do
-          new_resource.stub!(:control).and_return(['s', 'u'])
+          new_resource.stub(:control).and_return(['s', 'u'])
           provider.send(:control_dir).should_receive(:run_action).with(:create)
           provider.send(:control_signal_files).should_receive(:each).once
           provider.run_action(:enable)
