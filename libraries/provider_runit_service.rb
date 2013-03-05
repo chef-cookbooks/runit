@@ -90,7 +90,7 @@ class Chef
               Chef::Log.info("#{@new_resource} enabled")
             end
           end
-          load_new_resource_state
+          @load_new_resource_state
           @new_resource.enabled(true)
           restart_service if @new_resource.restart_on_update and run_script.updated_by_last_action?
         end
