@@ -288,8 +288,8 @@ describe Chef::Provider::Service::Runit do
         provider.send(:lsb_init).mode.should eq(00755)
         provider.send(:lsb_init).cookbook.should eq('runit')
         provider.send(:lsb_init).source.should eq('init.d.erb')
-        provider.send(:lsb_init).variables.should have_key(:options)
-        provider.send(:lsb_init).variables[:options].should eq(new_resource.options)
+        provider.send(:lsb_init).variables.should have_key(:name)
+        provider.send(:lsb_init).variables[:name].should eq(new_resource.service_name)
       end
 
       it 'does not create anything in the sv_dir if it is nil or false' do
