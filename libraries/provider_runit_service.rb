@@ -411,7 +411,7 @@ EOF
             @lsb_init.mode(00755)
             @lsb_init.cookbook('runit')
             @lsb_init.source('init.d.erb')
-            @lsb_init.variables(:options => new_resource.options)
+            @lsb_init.variables(:name => new_resource.service_name)
           else
             @lsb_init = Chef::Resource::Link.new(::File.join( '/etc',
                                                               'init.d',
