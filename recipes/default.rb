@@ -36,6 +36,10 @@ execute "runit-hup-init" do
   action :nothing
 end
 
+service "runit-start" do
+  action :nothing
+end
+
 case node["platform_family"]
 when "rhel"
 
@@ -104,6 +108,9 @@ when "debian","gentoo"
       "debian" => { "squeeze/sid" => :run, "default" => :nothing },
       "default" => :nothing
     ), "execute[runit-hup-init]", :immediately
+    if platform?("gentoo")
+      notifies :enable, "service[runit-start]"
+    end
   end
 
   if node["platform"] =~ /ubuntu/i && node["platform_version"].to_f <= 8.04
