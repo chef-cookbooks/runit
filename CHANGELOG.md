@@ -1,3 +1,9 @@
+## v1.1.2:
+
+* [COOK-2477] - runit cookbook should enable EPEL repo for CentOS 5
+* [COOK-2545] - Runit cookbook fails on Amazon Linux
+* [COOK-2322] - runit init template is broken on debian
+
 ## v1.1.0:
 
 * [COOK-2353] - Runit does not update run template if the service is
