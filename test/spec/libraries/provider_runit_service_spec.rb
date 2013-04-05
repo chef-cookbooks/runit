@@ -68,9 +68,9 @@ describe Chef::Provider::Service::Runit do
       before do
         File.stub(:exist?).with(sv_bin).and_return(true)
         File.stub(:executable?).with(sv_bin).and_return(true)
-        provider.stub(:shell_out)
-          .with(service_status_command)
-          .and_return(mock("ouput", :stdout => status_output, :exitstatus => 0))
+        provider.stub(:shell_out).
+          with(service_status_command).
+          and_return(mock("ouput", :stdout => status_output, :exitstatus => 0))
         provider.load_current_resource
       end
 
