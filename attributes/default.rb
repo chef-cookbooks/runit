@@ -66,7 +66,7 @@ when "gentoo"
 
   default["runit"]["sv_bin"] = "/usr/bin/sv"
   default["runit"]["chpst_bin"] = "/usr/bin/chpst"
-  default["runit"]["service_dir"] = "/etc/service"
+  default["runit"]["service_dir"] = "/var/service"
   default["runit"]["sv_dir"] = "/var/service"
   default["runit"]["executable"] = "/sbin/runit"
   default["runit"]["start"] = "/etc/init.d/runit-start start"
