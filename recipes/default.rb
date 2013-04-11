@@ -84,6 +84,10 @@ when "debian","gentoo"
       source "runit-start.sh.erb"
       mode 0755
     end
+
+    service "runit-start" do
+      action :nothing
+    end
   end
 
   package "runit" do
@@ -104,6 +108,9 @@ when "debian","gentoo"
       "debian" => { "squeeze/sid" => :run, "default" => :nothing },
       "default" => :nothing
     ), "execute[runit-hup-init]", :immediately
+    if platform?("gentoo")
+      notifies :enable, "service[runit-start]"
+    end
   end
 
   if node["platform"] =~ /ubuntu/i && node["platform_version"].to_f <= 8.04
