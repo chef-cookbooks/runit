@@ -36,10 +36,6 @@ execute "runit-hup-init" do
   action :nothing
 end
 
-service "runit-start" do
-  action :nothing
-end
-
 case node["platform_family"]
 when "rhel"
 
@@ -87,6 +83,10 @@ when "debian","gentoo"
     template "/etc/init.d/runit-start" do
       source "runit-start.sh.erb"
       mode 0755
+    end
+
+    service "runit-start" do
+      action :nothing
     end
   end
 
