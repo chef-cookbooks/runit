@@ -142,10 +142,8 @@ class Chef
         end
 
         def enable_service
-          unless node['platform'] == 'gentoo'
-            Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
-            service_link.run_action(:create)
-          end
+          Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
+          service_link.run_action(:create)
 
           Chef::Log.debug("waiting until named pipe #{service_dir_name}/supervise/ok exists.")
           until ::FileTest.pipe?("#{service_dir_name}/supervise/ok") do
