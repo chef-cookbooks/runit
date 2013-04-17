@@ -62,9 +62,10 @@ when "rhel"
 
   bash "rhel_build_install" do
     user "root"
-    cwd Chef::Config[:file_cache_path]
+    # cwd Chef::Config[:file_cache_path]
+    cwd ENV['HOME']
     code <<-EOH
-      tar xzf runit-2.1.1.tar.gz
+      tar xzf #{Chef::Config[:file_cache_path]}/runit-2.1.1.tar.gz
       cd runit-2.1.1
       ./build.sh
     EOH
