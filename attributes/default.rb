@@ -51,19 +51,9 @@ when "rhel"
   default["runit"]["executable"] = "/sbin/runit"
   default["runit"]["use_package_from_yum"] = false
 
-  if node["platform_version"].to_i < 6
-
-    default["runit"]["start"] = "/etc/init.d/runit-start start"
-    default["runit"]["stop"] = "/etc/init.d/runit-start stop"
-    default["runit"]["reload"] = "/etc/init.d/runit-start reload"
-
-  else
-
-    default["runit"]["start"] = "/etc/init.d/runit-start start"
-    default["runit"]["stop"] = "/etc/init.d/runit-start stop"
-    default["runit"]["reload"] = "/etc/init.d/runit-start reload"
-
-  end
+  default["runit"]["start"] = "/etc/init.d/runit-start start"
+  default["runit"]["stop"] = "/etc/init.d/runit-start stop"
+  default["runit"]["reload"] = "/etc/init.d/runit-start reload"
 
 when "gentoo"
 
