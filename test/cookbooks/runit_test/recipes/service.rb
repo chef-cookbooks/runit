@@ -142,3 +142,12 @@ file "/tmp/notifier" do
   content Time.now.to_s
   notifies :restart, 'service[plain-defaults]', :immediately
 end
+
+# Test for COOK-2867
+link "/etc/init.d/cook-2867" do
+  to "/usr/bin/sv"
+end
+
+runit_service "cook-2867" do
+  default_logger true
+end

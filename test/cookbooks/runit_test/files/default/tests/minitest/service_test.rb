@@ -26,8 +26,7 @@ describe "runit_test::service" do
     service('plain-defaults').must_be_running
     file('/etc/service/plain-defaults/run').must_exist
     file('/etc/service/plain-defaults/log/run').must_exist
-    link('/etc/init.d/plain-defaults').must_exist.with(
-      :link_type, :symbolic).and(:to, node['runit']['sv_bin'])
+    file('/etc/init.d/plain-defaults').must_exist
     unless node['platform'] == 'gentoo'
       link('/etc/service/plain-defaults').must_exist.with(
         :link_type, :symbolic).and(:to, '/etc/sv/plain-defaults')
@@ -81,8 +80,7 @@ describe "runit_test::service" do
     assert floyds_app.stdout.include?('run:')
     file('/home/floyd/service/floyds-app/run').must_exist.with(:owner, 'floyd')
     file('/home/floyd/service/floyds-app/log/run').must_exist.with(:owner, 'floyd')
-    link('/etc/init.d/floyds-app').must_exist.with(
-      :link_type, :symbolic).and(:to, node['runit']['sv_bin'])
+    file('/etc/init.d/floyds-app').must_exist
     unless node['platform'] == 'gentoo'
       link('/home/floyd/service/floyds-app').must_exist.with(
         :link_type, :symbolic).and(:to, '/home/floyd/sv/floyds-app')

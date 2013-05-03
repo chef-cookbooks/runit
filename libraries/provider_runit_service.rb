@@ -399,11 +399,10 @@ EOF
 
         def lsb_init
           return @lsb_init unless @lsb_init.nil?
+          initfile = ::File.join( '/etc', 'init.d', new_resource.service_name)
           if node['platform'] == 'debian'
-            @lsb_init = Chef::Resource::Template.new(::File.join( '/etc',
-                                                                  'init.d',
-                                                                  new_resource.service_name),
-                                                      run_context)
+            ::File.unlink(initfile) if ::File.symlink?(initfile)
+            @lsb_init = Chef::Resource::Template.new(initfile, run_context)
             @lsb_init.owner('root')
             @lsb_init.group('root')
             @lsb_init.mode(00755)
@@ -411,10 +410,7 @@ EOF
             @lsb_init.source('init.d.erb')
             @lsb_init.variables(:name => new_resource.service_name)
           else
-            @lsb_init = Chef::Resource::Link.new(::File.join( '/etc',
-                                                              'init.d',
-                                                              new_resource.service_name),
-                                                  run_context)
+            @lsb_init = Chef::Resource::Link.new(initfile, run_context)
             @lsb_init.to(new_resource.sv_bin)
           end
           @lsb_init
