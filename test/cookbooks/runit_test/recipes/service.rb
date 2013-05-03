@@ -102,11 +102,10 @@ end
 
 # Note: this won't update the run script for the above due to
 # http://tickets.opscode.com/browse/COOK-2353
-runit_service "the other name for yerba-alt" do
-  service_name "yerba-alt"
-  default_logger true
-end
-
+# runit_service "the other name for yerba-alt" do
+#   service_name "yerba-alt"
+#   default_logger true
+# end
 
 # Create a service that should exist but be disabled
 runit_service "exist-disabled"
