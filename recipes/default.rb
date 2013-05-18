@@ -54,9 +54,10 @@ when "rhel"
     package "buildsys-macros"
   end
 
+  rpm_installed = "rpm -qa | grep -q '^runit'"
   cookbook_file "#{Chef::Config[:file_cache_path]}/runit-2.1.1.tar.gz" do
     source "runit-2.1.1.tar.gz"
-    not_if "rpm -qa | grep -q '^runit'"
+    not_if rpm_installed
     notifies :run, "bash[rhel_build_install]", :immediately
   end
 
@@ -69,7 +70,8 @@ when "rhel"
       ./build.sh
     EOH
     notifies :install, "rpm_package[runit-211]", :immediately
-    action :nothing
+    action :run
+    not_if rpm_installed
   end
 
   rpm_package "runit-211" do
