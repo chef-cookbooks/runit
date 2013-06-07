@@ -107,8 +107,8 @@ class Chef
       end
 
       def sv_opts
-        @sv_opts += " -w #{@sv_timeout}" unless @sv_timeout.nil?
-        @sv_opts += " -v" if @sv_verbose
+        @sv_opts = "#{@sv_opts} -w #{@sv_timeout}" unless @sv_timeout.nil?
+        @sv_opts = "#{@sv_opts} -v" if @sv_verbose
         set_or_return(:sv_opts, @sv_opts, :kind_of => [String])
       end
 
