@@ -30,6 +30,7 @@ describe Chef::Provider::Service::Runit do
   let(:service_dir_name) { "#{service_dir}/#{service_name}" }
   let(:service_status_command) { "#{sv_bin} status #{service_name}" }
   let(:run_script) { File.join(service_dir, service_name, "run") }
+  let(:log_run_script) { File.join(service_dir, service_name, "log", "run") }
   let(:node) do
     node = Chef::Node.new
     node.automatic['platform'] = 'ubuntu'
@@ -186,6 +187,7 @@ describe Chef::Provider::Service::Runit do
       before(:each) do
         provider.current_resource.enabled(false)
         FileTest.stub(:pipe?).with("#{service_dir_name}/supervise/ok").and_return(true)
+        FileTest.stub(:pipe?).with("#{service_dir_name}/log/supervise/ok").and_return(true)
       end
 
       it 'creates the sv_dir directory' do
@@ -297,9 +299,9 @@ describe Chef::Provider::Service::Runit do
         new_resource.stub(:sv_templates).and_return(false)
         provider.should_not_receive(:sv_dir)
         provider.send(:run_script).should_not_receive(:run_action).with(:create)
+        provider.send(:log_run_script).should_not_receive(:run_action).with(:create)
         provider.should_not_receive(:log)
         provider.should_not_receive(:log_main_dir)
-        provider.should_not_receive(:log_run_script)
         provider.send(:lsb_init).should_receive(:run_action).with(:create)
         provider.send(:service_link).should_receive(:run_action).with(:create)
         provider.run_action(:enable)
@@ -331,7 +333,7 @@ describe Chef::Provider::Service::Runit do
         context "run_script is updated" do
           before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(true) }
 
-          context "restart_on_update attributre is true" do
+          context "restart_on_update attribute is true" do
             before { new_resource.restart_on_update(true) }
 
             it "restarts the service" do
@@ -353,7 +355,7 @@ describe Chef::Provider::Service::Runit do
         context "run script is unchanged" do
           before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(false) }
 
-          context "restart_on_update attributre is true" do
+          context "restart_on_update attribute is true" do
             before { new_resource.restart_on_update(true) }
 
             it "does not restart the service" do
@@ -367,6 +369,57 @@ describe Chef::Provider::Service::Runit do
 
             it "does not restart the service" do
               provider.should_not_receive(:restart_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+      end
+
+      describe "log_run_script template changes" do
+        before do
+          provider.stub(:configure_service)
+          provider.stub(:enable_service)
+        end
+
+        context "log_run_script is updated" do
+          before { provider.send(:log_run_script).stub(:updated_by_last_action?).and_return(true) }
+
+          context "restart_on_update attribute is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "restarts the service" do
+              provider.should_receive(:restart_log_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_log_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+
+        context "log_run_script is unchanged" do
+          before { provider.send(:log_run_script).stub(:updated_by_last_action?).and_return(false) }
+
+          context "restart_on_update attribute is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_log_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_log_service)
               provider.run_action(:enable)
             end
           end
