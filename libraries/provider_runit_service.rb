@@ -93,6 +93,7 @@ class Chef
           load_new_resource_state
           @new_resource.enabled(true)
           restart_service if @new_resource.restart_on_update and run_script.updated_by_last_action?
+          restart_log_service if @new_resource.restart_on_update and log_run_script.updated_by_last_action?
         end
 
         def configure_service
@@ -118,7 +119,6 @@ class Chef
               env_files.each {|file| file.run_action(:create)}
             else
               Chef::Log.debug("Environment not specified for #{new_resource.service_name}, continuing")
-
             end
 
             if new_resource.finish
@@ -150,6 +150,14 @@ class Chef
             sleep 1
             Chef::Log.debug(".")
           end
+
+          if new_resource.log
+            Chef::Log.debug("waiting until named pipe #{service_dir_name}/log/supervise/ok exists.")
+            until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok") do
+              sleep 1
+              Chef::Log.debug(".")
+            end
+          end
         end
 
         def disable_service
@@ -171,8 +179,16 @@ class Chef
           shell_out!("#{new_resource.sv_bin} restart #{service_dir_name}")
         end
 
+        def restart_log_service
+          shell_out!("#{new_resource.sv_bin} restart #{service_dir_name}/log")
+        end
+
         def reload_service
           shell_out!("#{new_resource.sv_bin} force-reload #{service_dir_name}")
+        end
+
+        def reload_log_service
+          shell_out!("#{new_resource.sv_bin} force-reload #{service_dir_name}/log")
         end
 
         #
@@ -225,8 +241,17 @@ class Chef
           (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
         end
 
+        def log_running?
+          cmd = shell_out("#{new_resource.sv_bin} status #{new_resource.service_name}/log")
+          (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
+        end
+
         def enabled?
           ::File.exists?(::File.join(service_dir_name, "run"))
+        end
+
+        def log_service_name
+          ::File.join(new_resource.service_name, "log")
         end
 
         def sv_dir_name
@@ -235,6 +260,10 @@ class Chef
 
         def service_dir_name
           ::File.join(new_resource.service_dir, new_resource.service_name)
+        end
+
+        def log_dir_name
+          ::File.join(new_resource.service_dir, new_resource.service_name, log)
         end
 
         def template_cookbook
