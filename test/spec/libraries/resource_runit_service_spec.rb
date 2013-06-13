@@ -228,4 +228,44 @@ describe Chef::Resource::RunitService do
     resource.sv_templates(false)
     resource.sv_templates.should be_false
   end
+
+  it "has a log_size parameter to control the maximum log size" do
+    resource.log_size(1000000)
+    resource.log_size.should eq(1000000)
+  end
+
+  it "has a log_num parameter to control the maximum number of logs" do
+    resource.log_num(10)
+    resource.log_num.should eq(10)
+  end
+
+  it "has a log_min parameter to control the minimum number of logs" do
+    resource.log_min(5)
+    resource.log_min.should eq(5)
+  end
+
+  it "has a log_timeout parameter to control the maximum age of a log file" do
+    resource.log_timeout(60 * 60)
+    resource.log_timeout.should eq(60 * 60)
+  end
+
+  it "has a log_processor parameter to allow logs to be fed through it after rotation" do
+    resource.log_processor("/usr/local/bin/process")
+    resource.log_processor.should eq("/usr/local/bin/process")
+  end
+
+  it "has a log_socket parameter to allow log lines to be sent to a UDP socket" do
+    resource.log_socket("127.0.0.1:1514")
+    resource.log_socket.should eq("127.0.0.1:1514")
+  end
+
+  it "has a log_prefix parameter to allow log lines to be prefixed with a fixed string" do
+    resource.log_prefix("myservice:")
+    resource.log_prefix.should eq("myservice:")
+  end
+
+  it "has a log_config_append parameter to allow arbitrary configuration entries to be added to the configuration" do
+    resource.log_config_append("-bogus")
+    resource.log_config_append.should eq("-bogus")
+  end
 end
