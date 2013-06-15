@@ -1,3 +1,12 @@
+## v1.1.6:
+
+### Bug
+
+- [COOK-2353]: Runit does not update run template if the service is
+  already enabled
+- [COOK-3013]: Runit install fails on rhel if converge is only
+  partially successful
+
 ## v1.1.4:
 
 ### Bug
