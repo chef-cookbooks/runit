@@ -75,7 +75,7 @@ when "rhel"
   end
 
   rpm_package "runit-211" do
-    source "/root/rpmbuild/RPMS/runit-2.1.1.rpm"
+    source "#{Dir.home}/rpmbuild/RPMS/runit-2.1.1.rpm"
     action :nothing
   end
 
