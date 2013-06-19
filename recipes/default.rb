@@ -74,8 +74,9 @@ when "rhel"
     not_if rpm_installed
   end
 
+  rpm_root_dir = `rpm --eval "%{_rpmdir}"`
   rpm_package "runit-211" do
-    source "/root/rpmbuild/RPMS/runit-2.1.1.rpm"
+    source rpm_root_dir.strip + "/runit-2.1.1.rpm"
     action :nothing
   end
 
