@@ -54,8 +54,3 @@ suites:
   - recipe[runit_test::service]
   - recipe[runit-other_test]
   attributes: {}
-- name: runit-service
-  run_list:
-  - recipe[runit]
-  - recipe[runit_test::test_runit_service]
-  attributes: {}
