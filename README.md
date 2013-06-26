@@ -49,6 +49,8 @@ See `attributes/default.rb` for defaults generated per platform.
   directory where enabled services are linked.
 * `node['runit']['sv_dir']` - Full path to the directory where
   service lives, which gets linked to `service_dir`.
+* `node['runit']['lsb_init_dir']` - Full path to the directory where
+  the LSB-compliant init script interface will be created.
 * `node['runit']['start']` - Command to start the runsvdir service
 * `node['runit']['stop]` - Command to stop the runsvdir service
 * `node['runit']['reload']` - Command to reload the runsvdir service
@@ -122,6 +124,10 @@ Many of these parameters are only used in the `:enable` action.
    supervised by `runsvdir`. By default, this will attempt to use the
    `node['runit']['service_dir']` attribute, and falls back to
    `/etc/service`.
+- **lsb_init_dir** - The directory where an LSB-compliant init script
+   interface will be created. By default, this will attempt to use the
+   `node['runit']['lsb_init_dir']` attribute, and falls back to
+   `/etc/init.d`.
 - **sv_bin** - The path to the `sv` program binary. This will attempt
     to use the `node['runit']['sv_bin']` attribute, and falls back to
     `/usr/bin/sv`.
