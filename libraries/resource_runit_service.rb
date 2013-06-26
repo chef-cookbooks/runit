@@ -34,10 +34,12 @@ class Chef
         @action = :enable
         @allowed_actions = [:nothing, :start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2]
 
-        # sv_bin, sv_dir and service_dir may have been set in the node attributes
+        # sv_bin, sv_dir, service_dir and lsb_init_dir may have been set in the
+        # node attributes
         @sv_bin = runit_node[:sv_bin] || '/usr/bin/sv'
         @sv_dir = runit_node[:sv_dir] || '/etc/sv'
         @service_dir = runit_node[:service_dir] || '/etc/service'
+        @lsb_init_dir = runit_node[:lsb_init_dir] || '/etc/init.d'
 
         @control = []
         @options = {}
@@ -89,6 +91,10 @@ class Chef
 
       def service_dir(arg=nil)
         set_or_return(:service_dir, arg, :kind_of => [String])
+      end
+
+      def lsb_init_dir(arg=nil)
+        set_or_return(:lsb_init_dir, arg, :kind_of => [String])
       end
 
       def control(arg=nil)
