@@ -35,22 +35,26 @@ describe Chef::Resource::RunitService do
   its(:service_name) { should eq('getty.service') }
   its(:sv_dir) { should eq('/etc/sv') }
   its(:sv_bin) { should eq("/usr/bin/sv") }
+  its(:lsb_init_dir) { should eq("/etc/init.d") }
 
   describe "setting supported default values from node attributes" do
     let(:sv_bin) { "/fake/bin/sv_bin" }
     let(:sv_dir) { "/fake/sv_dir/path" }
     let(:service_dir) { "/fake/service_dir" }
+    let(:lsb_init_dir) { "/fake/lsb_init_dir" }
     let(:node) do
       node = Chef::Node.new
       node.set['runit']['sv_bin'] = sv_bin
       node.set['runit']['sv_dir'] = sv_dir
       node.set['runit']['service_dir'] = service_dir
+      node.set['runit']['lsb_init_dir'] = lsb_init_dir
       node
     end
 
     its(:sv_bin) { should eq sv_bin }
     its(:sv_dir) { should eq sv_dir }
     its(:service_dir) { should eq service_dir }
+    its(:lsb_init_dir) { should eq lsb_init_dir }
   end
 
   describe "backward compatiblility hack" do
@@ -84,6 +88,15 @@ describe Chef::Resource::RunitService do
   it 'has a service_dir parameter that can be set' do
     resource.service_dir('/var/service')
     resource.service_dir.should eq('/var/service')
+  end
+
+  it 'has a lsb_init_dir parameter set to /etc/init.d by default' do
+    resource.lsb_init_dir.should eq('/etc/init.d')
+  end
+
+  it 'has a lsb_init_dir parameter that can be set' do
+    resource.lsb_init_dir('/other/lsb_init_dir')
+    resource.lsb_init_dir.should eq('/other/lsb_init_dir')
   end
 
   it 'has a control parameter that can be set as an array of service control characters' do

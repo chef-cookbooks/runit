@@ -428,7 +428,7 @@ EOF
 
         def lsb_init
           return @lsb_init unless @lsb_init.nil?
-          initfile = ::File.join( '/etc', 'init.d', new_resource.service_name)
+          initfile = ::File.join(new_resource.lsb_init_dir, new_resource.service_name)
           if node['platform'] == 'debian'
             ::File.unlink(initfile) if ::File.symlink?(initfile)
             @lsb_init = Chef::Resource::Template.new(initfile, run_context)

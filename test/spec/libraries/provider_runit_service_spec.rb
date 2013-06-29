@@ -457,12 +457,6 @@ describe Chef::Provider::Service::Runit do
           provider.send(:control_signal_files).should_receive(:each).once
           provider.run_action(:enable)
         end
-
-        it 'does not create the service_link on gentoo' do
-          node.automatic['platform'] = 'gentoo'
-          provider.should_not_receive(:service_link)
-          provider.run_action(:enable)
-        end
       end
     end
   end
