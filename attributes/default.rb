@@ -49,6 +49,7 @@ when "rhel"
   default["runit"]["sv_dir"] = "/etc/sv"
   default["runit"]["lsb_init_dir"] = "/etc/init.d"
   default["runit"]["executable"] = "/sbin/runit"
+  default["runit"]["use_package_from_yum"] = false
 
   if node["platform_version"].to_i < 6
 
