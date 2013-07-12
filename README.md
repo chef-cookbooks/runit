@@ -57,7 +57,7 @@ See `attributes/default.rb` for defaults generated per platform.
 
 ### Optional Attributes for RHEL systems
 
-* `node['runit']['use_package_from_yum']` - If `true`, attemps to install
+* `node['runit']['use_package_from_yum']` - If `true`, attempts to install
   runit without building an RPM first. This is for users who already have 
   the package in their own Yum repository.
 
