@@ -149,6 +149,25 @@ Many of these parameters are only used in the `:enable` action.
 - **default_logger** - Whether a default `log/run` script should be set
    up. If true, the default content of the run script will use
    `svlogd` to write logs to `/var/log/service_name`. Default is false.
+- **log_size** - The maximum size a log file can grow to before it is
+  automatically rotated.  See svlogd(8) for the default value.
+- **log_num** - The maximum number of log files that will be retained
+  after rotation.  See svlogd(8) for the default value.
+- **log_min** - The minimum number of log files that will be retained
+  after rotation (if svlogd cannot create a new file and the minimum
+  has not been reached, it will block).  Default is no minimum.
+- **log_timeout** - The maximum age a log file can get to before it is
+  automatically rotated, whether it has reached `log_size` or not.
+  Default is no timeout.
+- **log_processor** - A string containing a path to a program that
+  rotated log files will be fed through.  See the **PROCESSOR** section
+  of svlogd(8) for details.  Default is no processor.
+- **log_socket** - An string containing an IP:port pair identifying a UDP
+   socket that log lines will be copied to.  Default is none.
+- **log_prefix** - A string that will be prepended to each line as it
+  is logged.  Default is no prefix.
+- **log_config_append** - A string containing optional additional lines to add
+  to the log service configuration.  See svlogd(8) for more details.
 - **cookbook** - A cookbook where templates are located instead of
    where the resource is used. Applies for all the templates in the
    `enable` action.

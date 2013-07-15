@@ -59,6 +59,14 @@ class Chef
         @control_template_names = {}
         @status_command = "#{@sv_bin} status #{@service_dir}"
         @sv_templates = true
+        @log_size = nil
+        @log_num = nil
+        @log_min = nil
+        @log_timeout = nil
+        @log_processor = nil
+        @log_socket = nil
+        @log_prefix = nil
+        @log_config_append = nil
 
         #
         # Backward Compat Hack
@@ -178,6 +186,38 @@ class Chef
 
       def sv_templates(arg=nil)
         set_or_return(:sv_templates, arg, :kind_of => [TrueClass, FalseClass])
+      end
+
+      def log_size(arg=nil)
+        set_or_return(:log_size, arg, :kind_of => [Integer])
+      end
+
+      def log_num(arg=nil)
+        set_or_return(:log_num, arg, :kind_of => [Integer])
+      end
+
+      def log_min(arg=nil)
+        set_or_return(:log_min, arg, :kind_of => [Integer])
+      end
+
+      def log_timeout(arg=nil)
+        set_or_return(:log_timeout, arg, :kind_of => [Integer])
+      end
+
+      def log_processor(arg=nil)
+        set_or_return(:log_processor, arg, :kind_of => [String])
+      end
+
+      def log_socket(arg=nil)
+        set_or_return(:log_socket, arg, :kind_of => [String, Hash])
+      end
+
+      def log_prefix(arg=nil)
+        set_or_return(:log_prefix, arg, :kind_of => [String])
+      end
+
+      def log_config_append(arg=nil)
+        set_or_return(:log_config_append, arg, :kind_of => [String])
       end
 
       def runit_attributes_from_node(run_context)
