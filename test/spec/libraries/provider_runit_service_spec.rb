@@ -31,6 +31,7 @@ describe Chef::Provider::Service::Runit do
   let(:service_status_command) { "#{sv_bin} status #{service_name}" }
   let(:run_script) { File.join(service_dir, service_name, "run") }
   let(:log_run_script) { File.join(service_dir, service_name, "log", "run") }
+  let(:log_config_file) { File.join(service_dir, service_name, "log", "config") }
   let(:node) do
     node = Chef::Node.new
     node.automatic['platform'] = 'ubuntu'
@@ -224,6 +225,12 @@ describe Chef::Provider::Service::Runit do
         provider.send(:log_run_script).mode.should eq(00755)
         provider.send(:log_run_script).source.should eq("sv-#{new_resource.log_template_name}-log-run.erb")
         provider.send(:log_run_script).cookbook.should be_empty
+        provider.send(:log_config_file).path.should eq(::File.join(sv_dir_name, 'log', 'config'))
+        provider.send(:log_config_file).owner.should eq(new_resource.owner)
+        provider.send(:log_config_file).group.should eq(new_resource.group)
+        provider.send(:log_config_file).mode.should eq(00644)
+        provider.send(:log_config_file).source.should eq('log-config.erb')
+        provider.send(:log_config_file).cookbook.should eq('runit')
       end
 
       it 'creates log/run with default content if default_logger parameter is true' do
@@ -319,6 +326,7 @@ describe Chef::Provider::Service::Runit do
         provider.send(:log_dir).should_receive(:run_action).with(:create)
         provider.send(:log_main_dir).should_receive(:run_action).with(:create)
         provider.send(:log_run_script).should_receive(:run_action).with(:create)
+        provider.send(:log_config_file).should_receive(:run_action).with(:create)
         provider.send(:lsb_init).should_receive(:run_action).with(:create)
         provider.send(:service_link).should_receive(:run_action).with(:create)
         provider.run_action(:enable)
@@ -426,6 +434,57 @@ describe Chef::Provider::Service::Runit do
         end
       end
 
+      describe "log_config_file template changes" do
+        before do
+          provider.stub(:configure_service)
+          provider.stub(:enable_service)
+        end
+
+        context "log_config_file is updated" do
+          before { provider.send(:log_config_file).stub(:updated_by_last_action?).and_return(true) }
+
+          context "restart_on_update attribute is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "restarts the service" do
+              provider.should_receive(:restart_log_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_log_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+
+        context "log_config_file is unchanged" do
+          before { provider.send(:log_config_file).stub(:updated_by_last_action?).and_return(false) }
+
+          context "restart_on_update attribute is true" do
+            before { new_resource.restart_on_update(true) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_log_service)
+              provider.run_action(:enable)
+            end
+          end
+
+          context "restart_on_update attribute is false" do
+            before { new_resource.restart_on_update(false) }
+
+            it "does not restart the service" do
+              provider.should_not_receive(:restart_log_service)
+              provider.run_action(:enable)
+            end
+          end
+        end
+      end
+
       context 'new resource conditionals' do
         before(:each) do
           current_resource.stub(:enabled).and_return(false)
@@ -436,6 +495,7 @@ describe Chef::Provider::Service::Runit do
           provider.send(:log_dir).stub(:run_action).with(:create)
           provider.send(:log_main_dir).stub(:run_action).with(:create)
           provider.send(:log_run_script).stub(:run_action).with(:create)
+          provider.send(:log_config_file).stub(:run_action).with(:create)
         end
 
         it 'doesnt create the log dir or run script if log is false' do
