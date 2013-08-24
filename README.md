@@ -55,6 +55,12 @@ See `attributes/default.rb` for defaults generated per platform.
 * `node['runit']['stop]` - Command to stop the runsvdir service
 * `node['runit']['reload']` - Command to reload the runsvdir service
 
+### Optional Attributes for RHEL systems
+
+* `node['runit']['use_package_from_yum']` - If `true`, attempts to install
+  runit without building an RPM first. This is for users who already have
+  the package in their own Yum repository.
+
 Recipes
 =======
 
@@ -65,7 +71,10 @@ The default recipe installs runit and starts `runsvdir` to supervise
 the services in runit's service directory (e.g., `/etc/service`).
 
 On RHEL family systems, it will build the runit RPM using [Ian Meyer's
-runit RPM SPEC](https://github.com/imeyer/runit-rpm).
+runit RPM SPEC](https://github.com/imeyer/runit-rpm) unless the
+attribute `node['runit']['use_package_from_yum']` is set to `true`. In
+which case it will try and install runit through the normal package
+installation mechanism.
 
 On Debian family systems, the runit packages are maintained by the
 runit author, Gerrit Pape, and the recipe will use that for
