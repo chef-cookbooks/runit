@@ -3,6 +3,18 @@ runit Cookbook CHANGELOG
 This file is used to list changes made in each version of the runit cookbook.
 
 
+v1.2.0
+------
+### New Feature
+- **[COOK-3243](https://tickets.opscode.com/browse/COOK-3243)** - Expose LSB init directory as a configurable
+
+### Bug
+- **[COOK-3182](https://tickets.opscode.com/browse/COOK-3182)** - Do not hardcode rpmbuild location
+
+### Improvement
+- **[COOK-3175](https://tickets.opscode.com/browse/COOK-3175)** - Add svlogd config file support
+- **[COOK-3115](https://tickets.opscode.com/browse/COOK-3115)** - Add ability to install 'runit' package from Yum
+
 v1.1.6
 ------
 ### Bug
