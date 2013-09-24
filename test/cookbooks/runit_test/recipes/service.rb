@@ -58,6 +58,11 @@ runit_service "default-svlog" do
   default_logger true
 end
 
+# Create a service that has a check script
+runit_service "checker" do
+  check true
+end
+
 # Create a service that has a finish script
 runit_service "finisher" do
   finish true
@@ -92,6 +97,7 @@ end
 # Create a service with differently named template files
 runit_service "yerba" do
   log_template_name "yerba-matte"
+  check_script_template_name "yerba-matte"
   finish_script_template_name "yerba-matte"
 end
 

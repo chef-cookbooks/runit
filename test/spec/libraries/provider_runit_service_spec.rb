@@ -260,6 +260,15 @@ describe Chef::Provider::Service::Runit do
         provider.send(:env_files)[0].content.should eq('$PATH:/usr/local/bin')
       end
 
+      it 'creates a check script as a template if check_script parameter is true' do
+        provider.send(:check_script).path.should eq(::File.join(sv_dir_name, 'check'))
+        provider.send(:check_script).owner.should eq(new_resource.owner)
+        provider.send(:check_script).group.should eq(new_resource.group)
+        provider.send(:check_script).mode.should eq(00755)
+        provider.send(:check_script).source.should eq("sv-#{new_resource.check_script_template_name}-check.erb")
+        provider.send(:check_script).cookbook.should be_empty
+      end
+
       it 'creates a finish script as a template if finish_script parameter is true' do
         provider.send(:finish_script).path.should eq(::File.join(sv_dir_name, 'finish'))
         provider.send(:finish_script).owner.should eq(new_resource.owner)
