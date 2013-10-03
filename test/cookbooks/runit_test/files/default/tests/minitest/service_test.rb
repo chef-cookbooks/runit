@@ -44,6 +44,11 @@ describe "runit_test::service" do
     file('/etc/service/default-svlog/log/run').must_match(regexp)
   end
 
+  it 'creates a service that has a check script' do
+    service('checker').must_be_running
+    file('/etc/service/checker/check').must_exist
+  end
+
   it 'creates a service that has a finish script' do
     service('finisher').must_be_running
     file('/etc/service/finisher/finish').must_exist

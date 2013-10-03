@@ -141,6 +141,15 @@ describe Chef::Resource::RunitService do
     resource.cookbook.should eq('noodles')
   end
 
+  it 'has a check parameter that is false by default' do
+    resource.check.should be_false
+  end
+
+  it 'hash a check parameter that controls whether a check script is created' do
+    resource.check(true)
+    resource.check.should be_true
+  end
+
   it 'has a finish parameter that is false by default' do
     resource.finish.should be_false
   end
@@ -226,6 +235,15 @@ describe Chef::Resource::RunitService do
     resource.control_template_names.should have_key('u')
     resource.control_template_names['s'].should eq('banana_start')
     resource.control_template_names['u'].should eq('noodle_up')
+  end
+
+  it 'sets the check_script_template_name to the service_name by default' do
+    resource.check_script_template_name.should eq(resource.service_name)
+  end
+
+  it 'has a check_script_template_name parameter to allow a custom template name for the check script' do
+    resource.check_script_template_name('eat_bananas')
+    resource.check_script_template_name.should eq('eat_bananas')
   end
 
   it 'sets the finish_script_template_name to the service_name by default' do
