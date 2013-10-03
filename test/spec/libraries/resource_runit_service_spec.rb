@@ -36,6 +36,7 @@ describe Chef::Resource::RunitService do
   its(:sv_dir) { should eq('/etc/sv') }
   its(:sv_bin) { should eq("/usr/bin/sv") }
   its(:lsb_init_dir) { should eq("/etc/init.d") }
+  its(:sv_timeout) { should eq(nil) }
 
   describe "setting supported default values from node attributes" do
     let(:sv_bin) { "/fake/bin/sv_bin" }
@@ -258,6 +259,11 @@ describe Chef::Resource::RunitService do
   it 'has a sv_templates parameter to control whether the sv_dir templates are created' do
     resource.sv_templates(false)
     resource.sv_templates.should be_false
+  end
+
+  it 'has a sv_timeout parameter to control sv_bin timeout' do
+    resource.sv_timeout(30)
+    resource.sv_timeout.should eq(30)
   end
 
   it "has a log_size parameter to control the maximum log size" do
