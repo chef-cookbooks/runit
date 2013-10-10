@@ -166,6 +166,11 @@ Many of these parameters are only used in the `:enable` action.
 - **restart_on_update** - Whether the service should be restarted when
     the run script is updated. Defaults to `true`. Set to `false` if
     the service shouldn't be restarted when the run script is updated.
+- **sv_timeout** - Supplies a "-w" value to the sv command.  Set to any
+  number (string or integer if you want runit to wait longer for your 
+  service to stop/start.
+- **sv_verbse** - Supplies a "-v" value to the sv command.  Must be
+  true or false.
 
 Unlike previous versions of the cookbook using the `runit_service` definition, the `runit_service` resource can be notified. See __Usage__ examples below.
 

@@ -41,6 +41,9 @@ class Chef
         @service_dir = runit_node[:service_dir] || '/etc/service'
         @lsb_init_dir = runit_node[:lsb_init_dir] || '/etc/init.d'
 
+        # sv_opts needs to be filled in here, to use it in the backwards-compat service definition?  Hell, I don't know.
+        @sv_opts = sv_opts
+
         @control = []
         @options = {}
         @env = {}
@@ -82,9 +85,9 @@ class Chef
           @service_mirror = Chef::Resource::Service.new(name, run_context)
           @service_mirror.provider(Chef::Provider::Service::Simple)
           @service_mirror.supports(@supports)
-          @service_mirror.start_command("#{@sv_bin} start #{service_dir_name}")
-          @service_mirror.stop_command("#{@sv_bin} stop #{service_dir_name}")
-          @service_mirror.restart_command("#{@sv_bin} restart #{service_dir_name}")
+          @service_mirror.start_command("#{@sv_bin} #{@sv_opts} start #{service_dir_name}")
+          @service_mirror.stop_command("#{@sv_bin} #{@sv_opts} stop #{service_dir_name}")
+          @service_mirror.restart_command("#{@sv_bin} #{@sv_opts} restart #{service_dir_name}")
           @service_mirror.status_command("#{@sv_bin} status #{service_dir_name}")
           @service_mirror.action(:nothing)
           run_context.resource_collection.insert(@service_mirror)
@@ -109,6 +112,20 @@ class Chef
 
       def control(arg=nil)
         set_or_return(:control, arg, :kind_of => [Array])
+      end
+
+      def sv_timeout(arg=nil)
+        set_or_return(:sv_timeout, arg, :kind_of => [String, Integer])
+      end
+
+      def sv_verbose(arg=false)
+        set_or_return(:sv_verbose, arg, :kind_of => [TrueClass, FalseClass])
+      end
+
+      def sv_opts
+        @sv_opts = "#{@sv_opts} -w #{@sv_timeout}" unless @sv_timeout.nil?
+        @sv_opts = "#{@sv_opts} -v" if @sv_verbose
+        set_or_return(:sv_opts, @sv_opts, :kind_of => [String])
       end
 
       def options(arg=nil)

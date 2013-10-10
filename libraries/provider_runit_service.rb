@@ -179,15 +179,15 @@ class Chef
         end
 
         def start_service
-          shell_out!("#{new_resource.sv_bin} start #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} #{new_resource.sv_opts} start #{service_dir_name}")
         end
 
         def stop_service
-          shell_out!("#{new_resource.sv_bin} stop #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} #{new_resource.sv_opts} stop #{service_dir_name}")
         end
 
         def restart_service
-          shell_out!("#{new_resource.sv_bin} restart #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} #{new_resource.sv_opts} restart #{service_dir_name}")
         end
 
         def restart_log_service
@@ -195,7 +195,7 @@ class Chef
         end
 
         def reload_service
-          shell_out!("#{new_resource.sv_bin} force-reload #{service_dir_name}")
+          shell_out!("#{new_resource.sv_bin} #{new_resource.sv_opts} force-reload #{service_dir_name}")
         end
 
         def reload_log_service
@@ -241,7 +241,7 @@ class Chef
         def runit_send_signal(signal, friendly_name=nil)
           friendly_name ||= signal
           converge_by("send #{friendly_name} to #{new_resource}") do
-            shell_out!("#{new_resource.sv_bin} #{signal} #{service_dir_name}")
+            shell_out!("#{new_resource.sv_bin} #{new_resource.sv_opts} #{signal} #{service_dir_name}")
             Chef::Log.info("#{new_resource} sent #{friendly_name}")
             new_resource.updated_by_last_action(true)
           end
