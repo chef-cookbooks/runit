@@ -270,7 +270,10 @@ class Chef
         end
 
         def sv_args
-          new_resource.sv_timeout.nil? ? '' : "-w '#{new_resource.sv_timeout}' "
+          sv_args = ''
+          sv_args += "-w '#{new_resource.sv_timeout}' " unless new_resource.sv_timeout.nil?
+          sv_args += '-v ' if new_resource.sv_verbose
+          sv_args
         end
 
         def service_dir_name

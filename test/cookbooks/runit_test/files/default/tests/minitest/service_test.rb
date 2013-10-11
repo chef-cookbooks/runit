@@ -58,6 +58,10 @@ describe "runit_test::service" do
     service('timer').must_be_running
   end
 
+  it 'creates a service using sv_verbose' do
+    service('chatterbox').must_be_running
+  end
+
   it 'creates a service that uses env files' do
     regexp = %r{\$PATH:/opt/chef/embedded/bin}
     service('env-files').must_be_running

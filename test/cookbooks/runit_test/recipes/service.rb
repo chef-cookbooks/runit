@@ -92,6 +92,11 @@ runit_service "timer" do
   check true
 end
 
+# Create a service with verbose enabled
+runit_service "chatterbox" do
+  sv_verbose true
+end
+
 # # Create a service running by a normal user in its runsvdir
 runit_service "floyds-app" do
   sv_dir "/home/floyd/sv"

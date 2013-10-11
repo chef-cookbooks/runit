@@ -62,6 +62,7 @@ class Chef
         @status_command = "#{@sv_bin} status #{@service_dir}"
         @sv_templates = true
         @sv_timeout = nil
+        @sv_verbose = false
         @log_size = nil
         @log_num = nil
         @log_min = nil
@@ -102,6 +103,10 @@ class Chef
 
       def sv_timeout(arg=nil)
         set_or_return(:sv_timeout, arg, :kind_of => [Fixnum])
+      end
+
+      def sv_verbose(arg=nil)
+        set_or_return(:sv_verbose, arg, :kind_of => [TrueClass, FalseClass])
       end
 
       def service_dir(arg=nil)
