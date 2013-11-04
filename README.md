@@ -60,6 +60,7 @@ This cookbook has a resource, `runit_service`, for managing services under runit
 - **start** - starts the service with `sv start`
 - **stop** - stops the service with `sv stop`
 - **disable** - stops the service with `sv down` and removes the service symlink
+- **create** - create the service directory, but don't enable the service with symlink
 - **restart** - restarts the service with `sv restart`
 - **reload** - reloads the service with `sv force-reload`
 - **once** - starts the service with `sv once`.
