@@ -323,6 +323,112 @@ describe Chef::Provider::Service::Runit do
         provider.run_action(:enable)
       end
 
+      describe 'when sv_timeout is set' do
+        before do
+          new_resource.sv_timeout(60)
+        end
+
+        %w{start up once cont}.each do |action|
+          it "pass a timeout argument on #{action} action to the sv binary" do
+            provider.current_resource.running(false)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -w '60' #{action} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+        {
+          :usr1 => 1,
+          :usr2 => 2,
+          :reload => 'force-reload',
+        }.each do |action, arg|
+          it "pass a timeout argument on #{action} action to the sv binary" do
+            provider.current_resource.running(true)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -w '60' #{arg} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+        %w{stop down restart hup int term kill quit}.each do |action|
+          it "pass a timeout argument on #{action} action to the sv binary" do
+            provider.current_resource.running(true)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -w '60' #{action} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+      end
+
+      describe 'when sv_verbose is true' do
+        before do
+          new_resource.sv_verbose(true)
+        end
+
+            %w{start up once cont}.each do |action|
+          it "pass a verbose argument on #{action} action to the sv binary" do
+            provider.current_resource.running(false)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -v #{action} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+        {
+          :usr1 => 1,
+          :usr2 => 2,
+          :reload => 'force-reload',
+        }.each do |action, arg|
+          it "pass a verbose argument on #{action} action to the sv binary" do
+            provider.current_resource.running(true)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -v #{arg} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+        %w{stop down restart hup int term kill quit}.each do |action|
+          it "pass a verbose argument on #{action} action to the sv binary" do
+            provider.current_resource.running(true)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -v #{action} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+      end
+
+      describe 'when both sv_timeout and sv_verbose are set' do
+        before do
+          new_resource.sv_timeout(60)
+          new_resource.sv_verbose(true)
+        end
+
+            %w{start up once cont}.each do |action|
+          it "pass both timeout and verbose arguments on #{action} action to the sv binary" do
+            provider.current_resource.running(false)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -w '60' -v #{action} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+        {
+          :usr1 => 1,
+          :usr2 => 2,
+          :reload => 'force-reload',
+        }.each do |action, arg|
+          it "pass both timeout and verbose arguments on #{action} action to the sv binary" do
+            provider.current_resource.running(true)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -w '60' -v #{arg} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+        %w{stop down restart hup int term kill quit}.each do |action|
+          it "pass both timeout and verbose arguments argument on #{action} action to the sv binary" do
+            provider.current_resource.running(true)
+            provider.should_receive(:shell_out!).with("#{sv_bin} -w '60' -v #{action} #{service_dir_name}")
+            provider.run_action(action.to_sym)
+          end
+        end
+
+      end
+
       it 'creates a symlink from the sv dir to the service' do
         provider.send(:service_link).path.should eq(service_dir_name)
         provider.send(:service_link).to.should eq(sv_dir_name)

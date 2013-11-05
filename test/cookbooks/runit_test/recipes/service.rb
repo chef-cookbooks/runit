@@ -86,6 +86,17 @@ end
 # Create a runsvdir service for a normal user
 runit_service "runsvdir-floyd"
 
+# Create a service with different timeout
+runit_service "timer" do
+  sv_timeout 4
+  check true
+end
+
+# Create a service with verbose enabled
+runit_service "chatterbox" do
+  sv_verbose true
+end
+
 # # Create a service running by a normal user in its runsvdir
 runit_service "floyds-app" do
   sv_dir "/home/floyd/sv"
