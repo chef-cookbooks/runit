@@ -28,7 +28,7 @@ describe Chef::Provider::Service::Runit do
   let(:service_name) { "getty.service" }
   let(:service_dir) { "/etc/service" }
   let(:service_dir_name) { "#{service_dir}/#{service_name}" }
-  let(:service_status_command) { "#{sv_bin} status #{service_name}" }
+  let(:service_status_command) { "#{sv_bin} status #{service_dir_name}" }
   let(:run_script) { File.join(service_dir, service_name, "run") }
   let(:log_run_script) { File.join(service_dir, service_name, "log", "run") }
   let(:log_config_file) { File.join(service_dir, service_name, "log", "config") }
