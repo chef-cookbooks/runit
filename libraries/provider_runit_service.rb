@@ -248,12 +248,12 @@ class Chef
         end
 
         def running?
-          cmd = shell_out("#{new_resource.sv_bin} #{sv_args}status #{new_resource.service_name}")
+          cmd = shell_out("#{new_resource.sv_bin} #{sv_args}status #{service_dir_name}")
           (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
         end
 
         def log_running?
-          cmd = shell_out("#{new_resource.sv_bin} #{sv_args}status #{new_resource.service_name}/log")
+          cmd = shell_out("#{new_resource.sv_bin} #{sv_args}status #{service_dir_name}/log")
           (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
         end
 
