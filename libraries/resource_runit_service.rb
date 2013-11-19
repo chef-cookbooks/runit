@@ -39,8 +39,8 @@ class Chef
         @sv_bin = runit_node[:sv_bin] || '/usr/bin/sv'
         @sv_dir = runit_node[:sv_dir] || '/etc/sv'
         @service_dir = runit_node[:service_dir] || '/etc/service'
+        @lsb_init_dir = runit_node[:lsb_init_dir] || '/etc/init.d'
         @syslog_dir = runit_node[:syslog_dir]  || "" #|| "#{@sv_dir}/#{@name}"
-	@lsb_init_dir = runit_node[:lsb_init_dir] || '/etc/init.d'
 
         @control = []
         @options = {}
