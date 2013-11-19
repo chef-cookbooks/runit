@@ -281,8 +281,13 @@ class Chef
         end
 
         def log_dir_name
-          ::File.join(new_resource.service_dir, new_resource.service_name, log)
-        end
+		if new_resource.syslog_dir.empty?
+		  ::File.join(new_resource.sv_dir, new_resource.service_name, "log/main")
+		
+		else
+		  ::File.join(new_resource.syslog_dir, new_resource.service_name)
+		end
+	end
 
         def template_cookbook
           new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
@@ -291,7 +296,7 @@ class Chef
         def default_logger_content
           return <<-EOF
 #!/bin/sh
-exec svlogd -tt /var/log/#{new_resource.service_name}
+exec svlogd -tt #{log_dir_name}
 EOF
         end
 
@@ -344,7 +349,7 @@ EOF
 
         def default_log_dir
           return @default_log_dir unless @default_log_dir.nil?
-          @default_log_dir = Chef::Resource::Directory.new(::File.join("/var/log/#{new_resource.service_name}"), run_context)
+          @default_log_dir = Chef::Resource::Directory.new(::File.join("#{new_resource.syslog_dir}/#{new_resource.service_name}"), run_context)
           @default_log_dir.recursive(true)
           @default_log_dir.owner(new_resource.owner)
           @default_log_dir.group(new_resource.group)
@@ -382,7 +387,7 @@ EOF
 
         def log_config_file
           return @log_config_file unless @log_config_file.nil?
-          @log_config_file = Chef::Resource::Template.new(::File.join(sv_dir_name, 'log', 'config'), run_context)
+          @log_config_file = Chef::Resource::Template.new(::File.join(log_dir_name,'config'), run_context)
           @log_config_file.owner(new_resource.owner)
           @log_config_file.group(new_resource.group)
           @log_config_file.mode(00644)

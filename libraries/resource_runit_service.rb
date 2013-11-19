@@ -39,7 +39,8 @@ class Chef
         @sv_bin = runit_node[:sv_bin] || '/usr/bin/sv'
         @sv_dir = runit_node[:sv_dir] || '/etc/sv'
         @service_dir = runit_node[:service_dir] || '/etc/service'
-        @lsb_init_dir = runit_node[:lsb_init_dir] || '/etc/init.d'
+        @syslog_dir = runit_node[:syslog_dir]  || "" #|| "#{@sv_dir}/#{@name}"
+	@lsb_init_dir = runit_node[:lsb_init_dir] || '/etc/init.d'
 
         @control = []
         @options = {}
@@ -111,6 +112,10 @@ class Chef
 
       def service_dir(arg=nil)
         set_or_return(:service_dir, arg, :kind_of => [String])
+      end
+
+      def syslog_dir(arg=nil)
+        set_or_return(:syslog_dir, arg, :kind_of => [String])
       end
 
       def lsb_init_dir(arg=nil)
