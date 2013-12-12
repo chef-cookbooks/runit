@@ -8,6 +8,11 @@ v1.4.2
 Locking yum dependency to '< 3'
 
 
+v1.4.2
+------
+Locking yum dependency to '< 3'
+
+
 v1.4.0
 ------
 [COOK-3560] Allow the user to configure runit's timeout (-w) and verbose (-v) settings
