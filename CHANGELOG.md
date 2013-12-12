@@ -2,6 +2,11 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.4.4
+------
+fixing metadata version error. locking to < 3.0
+
+
 v1.4.2
 ------
 Locking yum dependency to '< 3'
