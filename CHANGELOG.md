@@ -2,16 +2,9 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
-
 v1.4.2
 ------
 Locking yum dependency to '< 3'
-
-
-v1.4.2
-------
-Locking yum dependency to '< 3'
-
 
 v1.4.0
 ------
@@ -25,7 +18,6 @@ v1.3.0
 
 ### Bug
 - **[COOK-3271](https://tickets.opscode.com/browse/COOK-3271)** - Fix an issue where runit fails to install rpm package on rehl systems
-
 
 v1.2.0
 ------
