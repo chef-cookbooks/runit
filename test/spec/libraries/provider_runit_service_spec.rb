@@ -32,6 +32,7 @@ describe Chef::Provider::Service::Runit do
   let(:run_script) { File.join(service_dir, service_name, 'run') }
   let(:log_run_script) { File.join(service_dir, service_name, 'log', 'run') }
   let(:log_config_file) { File.join(service_dir, service_name, 'log', 'config') }
+
   let(:node) do
     node = Chef::Node.new
     node.automatic['platform'] = 'ubuntu'
