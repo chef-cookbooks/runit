@@ -2,6 +2,14 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.5.0
+------
+### Improvement
+- **[COOK-3267] - Improve testing suite in runit cookbook
+- Updating test-kitchen harness
+- Cleaning up style for rubocop
+
+
 v1.4.4
 ------
 fixing metadata version error. locking to < 3.0
