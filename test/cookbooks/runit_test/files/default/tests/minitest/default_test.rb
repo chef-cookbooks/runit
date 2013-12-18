@@ -27,4 +27,22 @@ describe "runit_test::default" do
       package("runit").must_be_installed
     end
   end
+  it "The service runitsvdir should be running" do
+    if node['platform_family'] == "ubuntu" 
+      service("runsvdir").must_be_running
+    end
+  end 
+  it "The directory /etc/service should exist" do
+    directory("/etc/service").must_exist
+  end
+  it "It should have a file called runsvdir in /etc/event.d" do
+    if node['platform'] == "ubuntu" 
+      file("/etc/event.d/runsvdir").must_exist
+    end
+  end
+  it "It should have a file called run in /etc/sv/getty-5" do
+    if node['platform_family'] == "debian" 
+      file("/etc/sv/getty-5/run").must_exist
+    end
+  end
 end
