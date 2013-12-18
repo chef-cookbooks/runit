@@ -4,14 +4,14 @@
 #
 # Copyright 2012, Opscode, Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
@@ -19,7 +19,7 @@
 
 require File.expand_path('../support/helpers', __FILE__)
 
-describe "runit_test::service" do
+describe 'runit_test::service' do
   include Helpers::RunitTest
 
   it 'creates a service with the defaults' do
@@ -70,7 +70,7 @@ describe "runit_test::service" do
 
   it 'creates a service that sets options for the templates' do
     service('template-options').must_be_running
-    file('/etc/service/template-options/run').must_match("# Options are delicious")
+    file('/etc/service/template-options/run').must_match('# Options are delicious')
   end
 
   it 'creates a service that uses control signal files' do
@@ -87,8 +87,8 @@ describe "runit_test::service" do
   it 'creates a service running by a normal user in its runsvdir' do
     floyds_app = shell_out(
       "#{node['runit']['sv_bin']} status /home/floyd/service/floyds-app",
-      :user => "floyd",
-      :cwd => "/home/floyd"
+      :user => 'floyd',
+      :cwd => '/home/floyd'
     )
     assert floyds_app.stdout.include?('run:')
     file('/home/floyd/service/floyds-app/run').must_exist.with(:owner, 'floyd')
@@ -110,9 +110,7 @@ describe "runit_test::service" do
 
   it 'creates a service that should exist but be disabled' do
     file('/etc/sv/exist-disabled/run').must_exist
-    unless node['platform'] == 'gentoo'
-      link('/etc/service/exist-disabled').wont_exist
-    end
+    link('/etc/service/exist-disabled').wont_exist unless node['platform'] == 'gentoo'
   end
 
   it 'can use templates from another cookbook' do
@@ -120,9 +118,8 @@ describe "runit_test::service" do
   end
 
   it 'creates a service that has its own run scripts' do
-    if node['platform_family'] == 'rhel'
-      skip "RHEL platforms don't have a generally available package w/ runit scripts"
-    end
+    skip 'RHEL platforms dont ship runit scripts' if node['platform_family'] == 'rhel'
+
     git_daemon = shell_out("#{node['runit']['sv_bin']} status /etc/service/git-daemon")
     assert git_daemon.stdout.include?('run:')
     link('/etc/service/git-daemon').must_exist.with(

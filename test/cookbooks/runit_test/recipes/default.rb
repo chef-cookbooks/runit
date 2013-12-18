@@ -17,4 +17,4 @@
 # limitations under the License.
 #
 
-include_recipe "runit::default"
+include_recipe 'runit::default'

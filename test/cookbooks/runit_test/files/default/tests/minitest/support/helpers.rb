@@ -20,6 +20,7 @@
 require 'chef/mixin/shell_out'
 
 module Helpers
+  # Missing top-level module documentation comment.
   module RunitTest
     include MiniTest::Chef::Assertions
     include MiniTest::Chef::Context
