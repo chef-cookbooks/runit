@@ -2,6 +2,12 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.5.1
+------
+### Bug
+- **[COOK-3950](https://tickets.opscode.com/browse/COOK-3950)** - runit cookbook should use full service path when checking running status
+
+
 v1.5.0
 ------
 ### Improvement
