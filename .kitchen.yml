@@ -56,7 +56,7 @@ platforms:
 - name: ubuntu-1204
   driver_plugin: digitalocean
   driver_config:
-    image_id: 284203
+    image_id: 1505447
     flavor_id: 63
     region_id: 1
     ssh_key_ids: <%= ENV['DIGITAL_OCEAN_SSH_KEY_IDS'] %>

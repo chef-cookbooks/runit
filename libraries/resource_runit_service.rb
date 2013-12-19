@@ -240,7 +240,7 @@ class Chef
         if run_context && run_context.node
           runit_attr = run_context.node[:runit]
         else
-          runit_attr == {}
+          runit_attr = {}
         end
       end
     end
