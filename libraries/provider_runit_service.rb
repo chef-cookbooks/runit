@@ -290,8 +290,8 @@ class Chef
         end
 
         def default_logger_content
-          '#!/bin/sh
-exec svlogd -tt /var/log/#{new_resource.service_name}'
+          "#!/bin/sh
+exec svlogd -tt /var/log/#{new_resource.service_name}"
         end
 
         #
