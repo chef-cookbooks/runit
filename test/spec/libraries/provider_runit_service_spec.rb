@@ -28,7 +28,7 @@ describe Chef::Provider::Service::Runit do
   let(:service_name) { 'getty.service' }
   let(:service_dir) { '/etc/service' }
   let(:service_dir_name) { "#{service_dir}/#{service_name}" }
-  let(:service_status_command) { "#{sv_bin} status #{service_name}" }
+  let(:service_status_command) { "#{sv_bin} status #{service_dir}/#{service_name}" }
   let(:run_script) { File.join(service_dir, service_name, 'run') }
   let(:log_run_script) { File.join(service_dir, service_name, 'log', 'run') }
   let(:log_config_file) { File.join(service_dir, service_name, 'log', 'config') }
@@ -73,7 +73,7 @@ describe Chef::Provider::Service::Runit do
         File.stub(:executable?).with(sv_bin).and_return(true)
         provider.stub(:shell_out)
           .with(service_status_command)
-          .and_return(mock('ouput', :stdout => status_output, :exitstatus => 0))
+          .and_return(double('ouput', :stdout => status_output, :exitstatus => 0))
         provider.load_current_resource
       end
 

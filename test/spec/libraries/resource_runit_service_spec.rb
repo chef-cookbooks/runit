@@ -133,9 +133,9 @@ describe Chef::Resource::RunitService do
     resource.log.should be_false
   end
 
-  it 'raises an exception if the log parameter is set to nil' do
+  it 'should return default (true) if the log parameter is set to nil' do
     resource.log(nil)
-    resource.log.should raise_exception
+    resource.log.should be true
   end
 
   it 'has a cookbook parameter that can be set' do
