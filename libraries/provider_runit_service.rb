@@ -156,19 +156,22 @@ class Chef
         def enable_service
           Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
           service_link.run_action(:create)
-
-          Chef::Log.debug("waiting until named pipe #{service_dir_name}/supervise/ok exists.")
-          until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
-            sleep 1
-            Chef::Log.debug('.')
-          end
-
-          if new_resource.log
-            Chef::Log.debug("waiting until named pipe #{service_dir_name}/log/supervise/ok exists.")
-            until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
+          unless inside_container?
+            Chef::Log.debug("waiting until named pipe #{service_dir_name}/supervise/ok exists.")
+            until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
               sleep 1
               Chef::Log.debug('.')
             end
+
+            if new_resource.log
+              Chef::Log.debug("waiting until named pipe #{service_dir_name}/log/supervise/ok exists.")
+              until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
+                sleep 1
+                Chef::Log.debug('.')
+              end
+            end
+          else
+              Chef::Log.debug("skipping */supervise/ok check inside docker")
           end
         end
 
@@ -492,6 +495,20 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
           @service_link = Chef::Resource::Link.new(::File.join(service_dir_name), run_context)
           @service_link.to(sv_dir_name)
           @service_link
+        end
+
+        #
+        # Ohai currently doesn't support container detection (docker, lxc)
+        # If code is _not_ running inside container /proc/1/cgroup will lead to root ("/") hierarchy 
+        #
+        # see: https://tickets.opscode.com/browse/OHAI-551
+        # see: http://stackoverflow.com/a/20012536
+        #
+        def inside_container?
+          if @inside_container.nil?
+            @inside_container = `cat /proc/1/cgroup`.split("\n").map{|line| line.split(':').last}.find{|line| !line.eql?("/")}
+          end
+          @inside_container
         end
       end
     end
