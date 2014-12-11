@@ -15,3 +15,7 @@ bin/*
 .bundle/*
 .kitchen/
 .kitchen.local.yml
+
+## ignore ruby versioning?
+.ruby-version
+.ruby-gemset

@@ -135,7 +135,8 @@ class Chef
         set_or_return(:env, arg, :kind_of => [Hash])
       end
 
-      def log(arg = nil)
+      ## set log to current instance value if nothing is passed.
+      def log(arg = @log)
         set_or_return(:log, arg, :kind_of => [TrueClass, FalseClass])
       end
 
@@ -237,10 +238,10 @@ class Chef
       end
 
       def runit_attributes_from_node(run_context)
-        if run_context && run_context.node
-          runit_attr = run_context.node[:runit]
+        if run_context && run_context.node && run_context.node[:runit]
+          run_context.node[:runit]
         else
-          runit_attr = {}
+          {}
         end
       end
     end
