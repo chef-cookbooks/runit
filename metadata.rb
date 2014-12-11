@@ -13,6 +13,10 @@ recipe 'runit', 'Installs and configures runit'
 end
 
 depends 'build-essential'
+
+case node["platform_family"
+when "rhel"
 depends 'yum', '~> 3.0'
 depends 'yum-epel'
+end
 
