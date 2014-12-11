@@ -352,7 +352,7 @@ runit_service "memcached" do
     :memory => node[:memcached][:memory],
     :port => node[:memcached][:port],
     :user => node[:memcached][:user]}.merge(params)
-  )
+  })
 end
 ```
 
