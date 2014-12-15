@@ -23,6 +23,10 @@ package 'netcat' do
   package_name 'nc' if platform_family?('rhel', 'fedora')
 end
 
+package 'lsof' do
+  package_name 'lsof' if platform_family?('rhel', 'fedora')
+end
+
 # Create a normal user to run services later
 group 'floyd'
 
