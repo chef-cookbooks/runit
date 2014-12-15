@@ -6,9 +6,12 @@ gem 'foodcritic', '~> 3.0'
 gem 'rubocop'
 
 group :integration do
-  gem 'test-kitchen', '~> 1.0'
-  gem 'kitchen-vagrant', '~> 0.11'
-  gem 'kitchen-digitalocean'
-  gem 'kitchen-ec2'
+  gem 'test-kitchen'
+  gem 'kitchen-vagrant'
+  gem 'librarian-chef'
 end
 
+group :release do
+  gem 'emeril'
+  gem 'rake'
+end
