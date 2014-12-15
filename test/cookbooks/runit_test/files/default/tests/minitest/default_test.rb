@@ -36,10 +36,6 @@ describe 'runit_test::default' do
     directory('/etc/service').must_exist
   end
 
-  it 'It should have a file called runsvdir in /etc/event.d' do
-    file('/etc/event.d/runsvdir').must_exist if node['platform'] == 'ubuntu'
-  end
-
   it 'It should have a file called run in /etc/sv/getty-5' do
     file('/etc/sv/getty-5/run').must_exist if node['platform_family'] == 'debian'
   end
