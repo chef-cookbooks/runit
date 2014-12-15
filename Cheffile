@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+site 'https://supermarket.chef.io/api/v1'
+
+cookbook 'apt'
+cookbook 'yum'
+cookbook 'runit', path: '.'
+cookbook 'runit_test', path: './test/cookbooks/runit_test'
+cookbook 'runit-other_test', path: './test/cookbooks/runit-other_test'
+cookbook 'minitest-handler'
