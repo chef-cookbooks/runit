@@ -15,3 +15,9 @@ end
 FoodCritic::Rake::LintTask.new do |t|
   t.options = {:fail_tags => ['correctness']}
 end
+
+begin
+  require 'emeril/rake'
+rescue LoadError
+  puts ">>>>> Emerial gem not loaded, omitting taskes" unless ENV['CI']
+end
