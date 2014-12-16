@@ -2,6 +2,14 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.5.12 (2014-12-15)
+--------------------
+* prevent infinite loop inside docker container
+* runit service failing inside docker container
+* move to librarian-chef for kitchen dependency resolution
+* update tests
+* updates to chefspec matchers
+
 v1.5.10 (2014-03-07)
 --------------------
 PR #53- Fix runit RPM file location for Chef provisionless Centos 5.9 Box Image
