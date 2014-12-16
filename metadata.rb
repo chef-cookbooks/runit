@@ -17,4 +17,3 @@ end
 depends 'build-essential'
 depends 'yum', '~> 3.0'
 depends 'yum-epel'
-
