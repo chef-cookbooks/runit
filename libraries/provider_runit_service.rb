@@ -80,6 +80,13 @@ class Chef
         # Chef::Provider::Service overrides
         #
 
+        def action_create
+          converge_by("configure service without enabling #{@new_resource}") do
+            configure_service # Do this every run, even if service is already enabled and running
+            Chef::Log.info("#{@new_resource} configured")
+          end
+        end
+
         def action_enable
           converge_by("configure service #{@new_resource}") do
             configure_service # Do this every run, even if service is already enabled and running
