@@ -73,6 +73,7 @@ class Chef
 
           @current_resource.running(running?)
           @current_resource.enabled(enabled?)
+          @current_resource.env(get_current_env)
           @current_resource
         end
 
@@ -128,7 +129,9 @@ class Chef
             unless new_resource.env.empty?
               Chef::Log.debug("Setting up environment files for #{new_resource.service_name}")
               env_dir.run_action(:create)
-              env_files.each { |file| file.run_action(:create) }
+              env_files.each do |file| 
+                file.action.each { |action| file.run_action(action) }
+              end
             else
               Chef::Log.debug("Environment not specified for #{new_resource.service_name}, continuing")
             end
@@ -418,14 +421,33 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
 
         def env_files
           return @env_files unless @env_files.nil?
-          @env_files = new_resource.env.map do |var, value|
+          create_files = new_resource.env.map do |var, value|
             env_file = Chef::Resource::File.new(::File.join(sv_dir_name, 'env', var), run_context)
             env_file.owner(new_resource.owner)
             env_file.group(new_resource.group)
             env_file.content(value)
+            env_file.action(:create)
             env_file
           end
+          extra_env = @current_resource.env.reject { |k,_| new_resource.env.key?(k) }
+          delete_files = extra_env.map do |k,_|
+            env_file = Chef::Resource::File.new(::File.join(sv_dir_name, 'env', k), run_context)
+            env_file.action(:delete)
+            env_file
+          end
+          @env_files = create_files + delete_files
           @env_files
+        end
+
+        def get_current_env
+          env_dir = ::File.join(sv_dir_name, 'env')
+          return {} unless ::File.directory? env_dir
+          files = ::Dir.glob(::File.join(env_dir,'*'))
+          env = files.reduce({}) do |c,o|
+            contents = ::IO.read(o).rstrip
+            c.merge!(::File.basename(o) => contents)
+          end
+          env
         end
 
         def check_script
