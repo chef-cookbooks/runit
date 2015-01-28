@@ -134,6 +134,9 @@ describe Chef::Provider::Service::Runit do
           end
         end
         context 'no env dir' do
+          before do
+            ::File.stub(:directory?).with(sv_env_dir_name).and_return(false)
+          end
           it 'should set env to an empty hash' do
             provider.current_resource.env.should eq({})
           end
