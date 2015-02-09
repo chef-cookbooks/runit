@@ -384,7 +384,7 @@ exec svlogd -tt '#{new_resource.log_dir}'"
 
         def log_config_file
           return @log_config_file unless @log_config_file.nil?
-          @log_config_file = Chef::Resource::Template.new(::File.join(sv_dir_name, 'log', 'config'), run_context)
+          @log_config_file = Chef::Resource::Template.new(::File.join(new_resource.log_dir, 'config'), run_context)
           @log_config_file.owner(new_resource.owner)
           @log_config_file.group(new_resource.group)
           @log_config_file.mode(00644)
