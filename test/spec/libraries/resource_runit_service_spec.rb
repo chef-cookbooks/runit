@@ -272,6 +272,15 @@ describe Chef::Resource::RunitService do
     resource.sv_verbose.should eq(true)
   end
 
+  it 'has a log_dir parameter that defaults to "/var/log/service_name"' do
+    resource.log_dir.should eq(::File.join('/var/log', resource.service_name))
+  end
+
+  it 'has an log_dir parameter that can be set' do
+    resource.log_dir('/opt/noodles/log')
+    resource.log_dir.should eq('/opt/noodles/log')
+  end
+
   it 'has a log_size parameter to control the maximum log size' do
     resource.log_size(1_000_000)
     resource.log_size.should eq(1_000_000)

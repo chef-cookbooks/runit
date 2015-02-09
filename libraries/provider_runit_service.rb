@@ -298,7 +298,7 @@ class Chef
 
         def default_logger_content
           "#!/bin/sh
-exec svlogd -tt /var/log/#{new_resource.service_name}"
+exec svlogd -tt '#{new_resource.log_dir}'"
         end
 
         #
@@ -348,7 +348,7 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
 
         def default_log_dir
           return @default_log_dir unless @default_log_dir.nil?
-          @default_log_dir = Chef::Resource::Directory.new(::File.join("/var/log/#{new_resource.service_name}"), run_context)
+          @default_log_dir = Chef::Resource::Directory.new(new_resource.log_dir, run_context)
           @default_log_dir.recursive(true)
           @default_log_dir.owner(new_resource.owner)
           @default_log_dir.group(new_resource.group)
