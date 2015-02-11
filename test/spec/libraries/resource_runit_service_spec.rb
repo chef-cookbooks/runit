@@ -273,7 +273,7 @@ describe Chef::Resource::RunitService do
   end
 
   it 'has a log_dir parameter that defaults to "/var/log/service_name"' do
-    resource.log_dir.should eq(::File.join('/var/log', resource.service_name))
+    resource.log_dir.should eq('/var/log/getty.service')
   end
 
   it 'has an log_dir parameter that can be set' do

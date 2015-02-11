@@ -239,7 +239,7 @@ describe Chef::Provider::Service::Runit do
 
       it 'creates log/run with default content if default_logger parameter is true' do
         new_resource.log_dir('/opt/noodles/log')
-        script_content = "exec svlogd -tt #{new_resource.log_dir}"
+        script_content = "exec svlogd -tt '#{new_resource.log_dir}'"
         new_resource.default_logger(true)
         provider.send(:log_run_script).path.should eq(::File.join(sv_dir_name, 'log', 'run'))
         provider.send(:log_run_script).owner.should eq(new_resource.owner)
