@@ -2,6 +2,10 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.5.16 (2015-02-11)
+--------------------
+* Allow removal of env files(nhuff)
+
 v1.5.14 (2015-01-15)
 --------------------
 * Provide create action(clako)
