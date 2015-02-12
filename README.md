@@ -117,7 +117,9 @@ Many of these parameters are only used in the `:enable` action.
    script. Default is true.
 - **default_logger** - Whether a default `log/run` script should be set
    up. If true, the default content of the run script will use
-   `svlogd` to write logs to `/var/log/service_name`. Default is false.
+   `svlogd` to write logs to `log_dir`. Default is false.
+- **log_dir** - The directory where the `svlogd` log service will run.  Used to
+  create `svlogd`'s `config` file.  Default is `/var/log/service_name`.
 - **log_size** - The maximum size a log file can grow to before it is
   automatically rotated.  See svlogd(8) for the default value.
 - **log_num** - The maximum number of log files that will be retained

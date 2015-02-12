@@ -249,7 +249,10 @@ describe Chef::Provider::Service::Runit do
         provider.send(:log_run_script).mode.should eq(00755)
         provider.send(:log_run_script).source.should eq("sv-#{new_resource.log_template_name}-log-run.erb")
         provider.send(:log_run_script).cookbook.should be_empty
-        provider.send(:log_config_file).path.should eq(::File.join(sv_dir_name, 'log', 'config'))
+      end
+
+      it 'creates log config file in log_dir' do
+        provider.send(:log_config_file).path.should eq(::File.join(new_resource.log_dir, 'config'))
         provider.send(:log_config_file).owner.should eq(new_resource.owner)
         provider.send(:log_config_file).group.should eq(new_resource.group)
         provider.send(:log_config_file).mode.should eq(00644)
@@ -258,14 +261,15 @@ describe Chef::Provider::Service::Runit do
       end
 
       it 'creates log/run with default content if default_logger parameter is true' do
-        script_content = "exec svlogd -tt /var/log/#{new_resource.service_name}"
+        new_resource.log_dir('/opt/noodles/log')
+        script_content = "exec svlogd -tt '#{new_resource.log_dir}'"
         new_resource.default_logger(true)
         provider.send(:log_run_script).path.should eq(::File.join(sv_dir_name, 'log', 'run'))
         provider.send(:log_run_script).owner.should eq(new_resource.owner)
         provider.send(:log_run_script).group.should eq(new_resource.group)
         provider.send(:log_run_script).mode.should eq(00755)
         provider.send(:log_run_script).content.should include(script_content)
-        provider.send(:default_log_dir).path.should eq(::File.join('/var', 'log', new_resource.service_name))
+        provider.send(:default_log_dir).path.should eq(new_resource.log_dir)
         provider.send(:default_log_dir).recursive.should be_true
         provider.send(:default_log_dir).owner.should eq(new_resource.owner)
         provider.send(:default_log_dir).group.should eq(new_resource.group)
