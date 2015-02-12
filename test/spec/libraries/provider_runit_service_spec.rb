@@ -119,6 +119,29 @@ describe Chef::Provider::Service::Runit do
           end
         end
       end
+
+      describe 'set the current environment' do
+        let(:sv_env_dir_name) { ::File.join(new_resource.sv_dir, new_resource.service_name, 'env') }
+        context 'present env dir' do
+          before do
+            ::File.stub(:directory?).with(sv_env_dir_name).and_return(true)
+            ::Dir.stub(:glob).with(::File.join(sv_env_dir_name,'*')).and_return([::File.join(sv_env_dir_name,'FOO')])
+            ::IO.stub(:read).with(::File.join(sv_env_dir_name,'FOO')).and_return('bar')
+            provider.load_current_resource
+          end
+          it 'should load environment from env dir' do
+            provider.current_resource.env.should eq({'FOO' => 'bar'})
+          end
+        end
+        context 'no env dir' do
+          before do
+            ::File.stub(:directory?).with(sv_env_dir_name).and_return(false)
+          end
+          it 'should set env to an empty hash' do
+            provider.current_resource.env.should eq({})
+          end
+        end
+      end
     end
   end
 
@@ -259,6 +282,13 @@ describe Chef::Provider::Service::Runit do
         provider.send(:env_files)[0].owner.should eq(new_resource.owner)
         provider.send(:env_files)[0].group.should eq(new_resource.group)
         provider.send(:env_files)[0].content.should eq('$PATH:/usr/local/bin')
+      end
+
+      it 'removes env files that are not referenced in env' do
+        provider.current_resource.stub(:env).and_return('FOO' => 'Bar')
+        new_resource.stub(:env).and_return('PATH' => '/bin')
+        delete = provider.send(:env_files).select { |x| x.action.include? :delete }
+        delete.first.path.should eq(::File.join(sv_dir_name, 'env', 'FOO'))
       end
 
       it 'creates a check script as a template if check_script parameter is true' do
