@@ -2,7 +2,7 @@
 # Cookbook Name:: runit_test
 # Recipe:: service
 #
-# Copyright 2012, Opscode, Inc.
+# Copyright 2012, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ runit_service 'yerba-alt' do
 end
 
 # Note: this won't update the run script for the above due to
-# http://tickets.opscode.com/browse/COOK-2353
+# http://tickets.chef.io/browse/COOK-2353
 # runit_service 'the other name for yerba-alt' do
 #   service_name 'yerba-alt'
 #   default_logger true

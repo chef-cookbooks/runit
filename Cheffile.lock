@@ -8,7 +8,7 @@ SITE
     yum (3.5.1)
 
 SITE
-  remote: https://supermarket.getchef.com/api/v1
+  remote: https://supermarket.chef.io/api/v1
   specs:
     build-essential (2.1.3)
     yum-epel (0.5.3)
