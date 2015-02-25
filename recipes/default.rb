@@ -60,7 +60,7 @@ when 'rhel'
     rpm_installed = "rpm -qa | grep -q '^runit'"
     cookbook_file "#{Chef::Config[:file_cache_path]}/runit-2.1.1.tar.gz" do
       source 'runit-2.1.1.tar.gz'
-      not_if rpm_installed
+      not_if { rpm_installed || File.executable?(node['runit']['executable']) }
       notifies :run, 'bash[rhel_build_install]', :immediately
     end
 
@@ -75,7 +75,7 @@ when 'rhel'
         rpm -ivh "${rpm_root_dir}/runit-2.1.1.rpm"
       EOH
       action :run
-      not_if rpm_installed
+      not_if { rpm_installed || File.executable?(node['runit']['executable']) }
     end
   end
 
