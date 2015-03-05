@@ -41,6 +41,21 @@ when 'rhel'
 
   if node['runit']['use_package_from_yum']
     package 'runit'
+  elsif node['runit']['download_rpm']
+    rpm_path = "#{Chef::Config[:file_cache_path]}/runit-#{node['runit']['rpm']['version']}.rpm"
+
+    remote_file "downloading runit from #{node['runit']['rpm']['url']}" do
+      path rpm_path
+      source "#{node['runit']['rpm']['url']}/runit-#{node['runit']['rpm']['version']}.rpm"
+      checksum node['runit']['rpm']['checksum']
+      action :create_if_missing
+      notifies :install, 'package[runit]', :immediately
+    end
+    package 'runit' do
+      source rpm_path
+      action :nothing
+      provider Chef::Provider::Package::Rpm
+    end
   else
     include_recipe 'build-essential'
     # `rpmdevtools` is in EPEL repo in EL <= 5
