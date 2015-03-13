@@ -2,6 +2,10 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.5.18 (2015-03-13)
+--------------------
+* Add helper methods to detect installation presence
+
 v1.5.16 (2015-02-11)
 --------------------
 * Allow removal of env files(nhuff)
