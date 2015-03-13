@@ -2,7 +2,7 @@ Testing
 =======
 This cookbook has tests in the GitHub repository. To run the tests:
 
-    git clone git://github.com/opscode-cookbooks/runit.git
+    git clone git://github.com/chef-cookbooks/runit.git
     cd runit
     bundle install
 
