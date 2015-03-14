@@ -16,6 +16,8 @@ Requirements
 - Gentoo
 - RHEL
 
+### Cookbooks
+- packagecloud (for RHEL)
 
 Attributes
 ----------
@@ -32,22 +34,18 @@ See `attributes/default.rb` for defaults generated per platform.
 
 ### Optional Attributes for RHEL systems
 
-- `node['runit']['use_package_from_yum']` - If `true`, attempts to install
-  runit without building an RPM first. This is for users who already have
-  the package in their own Yum repository.
-
+- `node['runit']['prefer_local_yum']` - If `true`, assumes that a `runit` package is available on an already configured local yum repository. By default, the recipe installs the `runit` package from a Package Cloud repository (see below). This is set to the value of `node['runit']['use_package_from_yum']` for backwards compatibility, but otherwise defaults to `false`.
 
 Recipes
 -------
 ### default
 The default recipe installs runit and starts `runsvdir` to supervise the services in runit's service directory (e.g., `/etc/service`).
 
-On RHEL family systems, it will build the runit RPM using [Ian Meyer's runit RPM SPEC](https://github.com/imeyer/runit-rpm) unless the attribute `node['runit']['use_package_from_yum']` is set to `true`. In which case it will try and install runit through the normal package installation mechanism.
+On RHEL-family systems, it will install the runit RPM using [Ian Meyer's Package Cloud repository](https://packagecloud.io/imeyer/runit) for runit. This replaces the previous functionality where the RPM was build using his [runit RPM SPEC](https://github.com/imeyer/runit-rpm). However, if the attribute `node['runit']['prefer_local_yum']` is set to `true`, the packagecloud repository creation will be skipped and it is assumed that a `runit` package is available on an otherwise configured (outside this cookbook) local repository.
 
 On Debian family systems, the runit packages are maintained by the runit author, Gerrit Pape, and the recipe will use that for installation.
 
 On Gentoo, the runit ebuild package is installed.
-
 
 Resource/Provider
 -----------------
