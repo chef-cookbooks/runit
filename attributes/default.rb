@@ -43,7 +43,7 @@ when 'rhel'
   default['runit']['sv_dir'] = '/etc/sv'
   default['runit']['lsb_init_dir'] = '/etc/init.d'
   default['runit']['executable'] = '/sbin/runit'
-  default['runit']['use_package_from_yum'] = false
+  default['runit']['prefer_local_yum'] = node['runit']['use_package_from_yum'] || false
   default['runit']['start'] = '/etc/init.d/runit-start start'
   default['runit']['stop'] = '/etc/init.d/runit-start stop'
   default['runit']['reload'] = '/etc/init.d/runit-start reload'
