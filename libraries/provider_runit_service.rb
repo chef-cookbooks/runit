@@ -82,24 +82,18 @@ class Chef
         #
 
         def action_create
-          converge_by("configure service without enabling #{@new_resource}") do
-            configure_service # Do this every run, even if service is already enabled and running
-            Chef::Log.info("#{@new_resource} configured")
-          end
+          configure_service # Do this every run, even if service is already enabled and running
+          Chef::Log.info("#{@new_resource} configured")
         end
 
         def action_enable
-          converge_by("configure service #{@new_resource}") do
-            configure_service # Do this every run, even if service is already enabled and running
-            Chef::Log.info("#{@new_resource} configured")
-          end
+          configure_service # Do this every run, even if service is already enabled and running
+          Chef::Log.info("#{@new_resource} configured")
           if @current_resource.enabled
             Chef::Log.debug("#{@new_resource} already enabled - nothing to do")
           else
-            converge_by("enable service #{@new_resource}") do
-              enable_service
-              Chef::Log.info("#{@new_resource} enabled")
-            end
+            enable_service
+            Chef::Log.info("#{@new_resource} enabled")
           end
           load_new_resource_state
           @new_resource.enabled(true)
@@ -129,7 +123,7 @@ class Chef
             unless new_resource.env.empty?
               Chef::Log.debug("Setting up environment files for #{new_resource.service_name}")
               env_dir.run_action(:create)
-              env_files.each do |file| 
+              env_files.each do |file|
                 file.action.each { |action| file.run_action(action) }
               end
             else
@@ -166,8 +160,8 @@ class Chef
         def enable_service
           Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
           service_link.run_action(:create)
-         
-          unless inside_docker?  
+
+          unless inside_docker?
             Chef::Log.debug("waiting until named pipe #{service_dir_name}/supervise/ok exists.")
             until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
               sleep 1
@@ -182,7 +176,7 @@ class Chef
               end
             end
           else
-              Chef::Log.debug("skipping */supervise/ok check inside docker")
+            Chef::Log.debug("skipping */supervise/ok check inside docker")
           end
         end
 
@@ -258,7 +252,6 @@ class Chef
           converge_by("send #{friendly_name} to #{new_resource}") do
             shell_out!("#{new_resource.sv_bin} #{sv_args}#{signal} #{service_dir_name}")
             Chef::Log.info("#{new_resource} sent #{friendly_name}")
-            new_resource.updated_by_last_action(true)
           end
         end
 
@@ -369,7 +362,7 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
             @log_run_script = Chef::Resource::File.new(
               ::File.join(sv_dir_name, 'log', 'run'),
               run_context
-              )
+            )
             @log_run_script.content(default_logger_content)
             @log_run_script.owner(new_resource.owner)
             @log_run_script.group(new_resource.group)
@@ -378,7 +371,7 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
             @log_run_script = Chef::Resource::Template.new(
               ::File.join(sv_dir_name, 'log', 'run'),
               run_context
-              )
+            )
             @log_run_script.owner(new_resource.owner)
             @log_run_script.group(new_resource.group)
             @log_run_script.mode(00755)
@@ -489,7 +482,7 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
             control_signal_file = Chef::Resource::Template.new(
               ::File.join(sv_dir_name, 'control', signal),
               run_context
-              )
+            )
             control_signal_file.owner(new_resource.owner)
             control_signal_file.group(new_resource.group)
             control_signal_file.mode(00755)
