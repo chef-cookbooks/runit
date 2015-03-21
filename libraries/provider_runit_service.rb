@@ -105,26 +105,26 @@ class Chef
         def configure_service
           if new_resource.sv_templates
             Chef::Log.debug("Creating sv_dir for #{new_resource.service_name}")
-            sv_dir.run_action(:create)
+            do_action(sv_dir, :create)
             Chef::Log.debug("Creating run_script for #{new_resource.service_name}")
-            run_script.run_action(:create)
+            do_action(run_script, :create)
 
             if new_resource.log
               Chef::Log.debug("Setting up svlog for #{new_resource.service_name}")
-              log_dir.run_action(:create)
-              log_main_dir.run_action(:create)
-              default_log_dir.run_action(:create) if new_resource.default_logger
-              log_run_script.run_action(:create)
-              log_config_file.run_action(:create)
+              do_action(log_dir, :create)
+              do_action(log_main_dir, :create)
+              do_action(default_log_dir, :create) if new_resource.default_logger
+              do_action(log_run_script, :create)
+              do_action(log_config_file, :create)
             else
               Chef::Log.debug("log not specified for #{new_resource.service_name}, continuing")
             end
 
             unless new_resource.env.empty?
               Chef::Log.debug("Setting up environment files for #{new_resource.service_name}")
-              env_dir.run_action(:create)
+              do_action(env_dir, :create)
               env_files.each do |file|
-                file.action.each { |action| file.run_action(action) }
+                file.action.each { |action| do_action(file, action) }
               end
             else
               Chef::Log.debug("Environment not specified for #{new_resource.service_name}, continuing")
@@ -132,34 +132,34 @@ class Chef
 
             if new_resource.check
               Chef::Log.debug("Creating check script for #{new_resource.service_name}")
-              check_script.run_action(:create)
+              do_action(check_script, :create)
             else
               Chef::Log.debug("Check script not specified for #{new_resource.service_name}, continuing")
             end
 
             if new_resource.finish
               Chef::Log.debug("Creating finish script for #{new_resource.service_name}")
-              finish_script.run_action(:create)
+              do_action(finish_script, :create)
             else
               Chef::Log.debug("Finish script not specified for #{new_resource.service_name}, continuing")
             end
 
             unless new_resource.control.empty?
               Chef::Log.debug("Creating control signal scripts for #{new_resource.service_name}")
-              control_dir.run_action(:create)
-              control_signal_files.each { |file| file.run_action(:create) }
+              do_action(control_dir, :create)
+              control_signal_files.each { |file| do_action(file, :create) }
             else
               Chef::Log.debug("Control signals not specified for #{new_resource.service_name}, continuing")
             end
           end
 
           Chef::Log.debug("Creating lsb_init compatible interface #{new_resource.service_name}")
-          lsb_init.run_action(:create)
+          do_action(lsb_init, :create)
         end
 
         def enable_service
           Chef::Log.debug("Creating symlink in service_dir for #{new_resource.service_name}")
-          service_link.run_action(:create)
+          do_action(service_link, :create)
 
           unless inside_docker?
             Chef::Log.debug("waiting until named pipe #{service_dir_name}/supervise/ok exists.")
@@ -304,6 +304,11 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
         #
         # Helper Resources
         #
+        def do_action(resource, action)
+          resource.run_action(action)
+          new_resource.updated_by_last_action(true) if resource.updated_by_last_action?
+        end
+
         def sv_dir
           return @sv_dir unless @sv_dir.nil?
           @sv_dir = Chef::Resource::Directory.new(sv_dir_name, run_context)
