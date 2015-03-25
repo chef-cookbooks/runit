@@ -5,11 +5,12 @@ provisioner:
   name: chef_zero
 
 platforms:
-  - name: centos-5.10
-  - name: centos-6.5
-  - name: fedora-19
+  - name: centos-5.11
+  - name: centos-6.6
+  - name: fedora-21
   - name: ubuntu-10.04
   - name: ubuntu-12.04
+  - name: ubuntu-14.04
 
 suites:
 - name: default
