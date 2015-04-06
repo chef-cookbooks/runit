@@ -37,7 +37,7 @@ execute 'runit-hup-init' do
 end
 
 case node['platform_family']
-when 'rhel'
+when 'rhel', 'fedora'
 
   packagecloud_repo 'imeyer/runit' unless node['runit']['prefer_local_yum']
   package 'runit'
