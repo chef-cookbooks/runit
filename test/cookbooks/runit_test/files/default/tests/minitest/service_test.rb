@@ -21,9 +21,10 @@ require File.expand_path('../support/helpers', __FILE__)
 
 describe 'runit_test::service' do
   include Helpers::RunitTest
+  MiniTest::Chef::Resources.register_resource(:runit_service)
 
   it 'creates a service with the defaults' do
-    service('plain-defaults').must_be_running
+    runit_service('plain-defaults').must_be_running
     file('/etc/service/plain-defaults/run').must_exist
     file('/etc/service/plain-defaults/log/run').must_exist
     file('/etc/init.d/plain-defaults').must_exist
@@ -34,53 +35,53 @@ describe 'runit_test::service' do
   end
 
   it 'creates a service that doesnt use the svlog' do
-    service('no-svlog').must_be_running
+    runit_service('no-svlog').must_be_running
     directory('/etc/sv/no-svlog/log').wont_exist
   end
 
   it 'creates a service that uses the default svlog' do
     regexp = %r{#!/bin/sh\nexec svlogd -tt /var/log/default-svlog}
-    service('default-svlog').must_be_running
+    runit_service('default-svlog').must_be_running
     file('/etc/service/default-svlog/log/run').must_match(regexp)
   end
 
   it 'creates a service that has a check script' do
-    service('checker').must_be_running
+    runit_service('checker').must_be_running
     file('/etc/service/checker/check').must_exist
   end
 
   it 'creates a service that has a finish script' do
-    service('finisher').must_be_running
+    runit_service('finisher').must_be_running
     file('/etc/service/finisher/finish').must_exist
   end
 
   it 'creates a service using sv_timeout' do
-    service('timer').must_be_running
+    runit_service('timer').must_be_running
   end
 
   it 'creates a service using sv_verbose' do
-    service('chatterbox').must_be_running
+    runit_service('chatterbox').must_be_running
   end
 
   it 'creates a service that uses env files' do
     regexp = %r{\$PATH:/opt/chef/embedded/bin}
-    service('env-files').must_be_running
+    runit_service('env-files').must_be_running
     file('/etc/service/env-files/env/PATH').must_match(regexp)
   end
 
   it 'creates a service that sets options for the templates' do
-    service('template-options').must_be_running
+    runit_service('template-options').must_be_running
     file('/etc/service/template-options/run').must_match('# Options are delicious')
   end
 
   it 'creates a service that uses control signal files' do
-    service('control-signals').must_be_running
+    runit_service('control-signals').must_be_running
     file('/etc/service/control-signals/control/u').must_match(/control signal up/)
   end
 
   it 'creates a runsvdir service for a normal user' do
     regexp = %r{exec chpst -ufloyd runsvdir /home/floyd/service}
-    service('runsvdir-floyd').must_be_running
+    runit_service('runsvdir-floyd').must_be_running
     file('/etc/service/runsvdir-floyd/run').must_match(regexp)
   end
 
@@ -101,11 +102,11 @@ describe 'runit_test::service' do
   end
 
   it 'creates a service with differently named template files' do
-    service('yerba').must_be_running
+    runit_service('yerba').must_be_running
   end
 
   it 'creates a service with differently named run script template' do
-    service('yerba-alt').must_be_running
+    runit_service('yerba-alt').must_be_running
   end
 
   it 'creates a service that should exist but be disabled' do
@@ -114,11 +115,11 @@ describe 'runit_test::service' do
   end
 
   it 'can use templates from another cookbook' do
-    service('other-cookbook-templates').must_be_running
+    runit_service('other-cookbook-templates').must_be_running
   end
 
   it 'creates a service that has its own run scripts' do
-    skip 'RHEL platforms dont ship runit scripts' if node['platform_family'] == 'rhel'
+    skip 'RHEL platforms dont ship runit scripts' if node['platform_family'] == 'rhel' || node['platform_family'] == 'fedora'
 
     git_daemon = shell_out("#{node['runit']['sv_bin']} status /etc/service/git-daemon")
     assert git_daemon.stdout.include?('run:')
