@@ -2,6 +2,15 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.6.0 (2015-04-06)
+--------------------
+* Fedora 21 support
+* Kitchen platform updates
+* use imeyer’s packagecloud repo for RHEL
+* fix converge_by usage
+* do_action helper to set updated_by_last_action
+* style fixes to provider
+
 v1.5.18 (2015-03-13)
 --------------------
 * Add helper methods to detect installation presence
