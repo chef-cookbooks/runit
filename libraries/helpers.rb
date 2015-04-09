@@ -48,6 +48,10 @@ module RunitCookbook
       results.any? { |val| /docker/ =~ val }
     end
 
+    def down_file
+      "#{sv_dir_name}/down"
+    end
+
     def env_dir
       "#{sv_dir_name}/env"
     end

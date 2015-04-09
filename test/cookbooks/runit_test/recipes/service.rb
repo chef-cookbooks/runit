@@ -185,7 +185,35 @@ end
 #   default_logger true
 # end
 
+
 # create a service using an alternate sv binary
 runit_service 'alternative-sv-bin' do
   sv_bin '/usr/local/bin/sv'
+end
+
+runit_service "downed-service-6702" do
+  start_down true
+end
+
+runit_service "un-downed-service" do
+  start_down true
+end
+
+runit_service "un-downed-service remove down" do
+  service_name 'un-downed-service'
+  log_template_name 'un-downed-service'
+  run_template_name 'un-downed-service'
+  start_down false
+end
+
+runit_service "un-downed-service-deleted" do
+  start_down true
+end
+
+runit_service "un-downed-service-deleted remove down" do
+  service_name 'un-downed-service-deleted'
+  log_template_name 'un-downed-service-deleted'
+  run_template_name 'un-downed-service-deleted'
+  start_down false
+  delete_downfile true
 end
