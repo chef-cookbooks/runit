@@ -202,6 +202,23 @@ class Chef
               action :create
             end
           end
+
+          # Create/Delete service down file
+          # To prevent unexpected behavior, require users to explicitly set
+          # delete_downfile to remove any down file that may already exist
+          df_action = :nothing
+          if new_resource.start_down
+            df_action = :create
+          elsif new_resource.delete_downfile
+            df_action = :delete
+          end
+
+          file down_file do
+            mode 00644
+            backup false
+            content '# File created and managed by chef!'
+            action df_action
+          end
         end
       end
 

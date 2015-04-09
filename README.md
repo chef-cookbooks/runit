@@ -168,6 +168,9 @@ Many of these parameters are only used in the `:enable` action.
 - **restart_on_update** - Whether the service should be restarted when
     the run script is updated. Defaults to `true`. Set to `false` if
     the service shouldn't be restarted when the run script is updated.
+- **start_down** - Set the default state of the runit service to 'down' by creating
+    `<sv_dir>/down` file
+- **delete_downfile** - Delete previously created `<sv_dir>/down` file
 
 Unlike previous versions of the cookbook using the `runit_service` definition, the `runit_service` resource can be notified. See __Usage__ examples below.
 
