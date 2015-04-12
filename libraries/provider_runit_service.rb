@@ -295,15 +295,13 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
         end
 
         def sv_dir
-          @sv_dir ||=
-            begin
-              d = Chef::Resource::Directory.new(sv_dir_name, run_context)
-              d.recursive(true)
-              d.owner(new_resource.owner)
-              d.group(new_resource.group)
-              d.mode(00755)
-              d
-            end
+          directory sv_dir_name do
+            owner new_resource.owner
+            group new_resource.group
+            mode '0755'
+            recursive true
+            action :create
+          end
         end
 
         def run_script
