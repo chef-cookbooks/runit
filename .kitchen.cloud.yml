@@ -21,6 +21,8 @@ platforms:
     region: <%= ENV['DIGITALOCEAN_REGION'] %>
     ssh_key_ids: <%= ENV['DIGITALOCEAN_SSH_KEYS'] %>
     ssh_key: <%= ENV['DIGITALOCEAN_SSH_KEY_PATH'] %>
+  run_list:
+  - recipe[yum-epel]
 
 - name: centos-6.5
   driver_plugin: digital_ocean
@@ -31,21 +33,21 @@ platforms:
     ssh_key_ids: <%= ENV['DIGITALOCEAN_SSH_KEYS'] %>
     ssh_key: <%= ENV['DIGITALOCEAN_SSH_KEY_PATH'] %>
 
-- name: centos-7.0
-  driver_plugin: digital_ocean
-  driver_config:
-    size: 2gb
-    image: centos-7-0-x64
-    region: <%= ENV['DIGITALOCEAN_REGION'] %>
-    ssh_key_ids: <%= ENV['DIGITALOCEAN_SSH_KEYS'] %>
-    ssh_key: <%= ENV['DIGITALOCEAN_SSH_KEY_PATH'] %>
-
-# - name: amazon-2014.09
-#   driver_plugin: ec2
+# - name: centos-7.0
+#   driver_plugin: digital_ocean
 #   driver_config:
-#     image_id: ami-9a6ed3f2
-#     username: ec2-user
-#     ssh_key: <%= ENV['EC2_SSH_KEY_PATH'] %>
+#     size: 2gb
+#     image: centos-7-0-x64
+#     region: <%= ENV['DIGITALOCEAN_REGION'] %>
+#     ssh_key_ids: <%= ENV['DIGITALOCEAN_SSH_KEYS'] %>
+#     ssh_key: <%= ENV['DIGITALOCEAN_SSH_KEY_PATH'] %>
+
+- name: amazon-2014.09
+  driver_plugin: ec2
+  driver_config:
+    image_id: ami-9a6ed3f2
+    username: ec2-user
+    ssh_key: <%= ENV['EC2_SSH_KEY_PATH'] %>
 
 # - name: fedora-21
 #   driver_plugin: digital_ocean
@@ -55,6 +57,17 @@ platforms:
 #     region: <%= ENV['DIGITALOCEAN_REGION'] %>
 #     ssh_key_ids: <%= ENV['DIGITALOCEAN_SSH_KEYS'] %>
 #     ssh_key: <%= ENV['DIGITALOCEAN_SSH_KEY_PATH'] %>
+
+# - name: debian-7.0
+#   driver_plugin: digital_ocean
+#   driver_config:
+#     size: 2gb
+#     image: debian-7-0-x64
+#     region: <%= ENV['DIGITALOCEAN_REGION'] %>
+#     ssh_key_ids: <%= ENV['DIGITALOCEAN_SSH_KEYS'] %>
+#     ssh_key: <%= ENV['DIGITALOCEAN_SSH_KEY_PATH'] %>
+#   run_list:
+#   - recipe[apt]
 
 - name: ubuntu-12.04
   driver_plugin: digital_ocean
@@ -81,16 +94,10 @@ platforms:
 suites:
 - name: default
   run_list:
-  - recipe[minitest-handler]
-  - recipe[runit]
   - recipe[runit_test]
-  - recipe[runit-other_test]
   attributes: {}
 
 - name: service
   run_list:
-  - recipe[minitest-handler]
-  - recipe[runit]
   - recipe[runit_test::service]
-  - recipe[runit-other_test]
   attributes: {}

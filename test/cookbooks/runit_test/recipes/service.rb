@@ -137,10 +137,6 @@ runit_service 'exist-disabled' do
   action :disable
 end
 
-runit_service 'other-cookbook-templates' do
-  cookbook 'runit-other_test'
-end
-
 unless platform_family?('rhel', 'fedora')
   # Create a service that has a package with its own service directory
   package 'git-daemon-run'
