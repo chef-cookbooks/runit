@@ -298,7 +298,7 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
           directory sv_dir_name do
             owner new_resource.owner
             group new_resource.group
-            mode '0755'
+            mode '00755'
             recursive true
             action :create
           end
@@ -309,7 +309,7 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
             owner new_resource.owner
             group new_resource.group
             source "sv-#{new_resource.run_template_name}-run.erb"
-            mode '0755'
+            mode '00755'
             variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
             action :create
           end
