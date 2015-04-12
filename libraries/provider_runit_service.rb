@@ -305,17 +305,14 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
         end
 
         def run_script
-          @run_script ||=
-            begin
-              t = Chef::Resource::Template.new(::File.join(sv_dir_name, 'run'), run_context)
-              t.owner(new_resource.owner)
-              t.group(new_resource.group)
-              t.source("sv-#{new_resource.run_template_name}-run.erb")
-              t.cookbook(template_cookbook)
-              t.mode(00755)
-              t.variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
-              t
-            end
+          template "#{sv_dir_name}/#{run}" do
+            owner new_resource.owner
+            group new_resource.group
+            source "sv-#{new_resource.run_template_name}-run.erb"
+            mode '0755'
+            variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
+            action :create
+          end
         end
 
         def log_dir
