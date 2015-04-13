@@ -223,33 +223,6 @@ describe Chef::Provider::Service::Runit do
         provider.send(:sv_dir).mode.should eq('00755')
       end
 
-      it 'sets up the supervised log directory and run script' do
-        provider.send(:log_dir).path.should eq(::File.join(sv_dir_name, 'log'))
-        provider.send(:log_dir).recursive.should be_true
-        provider.send(:log_dir).owner.should eq(new_resource.owner)
-        provider.send(:log_dir).group.should eq(new_resource.group)
-        provider.send(:log_config_file).path.should eq(::File.join(sv_dir_name, 'log', 'config'))
-        provider.send(:log_config_file).owner.should eq(new_resource.owner)
-        provider.send(:log_config_file).group.should eq(new_resource.group)
-        provider.send(:log_config_file).mode.should eq(00644)
-        provider.send(:log_config_file).source.should eq('log-config.erb')
-        provider.send(:log_config_file).cookbook.should eq('runit')
-      end
-
-      it 'creates log/run with default content if default_logger parameter is true' do
-        script_content = "exec svlogd -tt /var/log/#{new_resource.service_name}"
-        new_resource.default_logger(true)
-        provider.send(:log_run_script).path.should eq(::File.join(sv_dir_name, 'log', 'run'))
-        provider.send(:log_run_script).owner.should eq(new_resource.owner)
-        provider.send(:log_run_script).group.should eq(new_resource.group)
-        provider.send(:log_run_script).mode.should eq(00755)
-        provider.send(:log_run_script).content.should include(script_content)
-        provider.send(:default_log_dir).path.should eq(::File.join('/var', 'log', new_resource.service_name))
-        provider.send(:default_log_dir).recursive.should be_true
-        provider.send(:default_log_dir).owner.should eq(new_resource.owner)
-        provider.send(:default_log_dir).group.should eq(new_resource.group)
-      end
-
       it 'creates env directory and files' do
         provider.send(:env_dir).path.should eq(::File.join(sv_dir_name, 'env'))
         provider.send(:env_dir).owner.should eq(new_resource.owner)
@@ -560,4 +533,3 @@ describe Chef::Provider::Service::Runit do
     end
   end
 end
-

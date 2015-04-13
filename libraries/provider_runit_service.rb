@@ -345,55 +345,45 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
         end
 
         def log_run_script
-          @log_run_script ||=
-            begin
-              if new_resource.default_logger
-                f = Chef::Resource::File.new(
-                  ::File.join(sv_dir_name, 'log', 'run'),
-                  run_context
-                )
-                f.content(default_logger_content)
-                f.owner(new_resource.owner)
-                f.group(new_resource.group)
-                f.mode(00755)
-                f
-              else
-                t = Chef::Resource::Template.new(
-                  ::File.join(sv_dir_name, 'log', 'run'),
-                  run_context
-                )
-                t.owner(new_resource.owner)
-                t.group(new_resource.group)
-                t.mode(00755)
-                t.source("sv-#{new_resource.log_template_name}-log-run.erb")
-                t.cookbook(template_cookbook)
-                t.variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
-                t
-              end
+          if new_resource.default_logger
+            file "#{sv_dir_name}/log/run" do
+              content default_logger_content
+              owner new_resource.owner
+              group new_resource.group
+              mode '00755'
+              action :create
             end
+          else
+            template "#{sv_dir_name}/log/run" do
+              owner new_resource.owner
+              group new_resource.group
+              mode '00755'
+              source "sv-#{new_resource.log_template_name}-log-run.erb"
+              variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
+              action :create
+            end
+          end
         end
 
         def log_config_file
-          @log_config_file ||=
-            begin
-              t = Chef::Resource::Template.new(::File.join(sv_dir_name, 'log', 'config'), run_context)
-              t.owner(new_resource.owner)
-              t.group(new_resource.group)
-              t.mode(00644)
-              t.cookbook('runit')
-              t.source('log-config.erb')
-              t.variables(
-                :size => new_resource.log_size,
-                :num => new_resource.log_num,
-                :min => new_resource.log_min,
-                :timeout => new_resource.log_timeout,
-                :processor => new_resource.log_processor,
-                :socket => new_resource.log_socket,
-                :prefix => new_resource.log_prefix,
-                :append => new_resource.log_config_append
+          template "#{sv_dir_name}/log/config" do
+            owner new_resource.owner
+            group new_resource.group
+            mode '00644'
+            cookbook 'runit'
+            source 'log-config.erb'
+            variables(
+              :size => new_resource.log_size,
+              :num => new_resource.log_num,
+              :min => new_resource.log_min,
+              :timeout => new_resource.log_timeout,
+              :processor => new_resource.log_processor,
+              :socket => new_resource.log_socket,
+              :prefix => new_resource.log_prefix,
+              :append => new_resource.log_config_append
               )
-              t
-            end
+            action :create
+          end
         end
 
         def env_dir
@@ -411,19 +401,19 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
           @env_files ||=
             begin
               create_files = new_resource.env.map do |var, value|
-                f = Chef::Resource::File.new(::File.join(sv_dir_name, 'env', var), run_context)
-                f.owner(new_resource.owner)
-                f.group(new_resource.group)
-                f.content(value)
-                f.action(:create)
-                f
-              end
+              f = Chef::Resource::File.new(::File.join(sv_dir_name, 'env', var), run_context)
+              f.owner(new_resource.owner)
+              f.group(new_resource.group)
+              f.content(value)
+              f.action(:create)
+              f
+            end
               extra_env = current_resource.env.reject { |k,_| new_resource.env.key?(k) }
               delete_files = extra_env.map do |k,_|
-                f = Chef::Resource::File.new(::File.join(sv_dir_name, 'env', k), run_context)
-                f.action(:delete)
-                f
-              end
+              f = Chef::Resource::File.new(::File.join(sv_dir_name, 'env', k), run_context)
+              f.action(:delete)
+              f
+            end
               create_files + delete_files
             end
         end
@@ -482,18 +472,18 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
           @control_signal_files ||=
             begin
               new_resource.control.map do |signal|
-                t = Chef::Resource::Template.new(
-                  ::File.join(sv_dir_name, 'control', signal),
-                  run_context
+              t = Chef::Resource::Template.new(
+                ::File.join(sv_dir_name, 'control', signal),
+                run_context
                 )
-                t.owner(new_resource.owner)
-                t.group(new_resource.group)
-                t.mode(00755)
-                t.source("sv-#{new_resource.control_template_names[signal]}-#{signal}.erb")
-                t.cookbook(template_cookbook)
-                t.variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
-                t
-              end
+              t.owner(new_resource.owner)
+              t.group(new_resource.group)
+              t.mode(00755)
+              t.source("sv-#{new_resource.control_template_names[signal]}-#{signal}.erb")
+              t.cookbook(template_cookbook)
+              t.variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
+              t
+            end
             end
         end
 
