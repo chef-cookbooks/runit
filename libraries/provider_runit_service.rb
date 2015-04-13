@@ -480,25 +480,26 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
         end
 
         def lsb_init
-          @lsb_init ||=
-            begin
-              initfile = ::File.join(new_resource.lsb_init_dir, new_resource.service_name)
-              if node['platform'] == 'debian'
-                ::File.unlink(initfile) if ::File.symlink?(initfile)
-                t = Chef::Resource::Template.new(initfile, run_context)
-                t.owner('root')
-                t.group('root')
-                t.mode(00755)
-                t.cookbook('runit')
-                t.source('init.d.erb')
-                t.variables(:name => new_resource.service_name)
-                t
-              else
-                l = Chef::Resource::Link.new(initfile, run_context)
-                l.to(new_resource.sv_bin)
-                l
-              end
+          if node['platform'] == 'debian'
+            link "#{new_resource.lsb_init_dir}/#{new_resource.service_name}" do
+              action :delete
             end
+
+            template "#{new_resource.lsb_init_dir}/#{new_resource.service_name}" do
+              owner 'root'
+              group 'root'
+              mode '00755'
+              cookbook 'runit'
+              source 'init.d.erb'
+              variables(:name => new_resource.service_name)
+              action :create
+            end
+          else
+            link "#{new_resource.lsb_init_dir}/#{new_resource.service_name}" do
+              to new_resource.sv_bin
+              action :create
+            end
+          end
         end
 
         def service_link

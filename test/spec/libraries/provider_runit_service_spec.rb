@@ -238,24 +238,6 @@ describe Chef::Provider::Service::Runit do
         delete.first.path.should eq(::File.join(sv_dir_name, 'env', 'FOO'))
       end
 
-      it 'creates a symlink for LSB script compliance unless the platform is debian' do
-        node.automatic['platform'] = 'not_debian'
-        provider.send(:lsb_init).path.should eq(::File.join('/etc', 'init.d', new_resource.service_name))
-        provider.send(:lsb_init).to.should eq(sv_bin)
-      end
-
-      it 'creates an init script as a template for LSB compliance if the platform is debian' do
-        node.automatic['platform'] = 'debian'
-        provider.send(:lsb_init).path.should eq(::File.join('/etc', 'init.d', new_resource.service_name))
-        provider.send(:lsb_init).owner.should eq('root')
-        provider.send(:lsb_init).group.should eq('root')
-        provider.send(:lsb_init).mode.should eq(00755)
-        provider.send(:lsb_init).cookbook.should eq('runit')
-        provider.send(:lsb_init).source.should eq('init.d.erb')
-        provider.send(:lsb_init).variables.should have_key(:name)
-        provider.send(:lsb_init).variables[:name].should eq(new_resource.service_name)
-      end
-
       it 'does not create anything in the sv_dir if it is nil or false' do
         current_resource.stub(:enabled).and_return(false)
         new_resource.stub(:sv_templates).and_return(false)
