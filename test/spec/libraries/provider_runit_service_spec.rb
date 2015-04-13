@@ -238,20 +238,6 @@ describe Chef::Provider::Service::Runit do
         delete.first.path.should eq(::File.join(sv_dir_name, 'env', 'FOO'))
       end
 
-      it 'creates control directory and signal files' do
-        provider.send(:control_dir).path.should eq(::File.join(sv_dir_name, 'control'))
-        provider.send(:control_dir).owner.should eq(new_resource.owner)
-        provider.send(:control_dir).group.should eq(new_resource.group)
-        provider.send(:control_dir).mode.should eq(00755)
-        new_resource.control(['s'])
-        provider.send(:control_signal_files)[0].path.should eq(::File.join(sv_dir_name, 'control', 's'))
-        provider.send(:control_signal_files)[0].owner.should eq(new_resource.owner)
-        provider.send(:control_signal_files)[0].group.should eq(new_resource.group)
-        provider.send(:control_signal_files)[0].mode.should eq(00755)
-        provider.send(:control_signal_files)[0].source.should eq("sv-#{new_resource.control_template_names['s']}-s.erb")
-        provider.send(:control_signal_files)[0].cookbook.should be_empty
-      end
-
       it 'creates a symlink for LSB script compliance unless the platform is debian' do
         node.automatic['platform'] = 'not_debian'
         provider.send(:lsb_init).path.should eq(::File.join('/etc', 'init.d', new_resource.service_name))
