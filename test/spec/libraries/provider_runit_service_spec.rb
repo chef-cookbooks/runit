@@ -352,11 +352,6 @@ describe Chef::Provider::Service::Runit do
 
       end
 
-      it 'creates a symlink from the sv dir to the service' do
-        provider.send(:service_link).path.should eq(service_dir_name)
-        provider.send(:service_link).to.should eq(sv_dir_name)
-      end
-
       it 'enables the service with memoized resource creation methods' do
         current_resource.stub(:enabled).and_return(false)
       end

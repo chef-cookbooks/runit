@@ -503,12 +503,10 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
         end
 
         def service_link
-          @service_link ||=
-            begin
-              l = Chef::Resource::Link.new(::File.join(service_dir_name), run_context)
-              l.to(sv_dir_name)
-              l
-            end
+          link "#{service_dir_name}" do
+            to sv_dir_name
+            action :create
+          end
         end
 
         def inside_docker?
