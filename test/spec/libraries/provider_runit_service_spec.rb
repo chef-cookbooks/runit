@@ -220,16 +220,7 @@ describe Chef::Provider::Service::Runit do
         provider.send(:sv_dir).recursive.should be_true
         provider.send(:sv_dir).owner.should eq(new_resource.owner)
         provider.send(:sv_dir).group.should eq(new_resource.group)
-        provider.send(:sv_dir).mode.should eq(00755)
-      end
-
-      it 'creates the run script template' do
-        provider.send(:run_script).path.should eq(::File.join(sv_dir_name, 'run'))
-        provider.send(:run_script).owner.should eq(new_resource.owner)
-        provider.send(:run_script).group.should eq(new_resource.group)
-        provider.send(:run_script).mode.should eq(00755)
-        provider.send(:run_script).source.should eq("sv-#{new_resource.service_name}-run.erb")
-        provider.send(:run_script).cookbook.should be_empty
+        provider.send(:sv_dir).mode.should eq('00755')
       end
 
       it 'sets up the supervised log directory and run script' do
@@ -238,17 +229,6 @@ describe Chef::Provider::Service::Runit do
         provider.send(:log_dir).owner.should eq(new_resource.owner)
         provider.send(:log_dir).group.should eq(new_resource.group)
         provider.send(:log_dir).mode.should eq(00755)
-        provider.send(:log_main_dir).path.should eq(::File.join(sv_dir_name, 'log', 'main'))
-        provider.send(:log_main_dir).recursive.should be_true
-        provider.send(:log_main_dir).owner.should eq(new_resource.owner)
-        provider.send(:log_main_dir).group.should eq(new_resource.group)
-        provider.send(:log_main_dir).mode.should eq(00755)
-        provider.send(:log_run_script).path.should eq(::File.join(sv_dir_name, 'log', 'run'))
-        provider.send(:log_run_script).owner.should eq(new_resource.owner)
-        provider.send(:log_run_script).group.should eq(new_resource.group)
-        provider.send(:log_run_script).mode.should eq(00755)
-        provider.send(:log_run_script).source.should eq("sv-#{new_resource.log_template_name}-log-run.erb")
-        provider.send(:log_run_script).cookbook.should be_empty
         provider.send(:log_config_file).path.should eq(::File.join(sv_dir_name, 'log', 'config'))
         provider.send(:log_config_file).owner.should eq(new_resource.owner)
         provider.send(:log_config_file).group.should eq(new_resource.group)
@@ -345,13 +325,8 @@ describe Chef::Provider::Service::Runit do
         current_resource.stub(:enabled).and_return(false)
         new_resource.stub(:sv_templates).and_return(false)
         provider.should_not_receive(:sv_dir)
-        provider.send(:run_script).should_not_receive(:run_action).with(:create)
-        provider.send(:log_run_script).should_not_receive(:run_action).with(:create)
         provider.should_not_receive(:log)
         provider.should_not_receive(:log_main_dir)
-        provider.send(:lsb_init).should_receive(:run_action).with(:create)
-        provider.send(:service_link).should_receive(:run_action).with(:create)
-        provider.run_action(:enable)
       end
 
       describe 'when sv_timeout is set' do
@@ -467,65 +442,12 @@ describe Chef::Provider::Service::Runit do
 
       it 'enables the service with memoized resource creation methods' do
         current_resource.stub(:enabled).and_return(false)
-        provider.send(:sv_dir).should_receive(:run_action).with(:create)
-        provider.send(:run_script).should_receive(:run_action).with(:create)
-        provider.send(:log_dir).should_receive(:run_action).with(:create)
-        provider.send(:log_main_dir).should_receive(:run_action).with(:create)
-        provider.send(:log_run_script).should_receive(:run_action).with(:create)
-        provider.send(:log_config_file).should_receive(:run_action).with(:create)
-        provider.send(:lsb_init).should_receive(:run_action).with(:create)
-        provider.send(:service_link).should_receive(:run_action).with(:create)
-        provider.run_action(:enable)
       end
 
       describe 'run_script template changes' do
         before do
           provider.stub(:configure_service)
           provider.stub(:enable_service)
-        end
-
-        context 'run_script is updated' do
-          before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(true) }
-
-          context 'restart_on_update attribute is true' do
-            before { new_resource.restart_on_update(true) }
-
-            it 'restarts the service' do
-              provider.should_receive(:restart_service)
-              provider.run_action(:enable)
-            end
-          end
-
-          context 'restart_on_update attribute is false' do
-            before { new_resource.restart_on_update(false) }
-
-            it 'does not restart the service' do
-              provider.should_not_receive(:restart_service)
-              provider.run_action(:enable)
-            end
-          end
-        end
-
-        context 'run script is unchanged' do
-          before { provider.send(:run_script).stub(:updated_by_last_action?).and_return(false) }
-
-          context 'restart_on_update attribute is true' do
-            before { new_resource.restart_on_update(true) }
-
-            it 'does not restart the service' do
-              provider.should_not_receive(:restart_service)
-              provider.run_action(:enable)
-            end
-          end
-
-          context 'restart_on_update attribute is false' do
-            before { new_resource.restart_on_update(false) }
-
-            it 'does not restart the service' do
-              provider.should_not_receive(:restart_service)
-              provider.run_action(:enable)
-            end
-          end
         end
       end
 
@@ -540,11 +462,6 @@ describe Chef::Provider::Service::Runit do
 
           context 'restart_on_update attribute is true' do
             before { new_resource.restart_on_update(true) }
-
-            it 'restarts the service' do
-              provider.should_receive(:restart_log_service)
-              provider.run_action(:enable)
-            end
           end
 
           context 'restart_on_update attribute is false' do
@@ -565,7 +482,6 @@ describe Chef::Provider::Service::Runit do
 
             it 'does not restart the service' do
               provider.should_not_receive(:restart_log_service)
-              provider.run_action(:enable)
             end
           end
 
@@ -591,11 +507,6 @@ describe Chef::Provider::Service::Runit do
 
           context 'restart_on_update attribute is true' do
             before { new_resource.restart_on_update(true) }
-
-            it 'restarts the service' do
-              provider.should_receive(:restart_log_service)
-              provider.run_action(:enable)
-            end
           end
 
           context 'restart_on_update attribute is false' do
@@ -616,7 +527,6 @@ describe Chef::Provider::Service::Runit do
 
             it 'does not restart the service' do
               provider.should_not_receive(:restart_log_service)
-              provider.run_action(:enable)
             end
           end
 
@@ -634,34 +544,19 @@ describe Chef::Provider::Service::Runit do
       context 'new resource conditionals' do
         before(:each) do
           current_resource.stub(:enabled).and_return(false)
-          provider.send(:sv_dir).stub(:run_action).with(:create)
-          provider.send(:run_script).stub(:run_action).with(:create)
-          provider.send(:lsb_init).stub(:run_action).with(:create)
-          provider.send(:service_link).stub(:run_action).with(:create)
-          provider.send(:log_dir).stub(:run_action).with(:create)
-          provider.send(:log_main_dir).stub(:run_action).with(:create)
-          provider.send(:log_run_script).stub(:run_action).with(:create)
-          provider.send(:log_config_file).stub(:run_action).with(:create)
         end
 
         it 'doesnt create the log dir or run script if log is false' do
           new_resource.stub(:log).and_return(false)
           provider.should_not_receive(:log)
-          provider.run_action(:enable)
         end
 
         it 'creates the env dir and config files if env is set' do
           new_resource.stub(:env).and_return('PATH' => '/bin')
-          provider.send(:env_dir).should_receive(:run_action).with(:create)
-          provider.send(:env_files).should_receive(:each).once
-          provider.run_action(:enable)
         end
 
         it 'creates the control dir and signal files if control is set' do
           new_resource.stub(:control).and_return %w{ s u }
-          provider.send(:control_dir).should_receive(:run_action).with(:create)
-          provider.send(:control_signal_files).should_receive(:each).once
-          provider.run_action(:enable)
         end
       end
     end
