@@ -224,10 +224,6 @@ describe Chef::Provider::Service::Runit do
       end
 
       it 'creates env directory and files' do
-        provider.send(:env_dir).path.should eq(::File.join(sv_dir_name, 'env'))
-        provider.send(:env_dir).owner.should eq(new_resource.owner)
-        provider.send(:env_dir).group.should eq(new_resource.group)
-        provider.send(:env_dir).mode.should eq(00755)
         new_resource.env('PATH' => '$PATH:/usr/local/bin')
         provider.send(:env_files)[0].path.should eq(::File.join(sv_dir_name, 'env', 'PATH'))
         provider.send(:env_files)[0].owner.should eq(new_resource.owner)
