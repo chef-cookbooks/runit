@@ -447,18 +447,17 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
             source "sv-#{new_resource.finish_script_template_name}-finish.erb"
             cookbook template_cookbook
             variables(:options => new_resource.options) if new_resource.options.respond_to?(:has_key?)
+            action :create
           end
         end
 
         def control_dir
-          @control_dir ||=
-            begin
-              d = Chef::Resource::Directory.new(::File.join(sv_dir_name, 'control'), run_context)
-              d.owner(new_resource.owner)
-              d.group(new_resource.group)
-              d.mode(00755)
-              d
-            end
+          directory "#{sv_dir_name}/control" do
+            owner new_resource.owner
+            group new_resource.group
+            mode '00755'
+            action :create
+          end
         end
 
         def control_signal_files
