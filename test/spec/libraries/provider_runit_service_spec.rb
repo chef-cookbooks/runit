@@ -249,7 +249,6 @@ describe Chef::Provider::Service::Runit do
         provider.send(:default_log_dir).recursive.should be_true
         provider.send(:default_log_dir).owner.should eq(new_resource.owner)
         provider.send(:default_log_dir).group.should eq(new_resource.group)
-        provider.send(:default_log_dir).mode.should eq(00755)
       end
 
       it 'creates env directory and files' do
@@ -562,3 +561,4 @@ describe Chef::Provider::Service::Runit do
     end
   end
 end
+
