@@ -15,3 +15,11 @@ group :release do
   gem 'emeril'
   gem 'rake'
 end
+
+group :development do
+  gem 'growl'
+  gem 'guard', '~> 2.4'
+  gem 'guard-rubocop'
+  gem 'guard-rspec'
+  gem 'guard-rake'
+end
