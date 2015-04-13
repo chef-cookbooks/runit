@@ -29,7 +29,7 @@ class Chef
         super
         runit_node = runit_attributes_from_node(run_context)
         @resource_name = :runit_service
-        @provider = Chef::Provider::Service::Runit
+        @provider = Chef::Provider::RunitService
         @supports = { :restart => true, :reload => true, :status => true }
         @action = :enable
         @allowed_actions = [:nothing, :start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2, :create]
