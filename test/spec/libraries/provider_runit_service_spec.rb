@@ -238,15 +238,6 @@ describe Chef::Provider::Service::Runit do
         delete.first.path.should eq(::File.join(sv_dir_name, 'env', 'FOO'))
       end
 
-      it 'creates a finish script as a template if finish_script parameter is true' do
-        provider.send(:finish_script).path.should eq(::File.join(sv_dir_name, 'finish'))
-        provider.send(:finish_script).owner.should eq(new_resource.owner)
-        provider.send(:finish_script).group.should eq(new_resource.group)
-        provider.send(:finish_script).mode.should eq(00755)
-        provider.send(:finish_script).source.should eq("sv-#{new_resource.finish_script_template_name}-finish.erb")
-        provider.send(:finish_script).cookbook.should be_empty
-      end
-
       it 'creates control directory and signal files' do
         provider.send(:control_dir).path.should eq(::File.join(sv_dir_name, 'control'))
         provider.send(:control_dir).owner.should eq(new_resource.owner)
