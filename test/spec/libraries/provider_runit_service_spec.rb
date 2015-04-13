@@ -228,7 +228,6 @@ describe Chef::Provider::Service::Runit do
         provider.send(:log_dir).recursive.should be_true
         provider.send(:log_dir).owner.should eq(new_resource.owner)
         provider.send(:log_dir).group.should eq(new_resource.group)
-        provider.send(:log_dir).mode.should eq(00755)
         provider.send(:log_config_file).path.should eq(::File.join(sv_dir_name, 'log', 'config'))
         provider.send(:log_config_file).owner.should eq(new_resource.owner)
         provider.send(:log_config_file).group.should eq(new_resource.group)
