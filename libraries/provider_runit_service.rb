@@ -387,14 +387,12 @@ exec svlogd -tt /var/log/#{new_resource.service_name}"
         end
 
         def env_dir
-          @env_dir ||=
-            begin
-              d = Chef::Resource::Directory.new(::File.join(sv_dir_name, 'env'), run_context)
-              d.owner(new_resource.owner)
-              d.group(new_resource.group)
-              d.mode(00755)
-              d
-            end
+          directory "#{sv_dir_name}/env" do
+            owner new_resource.owner
+            group new_resource.group
+            mode '00755'
+            action :create
+          end
         end
 
         def env_files
