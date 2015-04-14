@@ -9,8 +9,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
     it { should be_installed }
   end
 
-  describe service('runsvdir') do
-    it { should be_running }
+  describe command('ps -ef | grep -v grep | grep "runsvdir"') do
+    its(:exit_status) { should eq 0 }
+    its(:stdout) { should match(/runsvdir/) }
   end
 
   describe file('/etc/service') do

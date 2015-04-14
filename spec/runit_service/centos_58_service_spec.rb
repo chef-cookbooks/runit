@@ -5,8 +5,8 @@ describe 'runit_test::service on centos-5.8' do
     ChefSpec::SoloRunner.new(
       platform: 'centos',
       version: '5.8',
-      # step_into: 'runit_service'
-      ) do |node|
+    # step_into: 'runit_service'
+    ) do |node|
       node.set['runit']['version'] = '0.0'
     end.converge('runit_test::service')
   end
@@ -70,8 +70,7 @@ describe 'runit_test::service on centos-5.8' do
     end
 
     it 'creates runit_service[exist-disabled]' do
-      expect(centos_58_service).to enable_runit_service('exist-disabled')
+      expect(centos_58_service).to disable_runit_service('exist-disabled')
     end
-
   end
 end
