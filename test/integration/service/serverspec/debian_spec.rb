@@ -4,16 +4,17 @@ set :backend, :exec
 
 puts "os: #{os}"
 
-if %w( redhat fedora debian ubuntu ).include? os[:family]
+if %w( debian ).include? os[:family]
 
   # plain-defaults
   describe 'creates a service with the defaults' do
-    describe service('plain-defaults') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv plain-defaults"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv plain-defaults/) }
     end
 
     describe file('/etc/init.d/plain-defaults') do
-      it { should be_symlink }
+      it { should be_mode 755 }
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
     end
@@ -46,8 +47,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # no-svlog
   describe 'creates a service that doesnt use the svlog' do
-    describe service('no-svlog') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv no-svlog"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv no-svlog/) }
     end
 
     describe file('/etc/service/no-svlog/log') do
@@ -57,8 +59,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # default-svlog
   describe 'creates a service that uses the default svlog' do
-    describe service('default-svlog') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv default-svlog"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv default-svlog/) }
     end
 
     describe file('/etc/service/default-svlog/log/run') do
@@ -72,8 +75,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # checker
   describe 'creates a service that has a check script' do
-    describe service('checker') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv checker"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv checker/) }
     end
 
     describe file('/etc/service/checker/check') do
@@ -85,8 +89,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # finisher
   describe 'creates a service that has a finish script' do
-    describe service('finisher') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv finisher"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv finisher/) }
     end
 
     describe file('/etc/service/finisher/finish') do
@@ -98,8 +103,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # env-files
   describe 'creates a service that uses env files' do
-    describe service('env-files') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv env-files"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv env-files/) }
     end
 
     describe file('/etc/service/env-files/env/PATH') do
@@ -113,8 +119,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # template-options
   describe 'creates a service that sets options for the templates' do
-    describe service('template-options') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv template-options"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv template-options/) }
     end
 
     describe file('/etc/service/template-options/run') do
@@ -128,8 +135,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # control-signals
   describe 'creates a service that uses control signal files' do
-    describe service('control-signals') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv control-signals"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv control-signals/) }
     end
 
     describe file('/etc/service/control-signals/control/u') do
@@ -143,8 +151,9 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # runsvdir-floyd
   describe 'creates a runsvdir service for a normal user' do
-    describe service('runsvdir-floyd') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv runsvdir-floyd"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv runsvdir-floyd/) }
     end
 
     describe file('/etc/service/runsvdir-floyd/run') do
@@ -158,28 +167,31 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # timer
   describe 'creates a service using sv_timeout' do
-    describe service('timer') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv timer"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv timer/) }
     end
     # FIXME: add something here
   end
 
   # chatterbox
   describe 'creates a service using sv_verbose' do
-    describe service('chatterbox') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv chatterbox"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv chatterbox/) }
     end
     # FIXME: add something here
   end
 
   # floyds-app
   describe 'creates a service running by a normal user in its runsvdir' do
-    describe service('floyds-app') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv floyds-app"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv floyds-app/) }
     end
 
     describe file('/etc/init.d/floyds-app') do
-      it { should be_symlink }
+      it { should be_mode 755 }
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
     end
@@ -212,24 +224,27 @@ if %w( redhat fedora debian ubuntu ).include? os[:family]
 
   # yerba
   describe 'creates a service with differently named template files' do
-    describe service('yerba') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv yerba"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv yerba/) }
     end
     # FIXME: add something here
   end
 
   # yerba-alt
   describe 'creates a service with differently named run script template' do
-    describe service('yerba-alt') do
-      it { should be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv yerba-alt"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv yerba-alt/) }
     end
     # FIXME: add something here
   end
 
   # exist-disabled
   describe 'creates a service that should exist but be disabled' do
-    describe service('exist-disabled') do
-      it { should_not be_running }
+    describe command('ps -ef | grep -v grep | grep "runsv control-signals"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should_not match(/runsv exist-disabled/) }
     end
 
     describe file('/etc/sv/exist-disabled/run') do
