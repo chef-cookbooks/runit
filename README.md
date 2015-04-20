@@ -185,7 +185,7 @@ exec svlogd -tt /var/log/service_name
 ```
 
 ### Examples
-These are example use cases of the `runit_service` resource described above. There are others in the `runit_test` cookbook that is included in the [git repository](https://github.com/chef-cookbooks/runit).
+These are example use cases of the `runit_service` resource described above. There are others in the `runit_test` cookbook that is included in the [git repository](https://github.com/hw-cookbooks/runit).
 
 **Default Example**
 
@@ -396,7 +396,7 @@ end
 
 **More Examples**
 
-For more examples, see the `runit_test` cookbook's `service` recipe in the [git repository](https://github.com/chef-cookbooks/runit).
+For more examples, see the `runit_test` cookbook's `service` recipe in the [git repository](https://github.com/hw-cookbooks/runit).
 
 
 License & Authors
