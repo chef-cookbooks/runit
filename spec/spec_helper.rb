@@ -13,6 +13,7 @@ else
     File.exists?(File.join(File.dirname(__FILE__), '..', r_file))
   end
   raise "Failed to locate valid cookbook resolver files!" unless resolver_lib
+  puts "Resolving cookbooks from #{resolver_lib.first}"
   require resolver_lib.last
 end
 
