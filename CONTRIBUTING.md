@@ -132,14 +132,14 @@ wiki page.
 
 ## Functional and Unit Tests
 
-This cookbook is set up to run unit tests under [ChefSpec](http://sethvargo.github.io/chefspec/) and
-integration tests under [test-kitchen](https://github.com/chef/test-kitchen).
-It uses [ServerSpec](http://serverspec.org) to run integration tests after
-test-kitchen converged the node to verify it's state.
+This cookbook is set up to run unit tests under [ChefSpec](http://sethvargo.github.io/chefspec/)
+and integration tests under [Test Kitchen](https://github.com/chef/test-kitchen). After Test Kitchen
+has converged a node, it runs [ServerSpec](http://serverspec.org) tests
+to verify the node's state.
 
 You can execute the unit tests by running
 ```
-bundle exec rake
+bundle exec rake spec
 ```
 
 You can execute the integration tests by running
