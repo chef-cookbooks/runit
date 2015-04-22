@@ -2,6 +2,11 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+UNRELEASED
+----------
+* Modernize runit_service provider by rewriting pure Ruby as LWRP
+* Modernize integration tests by rewriting Minitest suites as ServerSpec
+
 v1.6.0 (2015-04-06)
 --------------------
 * Fedora 21 support

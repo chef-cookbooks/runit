@@ -34,6 +34,8 @@ Metrics/AbcSize:
 AllCops:
   Exclude:
     - 'Guardfile'
+    - 'tmp/**/*'
+    - 'cookbooks/**/*'
 
 Style/GuardClause:
   Enabled: false
