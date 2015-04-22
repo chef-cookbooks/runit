@@ -132,21 +132,30 @@ wiki page.
 
 ## Functional and Unit Tests
 
-This cookbook is set up to run tests under
-[Chef's test-kitchen](https://github.com/chef/test-kitchen). It
-uses minitest-chef to run integration tests after the node has been
-converged to verify that the state of the node.
+This cookbook is set up to run unit tests under [ChefSpec](http://sethvargo.github.io/chefspec/) and
+integration tests under [test-kitchen](https://github.com/chef/test-kitchen).
+It uses [ServerSpec](http://serverspec.org) to run integration tests after
+test-kitchen converged the node to verify it's state.
+
+You can execute the unit tests by running
+```
+bundle exec rake
+```
+
+You can execute the integration tests by running
+```
+bundle exec kitchen test
+```
 
 Test kitchen should run completely without exception using the default
 [baseboxes provided by Chef](https://github.com/chef/bento).
 Because Test Kitchen creates VirtualBox machines and runs through
-every configuration in the Kitchenfile, it may take some time for
+every configuration in the `.kitchen.yml` config file, it may take some time for
 these tests to complete.
 
-If your changes are only for a specific recipe, run only its
-configuration with Test Kitchen. If you are adding a new recipe, or
-other functionality such as a LWRP or definition, please add
-appropriate tests and ensure they run with Test Kitchen.
+If you are adding a new recipe, or other functionality such as a
+LWRP or definition, please add appropriate tests and ensure they
+run with Test Kitchen.
 
 If any don't pass, investigate them before submitting your patch.
 
