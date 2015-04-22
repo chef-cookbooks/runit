@@ -36,17 +36,15 @@ user 'floyd' do
   shell '/bin/bash'
   home '/home/floyd'
   manage_home true
-  supports :manage_home => true
+  supports manage_home: true
 end
 
-%w{ sv service }.each do |dir|
-
+%w(sv service).each do |dir|
   directory "/home/floyd/#{dir}" do
     owner 'floyd'
     group 'floyd'
     recursive true
   end
-
 end
 
 # Create a service with all the fixin's
@@ -79,7 +77,7 @@ end
 
 # Create a service that sets options for the templates
 runit_service 'template-options' do
-  options(:raspberry => 'delicious')
+  options(raspberry: 'delicious')
 end
 
 # Create a service that uses control signal files
@@ -128,47 +126,38 @@ end
 #   default_logger true
 # end
 
-# Create a service that should exist but be disabled
-runit_service 'exist-disabled'
-
-log 'Created the exist-disabled service, now disable it'
-
 runit_service 'exist-disabled' do
-  action :disable
+  action [:create, :disable]
 end
 
-runit_service 'other-cookbook-templates' do
-  cookbook 'runit-other_test'
-end
+# unless platform_family?('rhel', 'fedora')
+#   # Create a service that has a package with its own service directory
+#   package 'git-daemon-run'
 
-unless platform_family?('rhel', 'fedora')
-  # Create a service that has a package with its own service directory
-  package 'git-daemon-run'
-
-  runit_service 'git-daemon' do
-    sv_templates false
-  end
-end
+#   runit_service 'git-daemon' do
+#     sv_templates false
+#   end
+# end
 
 # Despite waiting for runit to create supervise/ok, sometimes services
 # are supervised, but not actually fully started
-ruby_block 'sleep 5s to allow services to be fully started' do
-  block do
-    sleep 5
-  end
-end
+# ruby_block 'sleep 5s to allow services to be fully started' do
+#   block do
+#     sleep 5
+#   end
+# end
 
-# Notify the plain defaults service as a normal service resource
-file '/tmp/notifier' do
-  content Time.now.to_s
-  notifies :restart, 'service[plain-defaults]', :immediately
-end
+# # Notify the plain defaults service as a normal service resource
+# file '/tmp/notifier' do
+#   content Time.now.to_s
+#   notifies :restart, 'service[plain-defaults]', :immediately
+# end
 
-# Test for COOK-2867
-link '/etc/init.d/cook-2867' do
-  to '/usr/bin/sv'
-end
+# # Test for COOK-2867
+# link '/etc/init.d/cook-2867' do
+#   to '/usr/bin/sv'
+# end
 
-runit_service 'cook-2867' do
-  default_logger true
-end
+# runit_service 'cook-2867' do
+#   default_logger true
+# end
