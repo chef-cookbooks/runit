@@ -48,6 +48,7 @@ class Chef
             owner new_resource.owner
             group new_resource.group
             source "sv-#{new_resource.run_template_name}-run.erb"
+            cookbook template_cookbook
             mode '0755'
             variables(options: new_resource.options)
             action :create
@@ -92,6 +93,7 @@ class Chef
                 group new_resource.group
                 mode '00755'
                 source "sv-#{new_resource.log_template_name}-log-run.erb"
+                cookbook template_cookbook
                 variables(options: new_resource.options)
                 action :create
               end
