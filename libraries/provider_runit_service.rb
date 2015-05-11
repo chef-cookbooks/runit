@@ -80,6 +80,10 @@ class Chef
                 action :create
               end
 
+              link "/var/log/#{new_resource.service_name}/config" do
+                to "#{sv_dir_name}/log/config"
+              end
+
               file "#{sv_dir_name}/log/run" do
                 content default_logger_content
                 owner new_resource.owner
