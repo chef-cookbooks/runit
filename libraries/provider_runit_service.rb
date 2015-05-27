@@ -250,6 +250,10 @@ class Chef
 
       action :nothing do
       end
-    end
+
+      action :restart do
+        restart_service
+      end
+   end
   end
 end

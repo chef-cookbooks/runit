@@ -144,17 +144,22 @@ end
 
 # Despite waiting for runit to create supervise/ok, sometimes services
 # are supervised, but not actually fully started
-# ruby_block 'sleep 5s to allow services to be fully started' do
-#   block do
-#     sleep 5
-#   end
-# end
+ruby_block 'sleep 5s to allow services to be fully started' do
+  block do
+    sleep 5
+  end
+end
 
 # # Notify the plain defaults service as a normal service resource
-# file '/tmp/notifier' do
-#   content Time.now.to_s
-#   notifies :restart, 'service[plain-defaults]', :immediately
-# end
+file '/tmp/notifier' do
+  content Time.now.to_s
+  notifies :restart, 'service[plain-defaults]', :immediately
+end
+
+file '/tmp/notifier-2' do
+  content Time.now.to_s
+  notifies :restart, 'runit_service[plain-defaults]', :immediately
+end
 
 # # Test for COOK-2867
 # link '/etc/init.d/cook-2867' do
