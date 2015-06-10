@@ -19,6 +19,10 @@
 
 include_recipe 'runit::default'
 
+link '/usr/local/bin/sv' do
+  to '/usr/bin/sv'
+end
+
 package 'netcat' do
   package_name 'nc' if platform_family?('rhel', 'fedora')
 end
@@ -173,3 +177,8 @@ end
 # runit_service 'cook-2867' do
 #   default_logger true
 # end
+
+# create a service using an alternate sv binary
+runit_service 'alternative-sv-bin' do
+  sv_bin '/usr/local/bin/sv'
+end
