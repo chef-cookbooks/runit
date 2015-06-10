@@ -6,6 +6,7 @@ UNRELEASED
 ----------
 * Modernize runit_service provider by rewriting pure Ruby as LWRP
 * Modernize integration tests by rewriting Minitest suites as ServerSpec
+* Fix regression in support for alternate sv binary on debian platforms
 
 v1.6.0 (2015-04-06)
 --------------------
