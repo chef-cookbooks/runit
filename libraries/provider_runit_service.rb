@@ -193,7 +193,11 @@ class Chef
               mode '00755'
               cookbook 'runit'
               source 'init.d.erb'
-              variables(name: new_resource.service_name)
+              variables(
+                name: new_resource.service_name,
+                sv_bin: new_resource.sv_bin,
+                init_dir: ::File.join(parsed_lsb_init_dir, '')
+              )
               action :create
             end
           else
