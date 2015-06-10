@@ -249,6 +249,14 @@ if %w( redhat fedora ubuntu ).include? os[:family]
     # FIXME: add something here
   end
 
+  # ayahuasca
+  describe 'creates a service with a template from another cookbook' do
+    describe command('ps -ef | grep -v grep | grep "runsv ayahuasca"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv ayahuasca/) }
+    end
+  end
+
   # exist-disabled
   describe 'creates a service that should exist but be disabled' do
     describe command('ps -ef | grep -v grep | grep "runsv control-signals"') do

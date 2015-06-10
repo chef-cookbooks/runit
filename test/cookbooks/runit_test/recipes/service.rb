@@ -117,9 +117,18 @@ runit_service 'yerba' do
   finish_script_template_name 'yerba-matte'
 end
 
+
+# Create a service with differently named template file, using default logger
 runit_service 'yerba-alt' do
   run_template_name 'calabash'
   default_logger true
+end
+
+# Create a service with a template sourced from another cookbook
+runit_service 'ayahuasca' do
+  run_template_name 'ayahuasca'
+  default_logger true
+  cookbook 'runit_other_test'
 end
 
 # Note: this won't update the run script for the above due to

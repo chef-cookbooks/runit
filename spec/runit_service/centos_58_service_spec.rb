@@ -69,6 +69,10 @@ describe 'runit_test::service on centos-5.8' do
       expect(centos_58_service).to enable_runit_service('yerba-alt')
     end
 
+    it 'creates runit_service[ayahuasca]' do
+      expect(centos_58_service).to enable_runit_service('ayahuasca')
+    end
+
     it 'creates runit_service[exist-disabled]' do
       expect(centos_58_service).to disable_runit_service('exist-disabled')
     end
