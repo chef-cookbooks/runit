@@ -127,6 +127,7 @@ class Chef
               owner new_resource.owner
               group new_resource.group
               content value
+              mode 00640
               action :create
             end
           end
