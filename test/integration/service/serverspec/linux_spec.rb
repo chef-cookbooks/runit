@@ -271,4 +271,55 @@ if %w( redhat fedora ubuntu ).include? os[:family]
     end
   end
 
+  # downed service
+  describe 'creates and manages down file for service' do
+    describe 'creates a service with a default state of down' do
+      describe file('/etc/sv/downed-service-6702/run') do
+        it { should be_mode 755 }
+        it { should be_owned_by 'root' }
+        it { should be_grouped_into 'root' }
+      end
+
+      describe file('/etc/service/downed-service-6702') do
+        it { should be_symlink }
+        it { should be_owned_by 'root' }
+        it { should be_grouped_into 'root' }
+      end
+
+      describe file('/etc/sv/downed-service-6702/down') do
+        it { should be_mode 644 }
+        it { should be_owned_by 'root' }
+        it { should be_grouped_into 'root' }
+      end
+
+      describe command('ps -ef | grep -v grep | grep "runsv downed-service-6702"') do
+        its(:exit_status) { should eq 0 }
+        its(:stdout) { should match(/runsv downed-service-6702/) }
+      end
+
+      describe command('netstat -tuplen | grep LISTEN | grep 6702') do
+        its(:exit_status) { should eq 1 }
+      end
+    end
+
+    describe 'leaves existing downfile in place when down true -> false' do
+      describe file('/etc/sv/un-downed-service/down') do
+        it { should be_mode 644 }
+        it { should be_owned_by 'root' }
+        it { should be_grouped_into 'root' }
+      end
+
+      describe command('ps -ef | grep -v grep | grep "runsv un-downed-service"') do
+        its(:exit_status) { should eq 0 }
+        its(:stdout) { should match(/runsv un-downed-service/) }
+      end
+    end
+    describe 'removes existing downfile when requested' do
+      describe file('/etc/sv/un-downed-service-deleted/down') do
+        it { should_not exist }
+      end
+    end
+  end
+
+
 end
