@@ -109,7 +109,7 @@ if %w( debian ).include? os[:family]
     end
 
     describe file('/etc/service/env-files/env/PATH') do
-      it { should be_mode 644 }
+      it { should be_mode 640 }
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
       regexp = %r{\$PATH:/opt/chef/embedded/bin}
