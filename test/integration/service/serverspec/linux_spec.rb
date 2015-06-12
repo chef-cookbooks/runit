@@ -271,4 +271,17 @@ if %w( redhat fedora ubuntu ).include? os[:family]
     end
   end
 
+  # alternative-sv-bin
+  describe 'creates a service with an alternative sv_bin' do
+    describe command('ps -ef | grep -v grep | grep "runsv alternative-sv-bin"') do
+      its(:exit_status) { should eq 0 }
+      its(:stdout) { should match(/runsv alternative-sv-bin/) }
+    end
+
+    describe file('/etc/init.d/alternative-sv-bin') do
+      it { should be_symlink }
+      it { should be_linked_to('/usr/local/bin/sv') }
+    end
+  end
+
 end
