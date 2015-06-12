@@ -73,6 +73,15 @@ if %w( debian ).include? os[:family]
     end
   end
 
+  # Send some random data to the service logs and wait for logs to be written
+  describe command('dd if=/dev/urandom bs=5K count=10 | strings --bytes=1 | socat - "TCP4:127.0.0.1:6701" && sleep 2') do
+    its(:exit_status) { should eq 0 }
+  end
+
+  describe command('file /var/log/default-svlog/*.s') do
+    its(:stdout) { should contain('gzip compressed data') }
+  end
+
   # checker
   describe 'creates a service that has a check script' do
     describe command('ps -ef | grep -v grep | grep "runsv checker"') do

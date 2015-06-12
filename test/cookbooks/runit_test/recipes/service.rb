@@ -23,6 +23,8 @@ link '/usr/local/bin/sv' do
   to '/usr/bin/sv'
 end
 
+package 'socat'
+
 package 'netcat' do
   package_name 'nc' if platform_family?('rhel', 'fedora')
 end
@@ -62,7 +64,7 @@ end
 # Create a service that uses the default svlog
 runit_service 'default-svlog' do
   default_logger true
-  log_size 100000 # smallish 10k
+  log_size 10000 # smallish 10k
   log_num 12
   log_processor 'gzip'
 end

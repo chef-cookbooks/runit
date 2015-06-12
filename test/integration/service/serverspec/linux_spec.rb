@@ -73,7 +73,7 @@ if %w( redhat fedora ubuntu ).include? os[:family]
     end
 
     # Send some random data to the service logs and wait for logs to be written
-    describe command('dd if=/dev/urandom bs=5K count=10 | strings --bytes=1 | nc localhost 6701 && sleep 2') do
+    describe command('dd if=/dev/urandom bs=5K count=10 | strings --bytes=1 | socat - "TCP4:127.0.0.1:6701" && sleep 2') do
       its(:exit_status) { should eq 0 }
     end
 
