@@ -9,6 +9,8 @@ platforms:
     run_list:
     - recipe[yum-epel]
   - name: centos-6.6
+    run_list:
+    - recipe[yum-epel]
   - name: centos-7.0
   - name: fedora-21
   - name: ubuntu-10.04
