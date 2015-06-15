@@ -19,8 +19,6 @@
 # limitations under the License.
 #
 
-include Chef::Mixin::ShellOut
-
 module RunitCookbook
   module Helpers
     # Default settings for resource properties.
