@@ -2,7 +2,7 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
-UNRELEASED
+v1.7.0 (2015-06-18)
 ----------
 * Modernize runit_service provider by rewriting pure Ruby as LWRP (#107)
 * Modernize integration tests by rewriting Minitest suites as ServerSpec (#107)
