@@ -19,10 +19,16 @@
 # limitations under the License.
 #
 
-::Chef::Recipe.send(:include, Chef::Mixin::ShellOut)
-
 module RunitCookbook
   module Helpers
+
+    # include Chef::Mixin::ShellOut if it is not already included in the calling class
+    def self.included(klass)
+      unless(klass.ancestors.include?(Chef::Mixin::ShellOut))
+        klass.class_eval{ include Chef::Mixin::ShellOut }
+      end
+    end
+
     # Default settings for resource properties.
     def parsed_sv_bin
       return new_resource.sv_bin if new_resource.sv_bin
