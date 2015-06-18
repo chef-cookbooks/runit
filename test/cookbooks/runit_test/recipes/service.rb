@@ -19,6 +19,12 @@
 
 include_recipe 'runit::default'
 
+link '/usr/local/bin/sv' do
+  to '/usr/bin/sv'
+end
+
+package 'socat'
+
 package 'netcat' do
   package_name 'nc' if platform_family?('rhel', 'fedora')
 end
@@ -36,17 +42,15 @@ user 'floyd' do
   shell '/bin/bash'
   home '/home/floyd'
   manage_home true
-  supports :manage_home => true
+  supports manage_home: true
 end
 
-%w{ sv service }.each do |dir|
-
+%w(sv service).each do |dir|
   directory "/home/floyd/#{dir}" do
     owner 'floyd'
     group 'floyd'
     recursive true
   end
-
 end
 
 # Create a service with all the fixin's
@@ -60,6 +64,9 @@ end
 # Create a service that uses the default svlog
 runit_service 'default-svlog' do
   default_logger true
+  log_size 10000 # smallish 10k
+  log_num 12
+  log_processor 'gzip'
 end
 
 # Create a service that has a check script
@@ -79,7 +86,7 @@ end
 
 # Create a service that sets options for the templates
 runit_service 'template-options' do
-  options(:raspberry => 'delicious')
+  options(raspberry: 'delicious')
 end
 
 # Create a service that uses control signal files
@@ -116,9 +123,18 @@ runit_service 'yerba' do
   finish_script_template_name 'yerba-matte'
 end
 
+
+# Create a service with differently named template file, using default logger
 runit_service 'yerba-alt' do
   run_template_name 'calabash'
   default_logger true
+end
+
+# Create a service with a template sourced from another cookbook
+runit_service 'ayahuasca' do
+  run_template_name 'ayahuasca'
+  default_logger true
+  cookbook 'runit_other_test'
 end
 
 # Note: this won't update the run script for the above due to
@@ -128,27 +144,18 @@ end
 #   default_logger true
 # end
 
-# Create a service that should exist but be disabled
-runit_service 'exist-disabled'
-
-log 'Created the exist-disabled service, now disable it'
-
 runit_service 'exist-disabled' do
-  action :disable
+  action [:create, :disable]
 end
 
-runit_service 'other-cookbook-templates' do
-  cookbook 'runit-other_test'
-end
+# unless platform_family?('rhel', 'fedora')
+#   # Create a service that has a package with its own service directory
+#   package 'git-daemon-run'
 
-unless platform_family?('rhel', 'fedora')
-  # Create a service that has a package with its own service directory
-  package 'git-daemon-run'
-
-  runit_service 'git-daemon' do
-    sv_templates false
-  end
-end
+#   runit_service 'git-daemon' do
+#     sv_templates false
+#   end
+# end
 
 # Despite waiting for runit to create supervise/ok, sometimes services
 # are supervised, but not actually fully started
@@ -158,17 +165,55 @@ ruby_block 'sleep 5s to allow services to be fully started' do
   end
 end
 
-# Notify the plain defaults service as a normal service resource
+# # Notify the plain defaults service as a normal service resource
 file '/tmp/notifier' do
   content Time.now.to_s
   notifies :restart, 'service[plain-defaults]', :immediately
 end
 
-# Test for COOK-2867
-link '/etc/init.d/cook-2867' do
-  to '/usr/bin/sv'
+file '/tmp/notifier-2' do
+  content Time.now.to_s
+  notifies :restart, 'runit_service[plain-defaults]', :immediately
 end
 
-runit_service 'cook-2867' do
-  default_logger true
+# # Test for COOK-2867
+# link '/etc/init.d/cook-2867' do
+#   to '/usr/bin/sv'
+# end
+
+# runit_service 'cook-2867' do
+#   default_logger true
+# end
+
+
+# create a service using an alternate sv binary
+runit_service 'alternative-sv-bin' do
+  sv_bin '/usr/local/bin/sv'
+end
+
+runit_service "downed-service-6702" do
+  start_down true
+end
+
+runit_service "un-downed-service" do
+  start_down true
+end
+
+runit_service "un-downed-service remove down" do
+  service_name 'un-downed-service'
+  log_template_name 'un-downed-service'
+  run_template_name 'un-downed-service'
+  start_down false
+end
+
+runit_service "un-downed-service-deleted" do
+  start_down true
+end
+
+runit_service "un-downed-service-deleted remove down" do
+  service_name 'un-downed-service-deleted'
+  log_template_name 'un-downed-service-deleted'
+  run_template_name 'un-downed-service-deleted'
+  start_down false
+  delete_downfile true
 end

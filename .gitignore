@@ -1,6 +1,7 @@
 metadata.json
 .vagrant
 Berksfile.lock
+Cheffile.lock
 *~
 *#
 .#*

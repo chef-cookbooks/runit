@@ -168,6 +168,9 @@ Many of these parameters are only used in the `:enable` action.
 - **restart_on_update** - Whether the service should be restarted when
     the run script is updated. Defaults to `true`. Set to `false` if
     the service shouldn't be restarted when the run script is updated.
+- **start_down** - Set the default state of the runit service to 'down' by creating
+    `<sv_dir>/down` file
+- **delete_downfile** - Delete previously created `<sv_dir>/down` file
 
 Unlike previous versions of the cookbook using the `runit_service` definition, the `runit_service` resource can be notified. See __Usage__ examples below.
 
@@ -185,7 +188,7 @@ exec svlogd -tt /var/log/service_name
 ```
 
 ### Examples
-These are example use cases of the `runit_service` resource described above. There are others in the `runit_test` cookbook that is included in the [git repository](https://github.com/chef-cookbooks/runit).
+These are example use cases of the `runit_service` resource described above. There are others in the `runit_test` cookbook that is included in the [git repository](https://github.com/hw-cookbooks/runit).
 
 **Default Example**
 
@@ -396,16 +399,17 @@ end
 
 **More Examples**
 
-For more examples, see the `runit_test` cookbook's `service` recipe in the [git repository](https://github.com/chef-cookbooks/runit).
+For more examples, see the `runit_test` cookbook's `service` recipe in the [git repository](https://github.com/hw-cookbooks/runit).
 
 
 License & Authors
 -----------------
 - Author:: Adam Jacob <adam@chef.io>
 - Author:: Joshua Timberman <joshua@chef.io>
+- Author:: Sean OMeara <sean@chef.io>
 
 ```text
-Copyright:: 2008-2013, Chef Software, Inc
+Copyright:: 2008-2016, Chef Software, Inc
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
