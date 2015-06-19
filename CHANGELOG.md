@@ -2,6 +2,10 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+v1.7.2 (2015-06-19)
+----------
+* Re-add missing runit_service actions start, stop, reload and status
+
 v1.7.0 (2015-06-18)
 ----------
 * Modernize runit_service provider by rewriting pure Ruby as LWRP (#107)
