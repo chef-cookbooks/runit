@@ -276,6 +276,23 @@ class Chef
       action :restart do
         restart_service
       end
-   end
+
+      action :start do
+        start_service
+      end
+
+      action :stop do
+        stop_service
+      end
+
+      action :reload do
+        reload_service
+      end
+
+      action :status do
+        running?
+      end
+
+    end
   end
 end
