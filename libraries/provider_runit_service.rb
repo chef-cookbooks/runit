@@ -88,19 +88,17 @@ class Chef
               action :create
             end
 
+            template "#{sv_dir_name}/log/config" do
+              owner new_resource.owner
+              group new_resource.group
+              mode '00644'
+              cookbook 'runit'
+              source 'log-config.erb'
+              variables(config: new_resource)
+              action :create
+            end
+
             if new_resource.default_logger
-              directory "/var/log/#{new_resource.service_name}" do
-                owner new_resource.owner
-                group new_resource.group
-                mode '00755'
-                recursive true
-                action :create
-              end
-
-              link "/var/log/#{new_resource.service_name}/config" do
-                to "#{sv_dir_name}/log/config"
-              end
-
               file "#{sv_dir_name}/log/run" do
                 content default_logger_content
                 owner new_resource.owner
@@ -108,6 +106,25 @@ class Chef
                 mode '00755'
                 action :create
               end
+
+              directory new_resource.log_dir do
+                owner new_resource.owner
+                group new_resource.group
+                mode '00755'
+                recursive true
+                action :create
+              end
+
+              template "#{new_resource.log_dir}/config" do
+                owner new_resource.owner
+                group new_resource.group
+                mode '00644'
+                cookbook 'runit'
+                source 'log-config.erb'
+                variables(config: new_resource)
+                action :create
+              end
+
             else
               template "#{sv_dir_name}/log/run" do
                 owner new_resource.owner
@@ -120,15 +137,6 @@ class Chef
               end
             end
 
-            template "#{sv_dir_name}/log/config" do
-              owner new_resource.owner
-              group new_resource.group
-              mode '00644'
-              cookbook 'runit'
-              source 'log-config.erb'
-              variables(config: new_resource)
-              action :create
-            end
           end
 
           # environment stuff
