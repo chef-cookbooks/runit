@@ -55,7 +55,6 @@ describe 'runit_service' do
     end
 
     it "enables the service" do
-      expect(chef_run).to run_ruby_block("wait for #{service.name} service socket")
       expect(chef_run).to enable_runit_service(service.name)
     end
   end
