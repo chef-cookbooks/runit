@@ -243,10 +243,12 @@ class Chef
           action :create
         end
 
-        # FIXME: replace me
-        # ruby_block 'wait_for_service' do
-        #   block wait_for_service
-        # end
+        ruby_block 'wait_for_service' do
+          block do
+            wait_for_service
+          end
+          action :run
+        end
       end
 
       # signals
