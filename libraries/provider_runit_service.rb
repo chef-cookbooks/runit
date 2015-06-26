@@ -245,10 +245,7 @@ class Chef
 
         ruby_block 'wait_for_service' do
           block do
-            sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
-            if new_resource.log
-              sleep 1 until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
-            end
+            wait_for_service
           end
           action :run
         end
