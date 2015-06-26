@@ -243,7 +243,7 @@ class Chef
           action :create
         end
 
-        ruby_block 'wait_for_service' do
+        ruby_block "wait for #{new_resource.service_name} service socket" do
           block do
             wait_for_service
           end
