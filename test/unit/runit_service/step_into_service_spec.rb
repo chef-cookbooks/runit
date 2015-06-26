@@ -66,7 +66,7 @@ describe 'runit_service' do
   shared_examples_for 'runit_service with logging' do
 
     it_behaves_like 'runit_service'
-    
+
     it 'creates directories for the service logger' do
       expect(chef_run).to create_directory(::File.join(service_svdir, 'log'))
       expect(chef_run).to create_directory(::File.join(service_svdir, 'log', 'main'))
@@ -89,14 +89,14 @@ describe 'runit_service' do
   end
 
   context 'with default attributes' do
- 
+
     let(:service) { chef_run.runit_service('plain-defaults') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) { Hash.new }
 
     it_behaves_like 'runit_service with logging'
-    
+
   end
 
   context 'with the log attribute set to false' do
@@ -122,7 +122,7 @@ describe 'runit_service' do
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) { Hash.new }
-    
+
     it_behaves_like 'runit_service with logging'
 
     it 'creates a service with the default_logger attribute set to true' do
@@ -193,17 +193,19 @@ describe 'runit_service' do
         variables: { options: {} }
       )
     end
-    
+
   end
 
   context 'with environment attributes' do
     let(:service) { chef_run.runit_service('env-files') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new(:options => { :env_dir => "/etc/sv/env-files/env" }) }
+    let(:service_options) do
+      { env_dir: "/etc/sv/env-files/env" }
+    end
 
     it_behaves_like 'runit_service with logging'
-    
+
     it 'creates a service with a PATH environment variable' do
       expect(service.env).to have_key('PATH')
     end
