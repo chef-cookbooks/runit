@@ -2,6 +2,12 @@ runit Cookbook CHANGELOG
 ========================
 This file is used to list changes made in each version of the runit cookbook.
 
+UNRELEASED
+----------
+* Fix regression regarding waiting for the service socket before running
+* Enhance ChefSpec unit test coverage with specs that step into the LWRP
+* Deduplicate ServerSpec integration test coverage using example groups
+
 v1.7.2 (2015-06-19)
 ----------
 * Re-add missing runit_service actions start, stop, reload and status
