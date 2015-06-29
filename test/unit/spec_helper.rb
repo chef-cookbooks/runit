@@ -17,4 +17,9 @@ else
   require resolver_lib.last
 end
 
+class Chef::ResourceBuilder
+  def emit_cloned_resource_warning
+  end
+end
+
 at_exit { ChefSpec::Coverage.report! }
