@@ -22,6 +22,24 @@
 class Chef
   class Provider
     class RunitService < Chef::Provider::LWRPBase
+
+      unless(defined?(VALID_SIGNALS))
+        # Mapping of valid signals with optional friendly name
+        VALID_SIGNALS = Mash.new(
+          :down => nil,
+          :hup => nil,
+          :int => nil,
+          :term => nil,
+          :kill => nil,
+          :quit => nil,
+          :up => nil,
+          :once => nil,
+          :cont => nil,
+          1 => :usr1,
+          2 => :usr2
+        )
+      end
+
       use_inline_resources if defined?(use_inline_resources)
 
       def whyrun_supported?
@@ -252,24 +270,15 @@ class Chef
       end
 
       # signals
-      [:down, :hup, :int, :term, :kill, :quit].each do |signal|
-        action signal do
-          runit_send_signal(signal)
+      VALID_SIGNALS.each do |signal, signal_name|
+        action (signal_name || signal) do
+          if(running?)
+            Chef::Log.info "#{new_resource} signalled (#{(signal_name || signal).to_s.upcase})"
+            runit_send_signal(signal, signal_name)
+          else
+            Chef::Log.debug "#{new_resource} not running - nothing to do"
+          end
         end
-      end
-
-      [:up, :once, :cont].each do |signal|
-        action signal do
-          runit_send_signal(signal)
-        end
-      end
-
-      action :usr1 do
-        runit_send_signal(1, :usr1)
-      end
-
-      action :usr2 do
-        runit_send_signal(2, :usr2)
       end
 
       action :nothing do
@@ -280,15 +289,30 @@ class Chef
       end
 
       action :start do
-        start_service
+        unless(running?)
+          start_service
+          Chef::Log.info "#{new_resource} started"
+        else
+          Chef::Log.debug "#{new_resource} already running - nothing to do"
+        end
       end
 
       action :stop do
-        stop_service
+        if(running?)
+          stop_service
+          Chef::Log.info "#{new_resource} stopped"
+        else
+          Chef::Log.debug "#{new_resource} already stopped - nothing to do"
+        end
       end
 
       action :reload do
-        reload_service
+        if(running?)
+          reload_service
+          Chef::Log.info "#{new_resource} reloaded"
+        else
+          Chef::Log.debug "#{new_resource} not running - nothing to do"
+        end
       end
 
       action :status do

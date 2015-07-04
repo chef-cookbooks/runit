@@ -183,7 +183,9 @@ exec svlogd -tt /var/log/#{new_resource.service_name}
     end
 
     def reload_log_service
-      shell_out!("#{new_resource.sv_bin} #{sv_args}force-reload #{service_dir_name}/log")
+      if(log_running?)
+        shell_out!("#{new_resource.sv_bin} #{sv_args}force-reload #{service_dir_name}/log")
+      end
     end
   end
 end
