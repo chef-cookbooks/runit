@@ -82,13 +82,59 @@ module RunitCookbook
       end
     end
 
+    # Checks if runsvdir process is running. It
+    # starts and monitors services from #{parsed_service_dir}.
+    # (http://smarden.org/runit/runsvdir.8.html). 
+    # True e.g. in a docker container which uses Phusion 
+    # baseimage-docker. 
+    def runsvdir_running?
+      cmd = "ps -A -o command | grep \"^/usr/bin/runsvdir -P"\
+        " #{parsed_service_dir}$\" -c"
+      # check also if monitoring parsed_sv_dir ?
+
+      result = shell_out(cmd) # not shell_out!, do not fail 
+      # on non zero exit status, exit status == 1 means: 
+      # runsv is not running yet
+      if result.stdout.to_i == 1 && result.exitstatus == 0
+        true
+      else
+        false
+      end
+    end
+
+    # Checks if runsv process is running and monitors this service.
+    def runsv_running?
+      # "ps -A -o command" == show all the processes, but only 
+      # columns with their commands (not pid, stat, etc.)
+      cmd = "ps -A -o command | grep \"^runsv"\
+        " #{new_resource.service_name}$\" -c"
+
+      result = shell_out(cmd) # not shell_out!, do not fail 
+      # on non zero exit status, exit status == 1 means: 
+      # runsv is not running yet
+      if result.stdout.to_i == 1 && result.exitstatus == 0
+        true
+      else
+        false
+      end
+    end
+
     def wait_for_service
-      unless inside_docker?
+      if !inside_docker? || runsvdir_running?
+        # Let it wait in docker if runsvdir is running, it
+        # will not cause infinite loop then.
+        # "Taking out the check for the supervise/ok file causes the 
+        # restart to happen before runsvdir actually initializes the service directory."
+        # (https://github.com/hw-cookbooks/runit/issues/60)
         sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
 
         if new_resource.log
           sleep 1 until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
         end
+        # Why? When starting a service with sv, which controls and manages services 
+        # monitored by runsv(8), it fail with error: 
+        # "fail: <service_name>: runsv not running".
+        sleep 1 until runsv_running?
       end
     end
 
