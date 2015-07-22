@@ -19,6 +19,17 @@
 
 include_recipe 'runit::default'
 
+def docker?
+  results = `cat /proc/1/cgroup`.strip.split("\n")
+  results.any? { |val| /docker/ =~ val }
+end
+if docker?
+  bash 'apt-get update' do
+    user 'root'
+    code 'apt-get update'
+  end
+end
+
 link '/usr/local/bin/sv' do
   to '/usr/bin/sv'
 end
