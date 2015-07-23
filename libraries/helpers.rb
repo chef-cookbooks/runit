@@ -89,7 +89,7 @@ module RunitCookbook
     # baseimage-docker. 
     def runsvdir_running?
       cmd = "ps -A -o command | grep \"^/usr/bin/runsvdir -P"\
-        " #{parsed_service_dir}$\" -c"
+        " #{parsed_service_dir}$\" | grep -v grep -c"
       # check also if monitoring parsed_sv_dir ?
 
       result = shell_out(cmd) # not shell_out!, do not fail 
@@ -107,7 +107,7 @@ module RunitCookbook
       # "ps -A -o command" == show all the processes, but only 
       # columns with their commands (not pid, stat, etc.)
       cmd = "ps -A -o command | grep \"^runsv"\
-        " #{new_resource.service_name}$\" -c"
+        " #{new_resource.service_name}$\" | grep -v grep -c"
 
       result = shell_out(cmd) # not shell_out!, do not fail 
       # on non zero exit status, exit status == 1 means: 
