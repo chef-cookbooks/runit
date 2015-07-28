@@ -119,23 +119,32 @@ module RunitCookbook
       end
     end
 
-    def wait_for_service
+    def need_to_wait_for_service?
       if !inside_docker? || runsvdir_running?
         # Let it wait in docker if runsvdir is running, it
         # will not cause infinite loop then.
         # "Taking out the check for the supervise/ok file causes the 
         # restart to happen before runsvdir actually initializes the service directory."
         # (https://github.com/hw-cookbooks/runit/issues/60)
-        sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
+        if !(::FileTest.pipe?("#{service_dir_name}/supervise/ok"))
+          return true
+        end
 
-        if new_resource.log
-          sleep 1 until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
+        if new_resource.log && !(::FileTest.pipe?("#{service_dir_name}/log/supervise/ok"))
+          return true
         end
         # Why? When starting a service with sv, which controls and manages services 
         # monitored by runsv(8), it fail with error: 
         # "fail: <service_name>: runsv not running".
-        sleep 1 until runsv_running?
+        if !(runsv_running?)
+          return true
+        end
       end
+
+    end
+
+    def wait_for_service
+      sleep 1 until !(need_to_wait_for_service?)
     end
 
     def runit_sv_works?

@@ -265,6 +265,7 @@ class Chef
           block do
             wait_for_service
           end
+          only_if { need_to_wait_for_service? }
           action :run
         end
       end
