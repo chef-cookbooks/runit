@@ -120,27 +120,25 @@ module RunitCookbook
     end
 
     def need_to_wait_for_service?
-      if !inside_docker? || runsvdir_running?
-        # Let it wait in docker if runsvdir is running, it
-        # will not cause infinite loop then.
-        # "Taking out the check for the supervise/ok file causes the 
-        # restart to happen before runsvdir actually initializes the service directory."
-        # (https://github.com/hw-cookbooks/runit/issues/60)
-        if !(::FileTest.pipe?("#{service_dir_name}/supervise/ok"))
-          return true
-        end
-
-        if new_resource.log && !(::FileTest.pipe?("#{service_dir_name}/log/supervise/ok"))
-          return true
-        end
-        # Why? When starting a service with sv, which controls and manages services 
-        # monitored by runsv(8), it fail with error: 
-        # "fail: <service_name>: runsv not running".
-        if !(runsv_running?)
-          return true
-        end
+      # "Taking out the check for the supervise/ok file causes the 
+      # restart to happen before runsvdir actually initializes the service directory."
+      # (https://github.com/hw-cookbooks/runit/issues/60)
+      if !(::FileTest.pipe?("#{service_dir_name}/supervise/ok"))
+        Chef::Log.debug("#{service_dir_name}/supervise/ok does not exist")
+        return true
       end
-
+      
+      if new_resource.log && !(::FileTest.pipe?("#{service_dir_name}/log/supervise/ok"))
+        Chef::Log.debug("#{service_dir_name}/log/supervise/ok does not exist")
+        return true
+      end
+      # Why? When starting a service with sv, which controls and manages services 
+      # monitored by runsv(8), it fails with error: 
+      # "fail: <service_name>: runsv not running".
+      if !(runsv_running?)
+        Chef::Log.debug("runsv #{service_dir_name} is not running")
+        return true
+      end
     end
 
     def wait_for_service
