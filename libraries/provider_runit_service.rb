@@ -260,13 +260,6 @@ class Chef
           to sv_dir_name
           action :create
         end
-
-        ruby_block "wait for #{new_resource.service_name} service socket" do
-          block do
-            wait_for_service
-          end
-          action :run
-        end
       end
 
       # signals
@@ -284,16 +277,36 @@ class Chef
       action :nothing do
       end
 
+      # Invokes method: wait_for_service from a Chef Resource.
+      def run_resource_wait_for_service
+        ruby_block "wait for #{new_resource.service_name} service socket" do
+          block do
+            wait_for_service
+          end
+          only_if { need_to_wait_for_service? }
+          action :run
+        end
+      end
+
       action :restart do
-        restart_service
+        if inside_docker? && !runsvdir_running? # e.g. during `docker build`
+          Chef::Log.debug "not restarting #{new_resource} (runsvdir process not running and inside docker)"
+        else
+          run_resource_wait_for_service
+          restart_service
+          Chef::Log.info "#{new_resource} restarted"
+        end
       end
 
       action :start do
-        unless(running?)
+        if(running?)
+          Chef::Log.debug "#{new_resource} already running - nothing to do"
+        elsif inside_docker? && !runsvdir_running? 
+          Chef::Log.debug "not starting #{new_resource} (runsvdir process not running and inside docker)"
+        else 
+          run_resource_wait_for_service
           start_service
           Chef::Log.info "#{new_resource} started"
-        else
-          Chef::Log.debug "#{new_resource} already running - nothing to do"
         end
       end
 
@@ -306,12 +319,15 @@ class Chef
         end
       end
 
-      action :reload do
-        if(running?)
+      action :reload do   
+        if !(running?) 
+          Chef::Log.debug "#{new_resource} not running - nothing to do"
+        elsif inside_docker? && !runsvdir_running? 
+          Chef::Log.debug "not reloading #{new_resource} (runsvdir process not running and inside docker)"
+        else
+          run_resource_wait_for_service
           reload_service
           Chef::Log.info "#{new_resource} reloaded"
-        else
-          Chef::Log.debug "#{new_resource} not running - nothing to do"
         end
       end
 

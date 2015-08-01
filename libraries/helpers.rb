@@ -82,14 +82,67 @@ module RunitCookbook
       end
     end
 
-    def wait_for_service
-      unless inside_docker?
-        sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
+    # Checks if runsvdir process is running. It
+    # starts and monitors services from #{parsed_service_dir}.
+    # (http://smarden.org/runit/runsvdir.8.html). 
+    # True e.g. in a docker container which uses Phusion 
+    # baseimage-docker. 
+    def runsvdir_running?
+      cmd = "ps -A -o command | grep \"^/usr/bin/runsvdir -P"\
+        " #{parsed_service_dir}$\" | grep -v grep -c"
+      # check also if monitoring parsed_sv_dir ?
 
-        if new_resource.log
-          sleep 1 until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
-        end
+      result = shell_out(cmd) # not shell_out!, do not fail 
+      # on non zero exit status, exit status == 1 means: 
+      # runsv is not running yet
+      if result.stdout.to_i == 1 && result.exitstatus == 0
+        true
+      else
+        false
       end
+    end
+
+    # Checks if runsv process is running and monitors this service.
+    def runsv_running?
+      # "ps -A -o command" == show all the processes, but only 
+      # columns with their commands (not pid, stat, etc.)
+      cmd = "ps -A -o command | grep \"^runsv"\
+        " #{new_resource.service_name}$\" | grep -v grep -c"
+
+      result = shell_out(cmd) # not shell_out!, do not fail 
+      # on non zero exit status, exit status == 1 means: 
+      # runsv is not running yet
+      if result.stdout.to_i == 1 && result.exitstatus == 0
+        true
+      else
+        false
+      end
+    end
+
+    def need_to_wait_for_service?
+      # "Taking out the check for the supervise/ok file causes the 
+      # restart to happen before runsvdir actually initializes the service directory."
+      # (https://github.com/hw-cookbooks/runit/issues/60)
+      if !(::FileTest.pipe?("#{service_dir_name}/supervise/ok"))
+        Chef::Log.debug("#{service_dir_name}/supervise/ok does not exist")
+        return true
+      end
+      
+      if new_resource.log && !(::FileTest.pipe?("#{service_dir_name}/log/supervise/ok"))
+        Chef::Log.debug("#{service_dir_name}/log/supervise/ok does not exist")
+        return true
+      end
+      # Why? When starting a service with sv, which controls and manages services 
+      # monitored by runsv(8), it fails with error: 
+      # "fail: <service_name>: runsv not running".
+      if !(runsv_running?)
+        Chef::Log.debug("runsv #{service_dir_name} is not running")
+        return true
+      end
+    end
+
+    def wait_for_service
+      sleep 1 until !(need_to_wait_for_service?)
     end
 
     def runit_sv_works?
