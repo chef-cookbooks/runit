@@ -18,6 +18,10 @@ group :kitchen_vagrant do
   gem 'kitchen-vagrant', '~> 0.19'
 end
 
+group :kitchen_docker_cli do
+  gem 'kitchen-docker_cli', '= 0.13.0'
+end
+
 group :librarian do
   gem 'librarian-chef'
 end
