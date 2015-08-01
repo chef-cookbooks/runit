@@ -25,6 +25,15 @@ platforms:
   - name: debian-7.8
     run_list:
     - recipe[apt]
+  - name: ubuntu-14.04-docker
+    transport:
+      name: docker_cli
+    driver:
+      name: docker_cli
+    driver_config:
+      dockerfile: KitchenDockerfile
+      image: phusion/baseimage:0.9.16
+      command: /sbin/my_init
 
 suites:
 - name: default
