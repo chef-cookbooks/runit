@@ -51,6 +51,25 @@ class Chef
 
       # actions
       action :create do
+
+        ruby_block 'restart_service' do
+          block do
+            action_enable
+            restart_service
+          end
+          action :nothing
+          only_if { new_resource.restart_on_update  }
+        end
+
+        ruby_block 'restart_log_service' do
+          block do
+            action_enable
+            restart_log_service
+          end
+          action :nothing
+          only_if { new_resource.restart_on_update  }
+        end
+
         # sv_templates
         if new_resource.sv_templates
 
@@ -70,6 +89,7 @@ class Chef
             mode '0755'
             variables(options: new_resource.options)
             action :create
+            notifies :run, 'ruby_block[restart_service]', :delayed
           end
 
           # log stuff
@@ -108,6 +128,7 @@ class Chef
                 group new_resource.group
                 mode '00755'
                 action :create
+                notifies :run, 'ruby_block[restart_log_service]', :delayed
               end
             else
               template "#{sv_dir_name}/log/run" do
@@ -118,6 +139,7 @@ class Chef
                 cookbook template_cookbook
                 variables(options: new_resource.options)
                 action :create
+                notifies :run, 'ruby_block[restart_log_service]', :delayed
               end
             end
 
@@ -129,6 +151,7 @@ class Chef
               source 'log-config.erb'
               variables(config: new_resource)
               action :create
+              notifies :run, 'ruby_block[restart_log_service]', :delayed
             end
           end
 
