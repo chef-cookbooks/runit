@@ -124,7 +124,7 @@ class Chef
       end
 
       def options(arg = nil)
-        @env.empty? ? opts = @options : opts = @options.merge!(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
+        opts = @env.empty? ? @options : @options.merge(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
         set_or_return(
           :options,
           arg,
