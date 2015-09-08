@@ -8,6 +8,7 @@ gem 'rubocop'
 group :integration do
   gem 'test-kitchen'
   gem 'kitchen-vagrant'
+  gem 'kitchen-docker_cli', '= 0.13.0'
   gem 'librarian-chef'
 end
 
