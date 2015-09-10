@@ -65,6 +65,7 @@ class Chef
         @sv_templates = true
         @sv_timeout = nil
         @sv_verbose = false
+        @log_dir = ::File.join('/var/log/', @service_name)
         @log_size = nil
         @log_num = nil
         @log_min = nil
@@ -213,6 +214,10 @@ class Chef
 
       def sv_templates(arg = nil)
         set_or_return(:sv_templates, arg, kind_of: [TrueClass, FalseClass])
+      end
+
+      def log_dir(arg = nil)
+        set_or_return(:log_dir, arg, kind_of: [String])
       end
 
       def log_size(arg = nil)

@@ -152,7 +152,7 @@ module RunitCookbook
     def default_logger_content
       <<-EOS
 #!/bin/sh
-exec svlogd -tt /var/log/#{new_resource.service_name}
+exec svlogd -tt #{new_resource.log_dir}
       EOS
     end
 

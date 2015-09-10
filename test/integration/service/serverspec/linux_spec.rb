@@ -41,6 +41,10 @@ if %w( redhat fedora ubuntu ).include? os[:family]
         it { should be_owned_by 'root' }
         it { should be_grouped_into 'root' }
       end
+
+      describe file('/etc/service/plain-defaults/log/config') do
+        it { should exist }
+      end
     end
 
     it_behaves_like 'common runit_test services'
