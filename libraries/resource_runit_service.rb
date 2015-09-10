@@ -44,6 +44,7 @@ class Chef
         @control = []
         @options = {}
         @env = {}
+        @manage_env_dir = false
         @log = true
         @cookbook = nil
         @check = false
@@ -136,6 +137,10 @@ class Chef
 
       def env(arg = nil)
         set_or_return(:env, arg, kind_of: [Hash])
+      end
+
+      def manage_env_dir(arg = nil)
+        set_or_return(:manage_env_dir, arg, kind_of: [TrueClass, FalseClass])
       end
 
       ## set log to current instance value if nothing is passed.

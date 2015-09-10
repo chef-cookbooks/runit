@@ -150,9 +150,9 @@ class Chef
             end
           end
 
-          ruby_block 'zap extra env files' do
+          ruby_block "zap extra env files for #{new_resource.name} service" do
             block { zap_extra_env_files }
-            only_if { extra_env_files? }
+            only_if { new_resource.manage_env_dir && extra_env_files? }
             action :run
           end
 

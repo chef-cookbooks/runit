@@ -79,9 +79,10 @@ runit_service 'finisher' do
   finish true
 end
 
-# Create a service that uses env files
+# Create a service that uses env files and manages the contents of the env directory
 runit_service 'env-files' do
   env('PATH' => '$PATH:/opt/chef/embedded/bin')
+  manage_env_dir true
 end
 
 # Create a service that sets options for the templates

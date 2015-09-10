@@ -94,6 +94,10 @@ describe 'runit_service' do
     let(:service_options) { Hash.new }
 
     it_behaves_like 'runit_service with logging'
+
+    it 'does not zap extra env files' do
+      expect(chef_run).to_not run_ruby_block('zap extra env files for plain-defaults service')
+    end
   end
 
   context 'with the log attribute set to false' do
@@ -210,6 +214,10 @@ describe 'runit_service' do
       expect(chef_run).to render_file(::File.join(service_svdir, 'env', 'PATH')).with_content(
         '$PATH:/opt/chef/embedded/bin'
       )
+    end
+
+    it 'zaps any extra env files' do
+      expect(chef_run).to run_ruby_block('zap extra env files for env-files service')
     end
   end
 
