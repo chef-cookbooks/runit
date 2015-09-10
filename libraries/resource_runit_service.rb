@@ -124,12 +124,14 @@ class Chef
       end
 
       def options(arg = nil)
-        @env.empty? ? opts = @options : opts = @options.merge!(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
+        if !@env.empty?
+          @options.merge!(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
+        end
+
         set_or_return(
           :options,
           arg,
-          kind_of: [Hash],
-          default: opts
+          kind_of: [Hash]
         )
       end
 
