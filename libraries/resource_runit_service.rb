@@ -155,11 +155,11 @@ class Chef
       end
 
       def start_down(arg = nil)
-        set_or_return(:start_down, arg, :kind_of => [TrueClass, FalseClass])
+        set_or_return(:start_down, arg, kind_of: [TrueClass, FalseClass])
       end
 
       def delete_downfile(arg = nil)
-        set_or_return(:delete_downfile, arg, :kind_of => [TrueClass, FalseClass])
+        set_or_return(:delete_downfile, arg, kind_of: [TrueClass, FalseClass])
       end
 
       def owner(arg = nil)

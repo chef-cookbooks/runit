@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 shared_examples_for 'common runit_test services' do
-
   # no-svlog
   describe 'creates a service that doesnt use the svlog' do
     describe command('ps -ef | grep -v grep | grep "runsv no-svlog"') do
@@ -238,5 +237,4 @@ shared_examples_for 'common runit_test services' do
       end
     end
   end
-
 end

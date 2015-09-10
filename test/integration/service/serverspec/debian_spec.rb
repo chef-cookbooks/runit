@@ -4,7 +4,6 @@ require 'service_example_groups'
 if %w( debian ).include? os[:family]
 
   describe "runit_test::service on #{os}" do
-
     # plain-defaults
     describe 'creates a service with the defaults' do
       describe command('ps -ef | grep -v grep | grep "runsv plain-defaults"') do
@@ -56,7 +55,7 @@ if %w( debian ).include? os[:family]
         end
 
         describe file('/etc/init.d/alternative-sv-bin') do
-          its(:content) { should match(/^RUNIT=\/usr\/local\/bin\/sv$/) }
+          its(:content) { should match(%r{^RUNIT=\/usr\/local\/bin\/sv$}) }
         end
       end
 
@@ -98,7 +97,6 @@ if %w( debian ).include? os[:family]
           it { should be_grouped_into 'floyd' }
         end
       end
-
     end
   end
 end

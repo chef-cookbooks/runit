@@ -22,8 +22,7 @@
 class Chef
   class Provider
     class RunitService < Chef::Provider::LWRPBase
-
-      unless(defined?(VALID_SIGNALS))
+      unless defined?(VALID_SIGNALS)
         # Mapping of valid signals with optional friendly name
         VALID_SIGNALS = Mash.new(
           :down => nil,
@@ -271,8 +270,8 @@ class Chef
 
       # signals
       VALID_SIGNALS.each do |signal, signal_name|
-        action (signal_name || signal) do
-          if(running?)
+        action(signal_name || signal) do
+          if running?
             Chef::Log.info "#{new_resource} signalled (#{(signal_name || signal).to_s.upcase})"
             runit_send_signal(signal, signal_name)
           else
@@ -289,16 +288,16 @@ class Chef
       end
 
       action :start do
-        unless(running?)
+        if running?
+          Chef::Log.debug "#{new_resource} already running - nothing to do"
+        else
           start_service
           Chef::Log.info "#{new_resource} started"
-        else
-          Chef::Log.debug "#{new_resource} already running - nothing to do"
         end
       end
 
       action :stop do
-        if(running?)
+        if running?
           stop_service
           Chef::Log.info "#{new_resource} stopped"
         else
@@ -307,7 +306,7 @@ class Chef
       end
 
       action :reload do
-        if(running?)
+        if running?
           reload_service
           Chef::Log.info "#{new_resource} reloaded"
         else
@@ -318,7 +317,6 @@ class Chef
       action :status do
         running?
       end
-
     end
   end
 end

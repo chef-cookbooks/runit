@@ -4,7 +4,6 @@ require 'service_example_groups'
 if %w( redhat fedora ubuntu ).include? os[:family]
 
   describe "runit_test::service on #{os}" do
-
     # plain-defaults
     describe 'creates a service with the defaults' do
       describe command('ps -ef | grep -v grep | grep "runsv plain-defaults"') do
@@ -48,7 +47,7 @@ if %w( redhat fedora ubuntu ).include? os[:family]
 
     # the following specs are a little different on debian vs other distros,
     # so they are not part of the common services example group
-    
+
     # alternative-sv-bin
     describe 'creates a service with an alternative sv_bin' do
       describe command('ps -ef | grep -v grep | grep "runsv alternative-sv-bin"') do
@@ -100,6 +99,5 @@ if %w( redhat fedora ubuntu ).include? os[:family]
         it { should be_grouped_into 'floyd' }
       end
     end
-
   end
 end

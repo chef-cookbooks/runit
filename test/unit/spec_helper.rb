@@ -17,8 +17,10 @@ else
   require resolver_lib.last
 end
 
-class Chef::ResourceBuilder
-  def emit_cloned_resource_warning
+class Chef
+  class ResourceBuilder
+    def emit_cloned_resource_warning
+    end
   end
 end
 

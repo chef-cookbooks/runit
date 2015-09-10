@@ -64,7 +64,7 @@ end
 # Create a service that uses the default svlog
 runit_service 'default-svlog' do
   default_logger true
-  log_size 10000 # smallish 10k
+  log_size 10_000 # smallish 10k
   log_num 12
   log_processor 'gzip'
 end
@@ -122,7 +122,6 @@ runit_service 'yerba' do
   check_script_template_name 'yerba-matte'
   finish_script_template_name 'yerba-matte'
 end
-
 
 # Create a service with differently named template file, using default logger
 runit_service 'yerba-alt' do
@@ -185,32 +184,31 @@ end
 #   default_logger true
 # end
 
-
 # create a service using an alternate sv binary
 runit_service 'alternative-sv-bin' do
   sv_bin '/usr/local/bin/sv'
 end
 
-runit_service "downed-service-6702" do
+runit_service 'downed-service-6702' do
   start_down true
 end
 
-runit_service "un-downed-service" do
+runit_service 'un-downed-service' do
   start_down true
 end
 
-runit_service "un-downed-service remove down" do
+runit_service 'un-downed-service remove down' do
   service_name 'un-downed-service'
   log_template_name 'un-downed-service'
   run_template_name 'un-downed-service'
   start_down false
 end
 
-runit_service "un-downed-service-deleted" do
+runit_service 'un-downed-service-deleted' do
   start_down true
 end
 
-runit_service "un-downed-service-deleted remove down" do
+runit_service 'un-downed-service-deleted remove down' do
   service_name 'un-downed-service-deleted'
   log_template_name 'un-downed-service-deleted'
   run_template_name 'un-downed-service-deleted'
