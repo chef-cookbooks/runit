@@ -256,6 +256,8 @@ class Chef
         # FIXME: remove action_create in next major version
         action_create
 
+        directory new_resource.service_dir
+
         link "#{service_dir_name}" do
           to sv_dir_name
           action :create
