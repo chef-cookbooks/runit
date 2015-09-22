@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 shared_examples_for 'common runit_test services' do
-
   # no-svlog
   describe 'creates a service that doesnt use the svlog' do
     describe command('ps -ef | grep -v grep | grep "runsv no-svlog"') do
@@ -167,6 +166,21 @@ shared_examples_for 'common runit_test services' do
     # FIXME: add something here
   end
 
+  describe 'creates a service with a non-default log directory' do
+    describe 'creates the log directory' do
+      describe file('/var/log/yerba/matte') do
+        it { should exist }
+        it { should be_directory }
+      end
+    end
+
+    describe 'writes a config file to the log directory' do
+      describe file('/var/log/yerba/matte/config') do
+        it { should exist }
+      end
+    end
+  end
+
   # ayahuasca
   describe 'creates a service with a template from another cookbook' do
     describe command('ps -ef | grep -v grep | grep "runsv ayahuasca"') do
@@ -238,5 +252,4 @@ shared_examples_for 'common runit_test services' do
       end
     end
   end
-
 end

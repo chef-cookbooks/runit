@@ -24,7 +24,7 @@ describe 'runit_service' do
     allow(shellout).to receive(:error!).and_return(nil)
   end
 
-  shared_examples_for "runit_service" do
+  shared_examples_for 'runit_service' do
     it 'creates directory for service configuration under sv_dir' do
       expect(chef_run).to create_directory(service_svdir)
     end
@@ -58,13 +58,12 @@ describe 'runit_service' do
       expect(chef_run).to run_ruby_block("wait for #{service.name} service socket")
     end
 
-    it "enables the service" do
+    it 'enables the service' do
       expect(chef_run).to enable_runit_service(service.name)
     end
   end
 
   shared_examples_for 'runit_service with logging' do
-
     it_behaves_like 'runit_service'
 
     it 'creates directories for the service logger' do
@@ -89,14 +88,12 @@ describe 'runit_service' do
   end
 
   context 'with default attributes' do
-
     let(:service) { chef_run.runit_service('plain-defaults') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) { Hash.new }
 
     it_behaves_like 'runit_service with logging'
-
   end
 
   context 'with the log attribute set to false' do
@@ -193,7 +190,6 @@ describe 'runit_service' do
         variables: { options: {} }
       )
     end
-
   end
 
   context 'with environment attributes' do
@@ -201,7 +197,7 @@ describe 'runit_service' do
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) do
-      { env_dir: "/etc/sv/env-files/env" }
+      { env_dir: '/etc/sv/env-files/env' }
     end
 
     it_behaves_like 'runit_service with logging'
@@ -226,7 +222,7 @@ describe 'runit_service' do
 
     it_behaves_like 'runit_service with logging'
 
-    it "writes custom control script for signal" do
+    it 'writes custom control script for signal' do
       expect(chef_run).to create_template(::File.join(service_svdir, 'control', service_signal)).with(
         owner: nil,
         group: nil,
