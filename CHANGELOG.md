@@ -14,6 +14,12 @@ v1.7.2 (2015-06-19)
 
 v1.7.0 (2015-06-18)
 ----------
+
+**NOTE**: With the benefit of hindsight we can say that the changes contained in
+this release merit a major version number change. Please be sure to test this
+new version for compatibility with your systems before upgrading to version 1.7.
+
+
 * Modernize runit_service provider by rewriting pure Ruby as LWRP (#107)
 * Modernize integration tests by rewriting Minitest suites as ServerSpec (#107)
 * Fix regression in support for alternate sv binary on debian platforms (#92, #123)
