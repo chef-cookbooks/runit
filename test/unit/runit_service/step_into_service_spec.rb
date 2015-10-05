@@ -213,6 +213,21 @@ describe 'runit_service' do
     end
   end
 
+  context 'with template options' do
+    let(:service) { chef_run.runit_service('template-options') }
+    let(:service_svdir) { ::File.join(sv_dir, service.name) }
+    let(:service_servicedir) { ::File.join(service_dir, service.name) }
+    let(:service_options) do
+      { raspberry: 'delicious' }
+    end
+
+    it_behaves_like 'runit_service with logging'
+
+    it 'renders the service run script with template options' do
+      expect(chef_run).to render_file(::File.join(service_svdir, 'run')).with_content(/# Options are delicious/)
+    end
+  end
+
   context 'with custom control script' do
     let(:service) { chef_run.runit_service('control-signals') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }

@@ -125,12 +125,15 @@ class Chef
       end
 
       def options(arg = nil)
-        opts = @env.empty? ? @options : @options.merge(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
+        default_opts = @env.empty? ? @options : @options.merge(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
+
+        merged_opts = arg.respond_to?(:merge) ? default_opts.merge(arg) : default_opts
+
         set_or_return(
           :options,
-          arg,
+          merged_opts,
           kind_of: [Hash],
-          default: opts
+          default: default_opts
         )
       end
 
