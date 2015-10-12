@@ -53,6 +53,20 @@ end
   end
 end
 
+# drop off environment files outside of the runit_service resources
+# so we can test manage_env_dir behavior
+%w(plain-defaults env-files).each do |svc|
+  directory "#{node['runit']['sv_dir']}/#{svc}/env" do
+    recursive true
+    action :nothing
+  end.run_action(:create)
+
+  file "#{node['runit']['sv_dir']}/#{svc}/env/ZAP_TEST" do
+    content '1'
+    action :nothing
+  end.run_action(:create)
+end
+
 # Create a service with all the fixin's
 runit_service 'plain-defaults'
 
