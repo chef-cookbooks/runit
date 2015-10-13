@@ -91,7 +91,6 @@ shared_examples_for 'common runit_test services' do
   end
 
   it 'deletes unknown environment files in env dir when manage_env_dir is true' do
-    pending 'zap extra env files ruby block running in first converge'
     expect(file('/etc/service/env-files/env/ZAP_TEST')).to_not exist
   end
 
