@@ -4,6 +4,9 @@ This file is used to list changes made in each version of the runit cookbook.
 
 UNRELEASED
 ----------
+
+v1.7.4 (2015-10-13)
+----------
 * Ensure the service directory exists so that we will succeed when enabling services (#153)
 * Fix regression where env directory contents were being deleted when the `env` attribute is empty. (#144, #158)
 * Add `log_dir` attribute, used only when `default_logger` is true. (#135)
