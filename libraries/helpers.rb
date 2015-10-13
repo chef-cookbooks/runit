@@ -65,7 +65,7 @@ module RunitCookbook
 
     def extra_env_files?
       files = []
-      Dir.glob("#{service_dir_name}/env/*").each do |f|
+      Dir.glob("#{sv_dir_name}/env/*").each do |f|
         files << File.basename(f)
       end
       return true if files.sort != new_resource.env.keys.sort
@@ -73,7 +73,7 @@ module RunitCookbook
     end
 
     def zap_extra_env_files
-      Dir.glob("#{service_dir_name}/env/*").each do |f|
+      Dir.glob("#{sv_dir_name}/env/*").each do |f|
         unless new_resource.env.key?(File.basename(f))
           File.unlink(f)
           Chef::Log.info("removing file #{f}")

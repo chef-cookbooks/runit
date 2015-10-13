@@ -2,7 +2,7 @@ require 'spec_helper'
 
 shared_examples_for 'common runit_test services' do
   # plain-defaults
-  describe 'does not delete unknown environment files in env dir when manage_env_dir is false' do
+  describe 'does not delete extra env files in env dir when the env attribute is empty' do
     describe file('/etc/service/plain-defaults/env/ZAP_TEST') do
       it { should exist }
       its(:content) { should eq '1' }
@@ -91,7 +91,6 @@ shared_examples_for 'common runit_test services' do
   end
 
   it 'deletes unknown environment files in env dir when manage_env_dir is true' do
-    pending 'zap extra env files ruby block running in first converge'
     expect(file('/etc/service/env-files/env/ZAP_TEST')).to_not exist
   end
 

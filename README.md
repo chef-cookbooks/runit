@@ -114,7 +114,10 @@ Many of these parameters are only used in the `:enable` action.
    compatibility with legacy runit service definition. Default is an
    empty hash.
 - **env** - A hash of environment variables with their values as content
-   used in the service's `env` directory. Default is an empty hash.
+  used in the service's `env` directory. Default is an empty hash. When
+  this hash is non-empty, the contents of the runit service's `env`
+  directory will be managed by Chef in order to conform to the declared
+  state.
 - **log** - Whether to start the service's logger with svlogd, requires
    a template `sv-service_name-log-run.erb` to configure the log's run
    script. Default is true.
