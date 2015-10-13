@@ -29,6 +29,10 @@ describe 'runit_service' do
       expect(chef_run).to create_directory(service_svdir)
     end
 
+    it 'creates the service directory' do
+      expect(chef_run).to create_directory(service_dir)
+    end
+
     it 'renders run script into service configuration directory' do
       expect(chef_run).to create_template(::File.join(service_svdir, 'run')).with(
         mode: '0755',
