@@ -158,6 +158,7 @@ exec svlogd -tt #{new_resource.log_dir}
 
     def disable_service
       shell_out("#{new_resource.sv_bin} #{sv_args}down #{service_dir_name}")
+      FileUtils.rm("#{service_dir_name}/supervise/ok")
       FileUtils.rm(service_dir_name)
     end
 
