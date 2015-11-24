@@ -8,6 +8,7 @@ platforms:
   - name: centos-5.11
   - name: centos-6.7
   - name: centos-7.2
+  - name: oel-6.7
   - name: debian-7.10
     run_list: apt::default
   - name: debian-8.4
@@ -23,7 +24,7 @@ platforms:
 
 suites:
 - name: default
-  run_list:  
+  run_list:
   - recipe[runit_test]
   attributes: {}
 

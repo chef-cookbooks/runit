@@ -66,4 +66,8 @@ if defined?(ChefSpec)
     ChefSpec::Matchers::ResourceMatcher.new(:runit_service, :usr2, service)
   end
 
+  def add_packagecloud_repo(service)
+    ChefSpec::Matchers::ResourceMatcher.new(:packagecloud_repo, :add, service)
+  end
+
 end
