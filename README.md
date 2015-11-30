@@ -16,12 +16,15 @@ See [issue #144](https://github.com/hw-cookbooks/runit/issues/144) for some note
 
 Requirements
 ------------
-### Platforms
+#### Platforms
 - Debian/Ubuntu
 - Gentoo
 - RHEL
 
-### Cookbooks
+#### Chef
+- Chef 11+
+
+#### Cookbooks
 - packagecloud (for RHEL)
 
 Attributes
