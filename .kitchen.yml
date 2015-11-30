@@ -8,13 +8,16 @@ platforms:
   - name: centos-5.11
   - name: centos-6.7
   - name: centos-7.2
-  - name: oel-6.7
   - name: debian-7.10
     run_list: apt::default
   - name: debian-8.4
     run_list: apt::default
   - name: fedora-21
     run_list: yum::dnf_yum_compat
+  - name: oel-6.6
+    driver:
+      box: oel-6.6
+      box_url: https://atlas.hashicorp.com/rafacas/boxes/oel66-plain/versions/1.0.1/providers/virtualbox.box
   - name: ubuntu-12.04
     run_list: apt::default
   - name: ubuntu-14.04
