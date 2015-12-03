@@ -135,6 +135,7 @@ runit_service 'yerba' do
   log_template_name 'yerba-matte'
   check_script_template_name 'yerba-matte'
   finish_script_template_name 'yerba-matte'
+  log_dir '/var/log/yerba-matte'
 end
 
 # Create a service with differently named template file, using default logger with non-default log_dir
