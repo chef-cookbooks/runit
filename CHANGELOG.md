@@ -4,6 +4,7 @@ This file is used to list changes made in each version of the runit cookbook.
 
 UNRELEASED
 ----------
+* Restore `restart_on_update` functionality originally added in [#20](https://github.com/hw-cookbooks/runit/pull/20) and lost in the 1.7.0 refactor.
 
 v1.7.4 (2015-10-13)
 ----------
