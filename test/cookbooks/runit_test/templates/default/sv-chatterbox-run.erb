@@ -1,4 +1,4 @@
 #!/bin/sh
 exec 2>&1
 sleep 2
-exec nc -l 6714
+exec socat - TCP4-LISTEN:6714,fork

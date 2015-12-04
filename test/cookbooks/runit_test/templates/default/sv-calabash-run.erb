@@ -1,3 +1,3 @@
 #!/bin/sh
 exec 2>&1
-exec nc -l 6712
+exec socat - TCP4-LISTEN:6712,fork
