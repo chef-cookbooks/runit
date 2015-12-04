@@ -20,7 +20,10 @@
 include_recipe 'runit::default'
 
 link '/usr/local/bin/sv' do
-  to '/usr/bin/sv'
+  to value_for_platform_family(
+    'default' => '/usr/bin/sv',
+    %w(rhel fedora) => '/sbin/sv'
+  )
 end
 
 package 'socat'
