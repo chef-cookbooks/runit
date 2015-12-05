@@ -23,11 +23,9 @@ def docker?
   results = `cat /proc/1/cgroup`.strip.split("\n")
   results.any? { |val| /docker/ =~ val }
 end
+
 if docker?
-  bash 'apt-get update' do
-    user 'root'
-    code 'apt-get update'
-  end
+  include_recipe 'apt::default'
 end
 
 link '/usr/local/bin/sv' do
