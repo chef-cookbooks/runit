@@ -70,7 +70,7 @@ describe 'runit_service' do
   # The naming of these logging-related shared example groups is confusing because
   # the `default_logger` parameter defaults to false. Maybe in a future version we
   # rename this to something potentially less confusing, like embedded_logger?
-  shared_examples_for 'runit_service with default_logger set to false'  do
+  shared_examples_for 'runit_service with default_logger set to false' do
     it_behaves_like 'runit_service with default logging'
 
     let(:log_run_script) { chef_run.template(::File.join(service_svdir, 'log', 'run')) }
@@ -112,7 +112,6 @@ describe 'runit_service' do
     it 'notifies the logger to restart when its config is updated' do
       expect(log_config_tmpl).to notify('ruby_block[restart_log_service]').to(:run).delayed
     end
-
   end
 
   context 'with default attributes' do

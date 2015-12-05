@@ -50,7 +50,6 @@ class Chef
 
       # actions
       action :create do
-
         ruby_block 'restart_service' do
           block do
             action_enable
