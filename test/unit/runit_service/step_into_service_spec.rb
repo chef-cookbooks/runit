@@ -67,12 +67,31 @@ describe 'runit_service' do
     end
   end
 
-  shared_examples_for 'runit_service with logging' do
+  # The naming of these logging-related shared example groups is confusing because
+  # the `default_logger` parameter defaults to false. Maybe in a future version we
+  # rename this to something potentially less confusing, like embedded_logger?
+  shared_examples_for 'runit_service with default_logger set to false' do
+    it_behaves_like 'runit_service with default logging'
+
+    let(:log_run_script) { chef_run.template(::File.join(service_svdir, 'log', 'run')) }
+
+    it 'notifies the logger to restart when its run script is updated' do
+      expect(log_run_script).to notify('ruby_block[restart_log_service]').to(:run).delayed
+    end
+  end
+
+  shared_examples_for 'runit_service with default logging' do
     it_behaves_like 'runit_service'
+
+    let(:log_config_tmpl) { chef_run.template(::File.join(service_svdir, 'log', 'config')) }
 
     it 'creates directories for the service logger' do
       expect(chef_run).to create_directory(::File.join(service_svdir, 'log'))
       expect(chef_run).to create_directory(::File.join(service_svdir, 'log', 'main'))
+    end
+
+    it 'renders logger run script into service log configuration directory' do
+      expect(chef_run).to render_file(::File.join(service_svdir, 'log', 'run'))
     end
 
     it 'renders logger run script into service log configuration directory' do
@@ -89,6 +108,10 @@ describe 'runit_service' do
         variables: { config: service }
       )
     end
+
+    it 'notifies the logger to restart when its config is updated' do
+      expect(log_config_tmpl).to notify('ruby_block[restart_log_service]').to(:run).delayed
+    end
   end
 
   context 'with default attributes' do
@@ -97,7 +120,7 @@ describe 'runit_service' do
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) { Hash.new }
 
-    it_behaves_like 'runit_service with logging'
+    it_behaves_like 'runit_service with default_logger set to false'
 
     it 'does not zap extra env files' do
       expect(chef_run).to_not run_ruby_block('zap extra env files for plain-defaults service')
@@ -122,13 +145,14 @@ describe 'runit_service' do
     end
   end
 
-  context 'with the default logger' do
+  context 'with default_logger enabled' do
     let(:service) { chef_run.runit_service('default-svlog') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) { Hash.new }
+    let(:log_run_script) { chef_run.file(::File.join(service_svdir, 'log', 'run')) }
 
-    it_behaves_like 'runit_service with logging'
+    it_behaves_like 'runit_service with default logging'
 
     it 'creates a service with the default_logger attribute set to true' do
       expect(service.default_logger).to eq(true)
@@ -150,6 +174,10 @@ describe 'runit_service' do
         to: ::File.join(service_svdir, 'log', 'config')
       )
     end
+
+    it 'notifies the logger to restart when its run script is updated' do
+      expect(log_run_script).to notify('ruby_block[restart_log_service]').to(:run).delayed
+    end
   end
 
   context 'with a check script' do
@@ -158,7 +186,7 @@ describe 'runit_service' do
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) { Hash.new }
 
-    it_behaves_like 'runit_service with logging'
+    it_behaves_like 'runit_service with default_logger set to false'
 
     it 'creates a service with check attribute set to true' do
       expect(service.check).to eq(true)
@@ -182,7 +210,7 @@ describe 'runit_service' do
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
     let(:service_options) { Hash.new }
 
-    it_behaves_like 'runit_service with logging'
+    it_behaves_like 'runit_service with default_logger set to false'
 
     it 'creates a service with finish attribute set to true' do
       expect(service.finish).to eq(true)
@@ -208,7 +236,7 @@ describe 'runit_service' do
       { env_dir: '/etc/sv/env-files/env' }
     end
 
-    it_behaves_like 'runit_service with logging'
+    it_behaves_like 'runit_service with default_logger set to false'
 
     it 'creates a service with a PATH environment variable' do
       expect(service.env).to have_key('PATH')
@@ -233,7 +261,7 @@ describe 'runit_service' do
       { raspberry: 'delicious' }
     end
 
-    it_behaves_like 'runit_service with logging'
+    it_behaves_like 'runit_service with default_logger set to false'
 
     it 'renders the service run script with template options' do
       expect(chef_run).to render_file(::File.join(service_svdir, 'run')).with_content(/# Options are delicious/)
@@ -247,7 +275,7 @@ describe 'runit_service' do
     let(:service_options) { Hash.new }
     let(:service_signal) { 'u' }
 
-    it_behaves_like 'runit_service with logging'
+    it_behaves_like 'runit_service with default_logger set to false'
 
     it 'writes custom control script for signal' do
       expect(chef_run).to create_template(::File.join(service_svdir, 'control', service_signal)).with(
