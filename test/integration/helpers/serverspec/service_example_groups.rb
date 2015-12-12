@@ -213,6 +213,10 @@ shared_examples_for 'common runit_test services' do
       it { should be_owned_by 'root' }
       it { should be_grouped_into 'root' }
     end
+
+    describe file('/etc/sv/exist-disabled/supervise/ok') do
+      it { should_not exist }
+    end
   end
 
   # downed service
