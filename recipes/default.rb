@@ -59,7 +59,7 @@ when 'debian', 'gentoo'
   if platform?('gentoo')
     template '/etc/init.d/runit-start' do
       source 'runit-start.sh.erb'
-      mode 0755
+      mode '0755'
     end
 
     service 'runit-start' do
