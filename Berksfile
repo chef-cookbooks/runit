@@ -4,6 +4,7 @@ metadata
 
 group :integration do
   cookbook 'apt'
+  cookbook 'yum'
   cookbook 'yum-epel'
 end
 
