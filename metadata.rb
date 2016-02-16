@@ -13,3 +13,6 @@ recipe 'runit', 'Installs and configures runit'
 end
 
 depends 'packagecloud'
+
+source_url 'https://github.com/hw-cookbooks/runit' if respond_to?(:source_url)
+issues_url 'https://github.com/hw-cookbooks/runit/issues' if respond_to?(:issues_url)
