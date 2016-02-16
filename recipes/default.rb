@@ -39,7 +39,13 @@ end
 case node['platform_family']
 when 'rhel', 'fedora'
 
-  packagecloud_repo 'imeyer/runit' unless node['runit']['prefer_local_yum']
+  # add the necessary repos unless prefer_local_yum is set
+  unless node['runit']['prefer_local_yum']
+    include_recipe 'yum-epel' if node['platform_version'].to_i < 7
+
+    packagecloud_repo 'imeyer/runit' 
+  end
+  
   package 'runit'
 
   service 'runsvdir-start' do
