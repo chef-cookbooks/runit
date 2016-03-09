@@ -72,16 +72,16 @@ class Chef
         if new_resource.sv_templates
 
           directory sv_dir_name do
-            owner new_resource.owner
-            group new_resource.group
+            owner new_resource.owner unless new_resource.owner.nil?
+            group new_resource.group unless new_resource.group.nil?
             mode '0755'
             recursive true
             action :create
           end
 
           template "#{sv_dir_name}/run" do
-            owner new_resource.owner
-            group new_resource.group
+            owner new_resource.owner unless new_resource.owner.nil?
+            group new_resource.group unless new_resource.group.nil?
             source "sv-#{new_resource.run_template_name}-run.erb"
             cookbook template_cookbook
             mode '0755'
@@ -93,31 +93,31 @@ class Chef
           # log stuff
           if new_resource.log
             directory "#{sv_dir_name}/log" do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               recursive true
               action :create
             end
 
             directory "#{sv_dir_name}/log/main" do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               mode '0755'
               recursive true
               action :create
             end
 
             directory new_resource.log_dir do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               mode '00755'
               recursive true
               action :create
             end
 
             template "#{sv_dir_name}/log/config" do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               mode '00644'
               cookbook 'runit'
               source 'log-config.erb'
@@ -133,16 +133,16 @@ class Chef
             if new_resource.default_logger
               file "#{sv_dir_name}/log/run" do
                 content default_logger_content
-                owner new_resource.owner
-                group new_resource.group
+                owner new_resource.owner unless new_resource.owner.nil?
+                group new_resource.group unless new_resource.group.nil?
                 mode '00755'
                 action :create
                 notifies :run, 'ruby_block[restart_log_service]', :delayed
               end
             else
               template "#{sv_dir_name}/log/run" do
-                owner new_resource.owner
-                group new_resource.group
+                owner new_resource.owner unless new_resource.owner.nil?
+                group new_resource.group unless new_resource.group.nil?
                 mode '00755'
                 source "sv-#{new_resource.log_template_name}-log-run.erb"
                 cookbook template_cookbook
@@ -156,16 +156,16 @@ class Chef
 
           # environment stuff
           directory "#{sv_dir_name}/env" do
-            owner new_resource.owner
-            group new_resource.group
+            owner new_resource.owner unless new_resource.owner.nil?
+            group new_resource.group unless new_resource.group.nil?
             mode '00755'
             action :create
           end
 
           new_resource.env.map do |var, value|
             file "#{sv_dir_name}/env/#{var}" do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               content value
               mode 00640
               action :create
@@ -181,8 +181,8 @@ class Chef
 
           if new_resource.check
             template "#{sv_dir_name}/check" do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               mode '00755'
               cookbook template_cookbook
               source "sv-#{new_resource.check_script_template_name}-check.erb"
@@ -193,8 +193,8 @@ class Chef
 
           if new_resource.finish
             template "#{sv_dir_name}/finish" do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               mode '00755'
               source "sv-#{new_resource.finish_script_template_name}-finish.erb"
               cookbook template_cookbook
@@ -204,16 +204,16 @@ class Chef
           end
 
           directory "#{sv_dir_name}/control" do
-            owner new_resource.owner
-            group new_resource.group
+            owner new_resource.owner unless new_resource.owner.nil?
+            group new_resource.group unless new_resource.group.nil?
             mode '00755'
             action :create
           end
 
           new_resource.control.map do |signal|
             template "#{sv_dir_name}/control/#{signal}" do
-              owner new_resource.owner
-              group new_resource.group
+              owner new_resource.owner unless new_resource.owner.nil?
+              group new_resource.group unless new_resource.group.nil?
               mode '0755'
               source "sv-#{new_resource.control_template_names[signal]}-#{signal}.erb"
               cookbook template_cookbook
