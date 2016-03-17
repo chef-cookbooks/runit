@@ -37,5 +37,8 @@ end
 desc 'Run all tests on Travis'
 task travis: ['style', 'spec', 'integration:cloud']
 
-# Default
-task default: %w(style spec)
+begin
+    require 'emeril/rake'
+rescue LoadError
+    puts '>>>>> Emerial gem not loaded, omitting taskes' unless ENV['CI']
+end
