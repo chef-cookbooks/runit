@@ -4,7 +4,7 @@ metadata
 
 group :integration do
   cookbook 'apt'
-  cookbook 'yum-epel'
+  cookbook 'yum'
 end
 
 cookbook 'runit_test', path: 'test/cookbooks/runit_test'

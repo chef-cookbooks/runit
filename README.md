@@ -26,6 +26,7 @@ Requirements
 
 #### Cookbooks
 - packagecloud (for RHEL)
+- yum-epel (for RHEL)
 
 Attributes
 ----------
