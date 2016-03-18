@@ -167,7 +167,7 @@ class Chef
               owner new_resource.owner
               group new_resource.group
               content value
-              sensitive true if Chef::Resource::ChefGem.instance_methods(false).include?(:sensitive)
+              sensitive true if Chef::Resource.instance_methods(false).include?(:sensitive)
               mode 00640
               action :create
             end
