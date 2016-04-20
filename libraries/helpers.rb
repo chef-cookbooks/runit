@@ -50,9 +50,12 @@ module RunitCookbook
     end
 
     # misc helper functions
-    def inside_docker?
-      results = `cat /proc/1/cgroup`.strip.split("\n")
-      results.any? { |val| /docker/ =~ val }
+    def inside_container?
+      return false unless File.exists?('/proc/1/cgroup')
+      cgdata = File.read('/proc/1/cgroup')
+      return false if cgdata.empty?
+      namespaces = cgdata.lines.map{ |l| l.strip.split(':').last }.uniq
+      namespaces.length != 1 || namespaces.first != '/'
     end
 
     def down_file
@@ -82,7 +85,7 @@ module RunitCookbook
     end
 
     def wait_for_service
-      unless inside_docker?
+      unless inside_container?
         sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
 
         if new_resource.log
