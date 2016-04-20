@@ -249,7 +249,7 @@ describe 'runit_service' do
     end
 
     it 'sets the sensitive attribute on the env file resource' do
-      expect(chef_run).to render_file(::File.join(service_svdir, 'env', 'PATH'))
+      expect(chef_run).to create_file(::File.join(service_svdir, 'env', 'PATH'))
         .with(sensitive: true)
     end
 
