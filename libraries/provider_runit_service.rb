@@ -305,6 +305,7 @@ class Chef
              file "#{service_dir_name}/supervise/#{target}" do
                owner new_resource.supervisor_owner || 'root'
                group new_resource.supervisor_group || 'root'
+               action :touch
              end
            end
          end

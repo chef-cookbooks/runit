@@ -309,13 +309,13 @@ describe 'runit_service' do
 
     it 'Changes ownership of supervise files to the supervisor_owner' do
       supervise_files.each do |file|
-        expect(chef_run).to create_file(::File.join(service_servicedir, 'supervise', file)).with(owner: 'floyd')
+        expect(chef_run).to touch_file(::File.join(service_servicedir, 'supervise', file)).with(owner: 'floyd')
       end
     end
 
     it 'Leaves group ownership of supervise files as root' do
       supervise_files.each do |file|
-        expect(chef_run).to create_file(::File.join(service_servicedir, 'supervise', file)).with(group: 'root')
+        expect(chef_run).to touch_file(::File.join(service_servicedir, 'supervise', file)).with(group: 'root')
       end
     end
   end
@@ -335,13 +335,13 @@ describe 'runit_service' do
 
     it 'Leaves ownership of supervise files as root' do
       supervise_files.each do |file|
-        expect(chef_run).to create_file(::File.join(service_servicedir, 'supervise', file)).with(owner: 'root')
+        expect(chef_run).to touch_file(::File.join(service_servicedir, 'supervise', file)).with(owner: 'root')
       end
     end
 
     it 'Changes group ownership of supervise files as supervisor_group' do
       supervise_files.each do |file|
-        expect(chef_run).to create_file(::File.join(service_servicedir, 'supervise', file)).with(group: 'floyd')
+        expect(chef_run).to touch_file(::File.join(service_servicedir, 'supervise', file)).with(group: 'floyd')
       end
     end
   end
@@ -361,13 +361,13 @@ describe 'runit_service' do
 
     it 'Changes ownership of supervise files to the supervisor_owner' do
       supervise_files.each do |file|
-        expect(chef_run).to create_file(::File.join(service_servicedir, 'supervise', file)).with(owner: 'floyd')
+        expect(chef_run).to touch_file(::File.join(service_servicedir, 'supervise', file)).with(owner: 'floyd')
       end
     end
 
     it 'Changes group ownership of supervise files as supervisor_group' do
       supervise_files.each do |file|
-        expect(chef_run).to create_file(::File.join(service_servicedir, 'supervise', file)).with(group: 'floyd')
+        expect(chef_run).to touch_file(::File.join(service_servicedir, 'supervise', file)).with(group: 'floyd')
       end
     end
   end
