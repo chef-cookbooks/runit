@@ -224,6 +224,19 @@ runit_service 'un-downed-service-deleted' do
   start_down true
 end
 
+runit_service 'supervisor_owner' do
+  supervisor_owner 'floyd'
+end
+
+runit_service 'supervisor_group' do
+  supervisor_group 'floyd'
+end
+
+runit_service 'supervisor_owner_and_group' do
+  supervisor_owner 'floyd'
+  supervisor_group 'floyd'
+end
+
 runit_service 'un-downed-service-deleted remove down' do
   service_name 'un-downed-service-deleted'
   log_template_name 'un-downed-service-deleted'

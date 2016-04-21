@@ -294,6 +294,20 @@ class Chef
           end
           action :run
         end
+
+        # Support supervisor owner and groups http://smarden.org/runit/faq.html#user
+        if new_resource.supervisor_owner || new_resource.supervisor_group
+           directory "#{service_dir_name}/supervise" do
+             mode '0755'
+             action :create
+           end
+           %w(ok status control).each do |target|
+             file "#{service_dir_name}/supervise/#{target}" do
+               owner new_resource.supervisor_owner || 'root'
+               group new_resource.supervisor_group || 'root'
+             end
+           end
+         end
       end
 
       # signals
