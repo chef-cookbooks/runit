@@ -159,6 +159,10 @@ Many of these parameters are only used in the `:enable` action.
    see [runsv man page](http://smarden.org/runit/runsv.8.html) on how
    to use this. This requires that each template be created with the
    name `sv-service_name-signal.erb`.
+- **supervisor_owner** - the user that should be allowed to control this service,
+   see [runsv faq](http://smarden.org/runit/faq.html#user)
+- **supervisor_group** - the group that should be allowed to control this service,
+   see [runsv faq](http://smarden.org/runit/faq.html#user)
 - **owner** - user that should own the templates created to enable the
    service
 - **group** - group that should own the templates created to enable the
