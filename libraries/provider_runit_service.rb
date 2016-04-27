@@ -167,6 +167,7 @@ class Chef
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               content value
+              sensitive true if Chef::Resource.instance_methods(false).include?(:sensitive)
               mode 00640
               action :create
             end

@@ -248,6 +248,11 @@ describe 'runit_service' do
       )
     end
 
+    it 'sets the sensitive attribute on the env file resource' do
+      expect(chef_run).to create_file(::File.join(service_svdir, 'env', 'PATH'))
+        .with(sensitive: true)
+    end
+
     it 'zaps any extra env files' do
       expect(chef_run).to run_ruby_block('zap extra env files for env-files service')
     end
