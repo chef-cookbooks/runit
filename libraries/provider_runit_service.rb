@@ -238,6 +238,7 @@ class Chef
               variables(
                 name: new_resource.service_name,
                 sv_bin: new_resource.sv_bin,
+                sv_args: sv_args,
                 init_dir: ::File.join(parsed_lsb_init_dir, '')
               )
               action :create

@@ -14,6 +14,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC="runit-managed <%= @name %>"
 NAME=<%= @name %>
 RUNIT=<%= @sv_bin %>
+RUNIT_ARGS="<%= @sv_args %>"
 SCRIPTNAME=<%= @init_dir %>$NAME
 
 # Exit if runit is not installed
@@ -30,34 +31,59 @@ SCRIPTNAME=<%= @init_dir %>$NAME
 case "$1" in
   start)
         [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
-        $RUNIT start $NAME
+        $RUNIT $RUNIT_ARGS start $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   stop)
         [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
-        $RUNIT stop $NAME
+        $RUNIT $RUNIT_ARGS stop $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   status)
-        $RUNIT status $NAME && exit 0 || exit $?
+        $RUNIT $RUNIT_ARGS status $NAME && exit 0 || exit $?
         ;;
   reload)
         [ "$VERBOSE" != no ] && log_daemon_msg "Reloading $DESC" "$NAME"
-        $RUNIT reload $NAME
+        $RUNIT $RUNIT_ARGS reload $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   force-reload)
         [ "$VERBOSE" != no ] && log_daemon_msg "Force reloading $DESC" "$NAME"
-        $RUNIT force-reload $NAME
+        $RUNIT $RUNIT_ARGS force-reload $NAME
+        [ "$VERBOSE" != no ] && log_end_msg $?
+        ;;
+  force-stop)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Force stopping $DESC" "$NAME"
+        $RUNIT $RUNIT_ARGS force-stop $NAME
+        [ "$VERBOSE" != no ] && log_end_msg $?
+        ;;
+  force-restart)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Force restarting $DESC" "$NAME"
+        $RUNIT $RUNIT_ARGS force-restart $NAME
+        [ "$VERBOSE" != no ] && log_end_msg $?
+        ;;
+  force-shutdown)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Force shutdowning $DESC" "$NAME"
+        $RUNIT $RUNIT_ARGS force-shutdown $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   restart)
         [ "$VERBOSE" != no ] && log_daemon_msg "Restarting $DESC" "$NAME"
-        $RUNIT restart $NAME
+        $RUNIT $RUNIT_ARGS restart $NAME
+        [ "$VERBOSE" != no ] && log_end_msg $?
+        ;;
+  shutdown)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Shutdowning $DESC" "$NAME"
+        $RUNIT $RUNIT_ARGS shutdown $NAME
+        [ "$VERBOSE" != no ] && log_end_msg $?
+        ;;
+  try-restart)
+        [ "$VERBOSE" != no ] && log_daemon_msg "Try restarting $DESC" "$NAME"
+        $RUNIT $RUNIT_ARGS try-restart $NAME
         [ "$VERBOSE" != no ] && log_end_msg $?
         ;;
   *)
-        echo "Usage: $SCRIPTNAME {start|stop|status|reload|force-reload|restart}" >&2
+        echo "Usage: $SCRIPTNAME {start|stop|status|reload|force-reload|force-restart|force-shutdown|force-stop|restart|shutdown|try-restart}" >&2
         exit 3
         ;;
 esac
