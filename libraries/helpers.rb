@@ -97,9 +97,15 @@ module RunitCookbook
     end
 
     def runit_send_signal(signal, friendly_name = nil)
+      upcase_signals = [ :term ]
       friendly_name ||= signal
       converge_by("send #{friendly_name} to #{new_resource}") do
-        shell_out!("#{sv_bin} #{sv_args}#{signal} #{service_dir_name}")
+        if upcase_signals.include?(signal)
+          shell_out!("#{sv_bin} #{sv_args}#{signal.upcase} #{service_dir_name}")
+        else
+          shell_out!("#{sv_bin} #{sv_args}#{signal} #{service_dir_name}")
+        end
+
         Chef::Log.info("#{new_resource} sent #{friendly_name}")
       end
     end
