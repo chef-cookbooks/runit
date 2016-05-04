@@ -19,5 +19,5 @@ end
 begin
   require 'emeril/rake'
 rescue LoadError
-  puts '>>>>> Emerial gem not loaded, omitting taskes' unless ENV['CI']
+  puts '>>>>> Emeril gem not loaded, omitting tasks' unless ENV['CI']
 end
