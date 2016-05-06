@@ -4,6 +4,9 @@ This file is used to list changes made in each version of the runit cookbook.
 
 UNRELEASED
 ----------
+* Add missing goals to Debian init script template (#175)
+* Mark `env` files as sensitive (#182)
+* Reduce warning spam in Chef ~12.7 (#183)
 
 v1.7.6
 ----------
