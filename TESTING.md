@@ -17,10 +17,9 @@ tests, use rake:
 
 ## Integration Tests
 
-Integration tests are setup to run under minitest-chef. They are
-automatically run under test kitchen.
+To run integration tests in Test Kitchen, use rake:
 
-    bundle exec kitchen test
+    bundle exec rake kitchen:all
 
 This tests the default recipe ("default" configuration), and various
 uses of the `runit_service` resource ("service" configuration).
