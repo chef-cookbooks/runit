@@ -226,15 +226,18 @@ end
 
 runit_service 'supervisor_owner' do
   supervisor_owner 'floyd'
+  default_logger true
 end
 
 runit_service 'supervisor_group' do
   supervisor_group 'floyd'
+  default_logger true
 end
 
 runit_service 'supervisor_owner_and_group' do
   supervisor_owner 'floyd'
   supervisor_group 'floyd'
+  default_logger true
 end
 
 runit_service 'un-downed-service-deleted remove down' do

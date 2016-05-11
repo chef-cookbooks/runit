@@ -301,7 +301,7 @@ describe 'runit_service' do
     let(:service_options) { Hash.new }
     let(:supervise_files) { %w(ok status control) }
 
-    it_behaves_like 'runit_service with default_logger set to false'
+    it_behaves_like 'runit_service with default logging'
 
     it 'Makes the supervise directory world writable' do
       expect(chef_run).to create_directory(::File.join(service_servicedir, 'supervise')).with(mode: '0755')
@@ -327,7 +327,7 @@ describe 'runit_service' do
     let(:service_options) { Hash.new }
     let(:supervise_files) { %w(ok status control) }
 
-    it_behaves_like 'runit_service with default_logger set to false'
+    it_behaves_like 'runit_service with default logging'
 
     it 'Makes the supervise directory world writable' do
       expect(chef_run).to create_directory(::File.join(service_servicedir, 'supervise')).with(mode: '0755')
@@ -353,7 +353,7 @@ describe 'runit_service' do
     let(:service_options) { Hash.new }
     let(:supervise_files) { %w(ok status control) }
 
-    it_behaves_like 'runit_service with default_logger set to false'
+    it_behaves_like 'runit_service with default logging'
 
     it 'Makes the supervise directory world writable' do
       expect(chef_run).to create_directory(::File.join(service_servicedir, 'supervise')).with(mode: '0755')
