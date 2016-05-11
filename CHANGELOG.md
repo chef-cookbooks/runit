@@ -8,8 +8,9 @@ UNRELEASED
 v1.7.8
 ----------
 * Add missing goals to Debian init script template (#175)
-* Mark `env` files as sensitive (#182)
+* Enhancement: Mark `env` files as sensitive (#182)
 * Reduce warning spam in Chef ~12.7 (#183)
+* Enhancement: Add support for specifying supervising user and/or group for managing service (#187)
 
 v1.7.6
 ----------
