@@ -14,7 +14,10 @@ RSpec::Core::RakeTask.new(:spec) do |t|
 end
 
 FoodCritic::Rake::LintTask.new do |t|
-  t.options = { fail_tags: ['correctness'] }
+  t.options = {
+    fail_tags: %w( correctness ),
+    tags: %w( ~FC004 )
+  }
 end
 
 RuboCop::RakeTask.new
