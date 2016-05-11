@@ -22,7 +22,7 @@ group :librarian do
 end
 
 group :berkshelf do
-  gem 'berkshelf',  '~> 4.0'
+  gem 'berkshelf', '~> 4.0'
 end
 
 group :release do

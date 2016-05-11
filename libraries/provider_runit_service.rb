@@ -283,7 +283,7 @@ class Chef
 
         directory new_resource.service_dir
 
-        link "#{service_dir_name}" do
+        link service_dir_name.to_s do
           to sv_dir_name
           action :create
         end
@@ -297,18 +297,18 @@ class Chef
 
         # Support supervisor owner and groups http://smarden.org/runit/faq.html#user
         if new_resource.supervisor_owner || new_resource.supervisor_group
-           directory "#{service_dir_name}/supervise" do
-             mode '0755'
-             action :create
-           end
-           %w(ok status control).each do |target|
-             file "#{service_dir_name}/supervise/#{target}" do
-               owner new_resource.supervisor_owner || 'root'
-               group new_resource.supervisor_group || 'root'
-               action :touch
-             end
-           end
-         end
+          directory "#{service_dir_name}/supervise" do
+            mode '0755'
+            action :create
+          end
+          %w(ok status control).each do |target|
+            file "#{service_dir_name}/supervise/#{target}" do
+              owner new_resource.supervisor_owner || 'root'
+              group new_resource.supervisor_group || 'root'
+              action :touch
+            end
+          end
+        end
       end
 
       # signals
