@@ -180,28 +180,26 @@ class Chef
             action :run
           end
 
-          if new_resource.check
-            template "#{sv_dir_name}/check" do
-              owner new_resource.owner unless new_resource.owner.nil?
-              group new_resource.group unless new_resource.group.nil?
-              mode '00755'
-              cookbook template_cookbook
-              source "sv-#{new_resource.check_script_template_name}-check.erb"
-              variables(options: new_resource.options)
-              action :create
-            end
+          template "#{sv_dir_name}/check" do
+            owner new_resource.owner unless new_resource.owner.nil?
+            group new_resource.group unless new_resource.group.nil?
+            mode '00755'
+            cookbook template_cookbook
+            source "sv-#{new_resource.check_script_template_name}-check.erb"
+            variables(options: new_resource.options)
+            action :create
+            only_if { new_resource.check }
           end
 
-          if new_resource.finish
-            template "#{sv_dir_name}/finish" do
-              owner new_resource.owner unless new_resource.owner.nil?
-              group new_resource.group unless new_resource.group.nil?
-              mode '00755'
-              source "sv-#{new_resource.finish_script_template_name}-finish.erb"
-              cookbook template_cookbook
-              variables(options: new_resource.options) if new_resource.options.respond_to?(:has_key?)
-              action :create
-            end
+          template "#{sv_dir_name}/finish" do
+            owner new_resource.owner unless new_resource.owner.nil?
+            group new_resource.group unless new_resource.group.nil?
+            mode '00755'
+            source "sv-#{new_resource.finish_script_template_name}-finish.erb"
+            cookbook template_cookbook
+            variables(options: new_resource.options) if new_resource.options.respond_to?(:has_key?)
+            action :create
+            only_if { new_resource.finish }
           end
 
           directory "#{sv_dir_name}/control" do
