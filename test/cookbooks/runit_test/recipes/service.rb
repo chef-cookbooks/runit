@@ -19,6 +19,15 @@
 
 include_recipe 'runit::default'
 
+def docker?
+  results = `cat /proc/1/cgroup`.strip.split("\n")
+  results.any? { |val| /docker/ =~ val }
+end
+
+if docker?
+  include_recipe 'apt::default'
+end
+
 link '/usr/local/bin/sv' do
   to value_for_platform_family(
     'default' => '/usr/bin/sv',

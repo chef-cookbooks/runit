@@ -288,10 +288,19 @@ class Chef
           action :create
         end
 
+        # It seems ok to wait for service socket in action :enable in order
+        # to do it once. The reason for doubt is: what if someone uses a resource
+        # which notifies e.g. runit_service restart action? The service socket
+        # should exist in such a situation before actual restart. But it seems
+        # reasonable to expect that any runit_service resource usage
+        # should first use action :enable and then any other action.
         ruby_block "wait for #{new_resource.service_name} service socket" do
           block do
             wait_for_service
           end
+          # (!inside_docker || runsvdir_running?) is to avoid infinite loop of waiting
+          # It says if we can wait for service.
+          only_if { (!inside_docker? || runsvdir_running?) && need_to_wait_for_service? }
           action :run
         end
 
@@ -327,12 +336,19 @@ class Chef
       end
 
       action :restart do
-        restart_service
+        if inside_docker? && !runsvdir_running? # e.g. during `docker build`
+          Chef::Log.debug "not restarting #{new_resource} (runsvdir process not running and inside docker)"
+        else
+          restart_service
+          Chef::Log.info "#{new_resource} restarted"
+        end
       end
 
       action :start do
         if running?
           Chef::Log.debug "#{new_resource} already running - nothing to do"
+        elsif inside_docker? && !runsvdir_running?
+          Chef::Log.debug "not starting #{new_resource} (runsvdir process not running and inside docker)"
         else
           start_service
           Chef::Log.info "#{new_resource} started"
@@ -349,11 +365,13 @@ class Chef
       end
 
       action :reload do
-        if running?
+        if !(running?)
+          Chef::Log.debug "#{new_resource} not running - nothing to do"
+        elsif inside_docker? && !runsvdir_running?
+          Chef::Log.debug "not reloading #{new_resource} (runsvdir process not running and inside docker)"
+        else
           reload_service
           Chef::Log.info "#{new_resource} reloaded"
-        else
-          Chef::Log.debug "#{new_resource} not running - nothing to do"
         end
       end
 

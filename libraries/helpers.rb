@@ -81,14 +81,108 @@ module RunitCookbook
       end
     end
 
-    def wait_for_service
-      unless inside_docker?
-        sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
+    # inspired on:
+    # https://github.com/djberg96/sys-proctable/blob/master/lib/linux/sys/proctable.rb
+    # Returns an array of hashes with keys: name and pid.
+    def list_processes_with_pids()
+      # there may be many processes of the same name, so use an array
+      # of hashes
+      processes = []
+      Dir.foreach("/proc") do |file|
+        next if file =~ /\D/ # Skip non-numeric directories
 
-        if new_resource.log
-          sleep 1 until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
+        # Get /proc/<pid>/cmdline information. Strip out embedded nulls.
+        begin
+          name = IO.read("/proc/#{file}/cmdline").tr("\000", ' ').strip
+          processes.push({ name: name, pid: file})
+        rescue
+          next # Process terminated, on to the next process
         end
       end
+      processes
+    end
+
+    # Looks for a line starting with "State:" in a specifed file
+    # and returns the rest of the line.
+    def read_state(status_file)
+      File.open(status_file, 'r') do |file|
+        lines = file.readlines
+        lines.each do |line|
+          if line.start_with?('State:')
+            state = /State:\s+(.*)/.match(line)[1]
+            return state
+          end
+        end
+      end
+    end
+
+    # Returns true if a process is running, false otherwise.
+    def is_process_running?(processes, process_name_pattern)
+      matching_processes = []
+      processes.each do |process|
+        if process[:name] =~ /#{process_name_pattern}/
+          matching_processes.push(process)
+        end
+      end
+      if matching_processes.length > 1
+        fail "#{process_name_pattern} matches more than 1 processes: "\
+        "#{matching_processes}"
+      elsif matching_processes.length == 0
+        # "#{process_name_pattern} matches 0 processes"
+        return false
+      end
+      status = read_state("/proc/#{matching_processes[0][:pid]}/status")
+      if status.start_with?('R') || status.start_with?('S')
+        return true
+      else
+        returns false
+      end
+    end
+
+    # Checks if runsvdir process is running. runsvdir
+    # starts and monitors services from #{parsed_service_dir}.
+    # (http://smarden.org/runit/runsvdir.8.html).
+    # True e.g. in a docker container which uses Phusion
+    # baseimage-docker, but false when running `docker build`.
+    def runsvdir_running?
+      processes = list_processes_with_pids()
+      # on ubuntu 14.04 inside docker the process is:
+      #   /usr/bin/runsvdir -P /etc/service
+      # on debian 7.8 in vm the process is:
+      #   runsvdir -P /etc/service log: svlogd [-ttv] ...
+      is_process_running?(processes, "runsvdir -P #{parsed_service_dir}")
+    end
+
+    # Checks if runsv process is running and monitors this service.
+    def runsv_running?
+      processes = list_processes_with_pids()
+      is_process_running?(processes, "^runsv #{new_resource.service_name}$")
+    end
+
+    # Returns true if this service files are not yet created, in order to
+    # avoid e.g. restart to happen before runsvdir actually initializes the
+    # service directory (https://github.com/hw-cookbooks/runit/issues/60)
+    def need_to_wait_for_service?
+      if !(::FileTest.pipe?("#{service_dir_name}/supervise/ok"))
+        Chef::Log.debug("#{service_dir_name}/supervise/ok does not exist")
+        return true
+      end
+
+      if new_resource.log && !(::FileTest.pipe?("#{service_dir_name}/log/supervise/ok"))
+        Chef::Log.debug("#{service_dir_name}/log/supervise/ok does not exist")
+        return true
+      end
+      # Reason: when starting a service with sv, which controls and manages services
+      # monitored by runsv(8), it fails with error:
+      # "fail: <service_name>: runsv not running".
+      if !(runsv_running?)
+        Chef::Log.debug("runsv #{service_dir_name} is not running")
+        return true
+      end
+    end
+
+    def wait_for_service
+      sleep 1 until !(need_to_wait_for_service?)
     end
 
     def runit_sv_works?

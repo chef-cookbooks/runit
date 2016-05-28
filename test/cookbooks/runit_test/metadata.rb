@@ -7,3 +7,4 @@ version '1.0.1'
 
 depends 'runit'
 depends 'runit_other_test'
+depends 'apt'
