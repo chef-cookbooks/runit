@@ -4,6 +4,8 @@ This file is used to list changes made in each version of the runit cookbook.
 
 UNRELEASED
 ----------
+* Breaking change: Removed support for EOL Ubuntu platforms (i.e. versions 6.10, 7.04, 7.10, 8.04) (#194)
+* Breaking change: Removed logic which skipped waiting for named pipe when running inside Docker (#193)
 
 v1.7.8
 ----------
