@@ -42,10 +42,9 @@ when 'rhel', 'fedora'
   packagecloud_repo 'imeyer/runit' unless node['runit']['prefer_local_yum']
   package 'runit'
 
-  if node['platform_version'].to_i == 7
-    service 'runsvdir-start' do
-      action [:start, :enable]
-    end
+  service 'runsvdir-start' do
+    action [:start, :enable]
+    only_if { node['platform_version'].to_i == 7 }
   end
 
 when 'debian', 'gentoo'

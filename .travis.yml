@@ -1,0 +1,4 @@
+language: ruby
+bundler_args: --without integration berkshelf
+rvm:
+  - 2.2

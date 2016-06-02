@@ -5,16 +5,22 @@ Bundler.setup
 require 'rake'
 require 'foodcritic'
 require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 
-task default: [:spec]
+task default: [:rubocop, :foodcritic, :spec]
 
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = './test/unit{,/*/**}/*_spec.rb'
 end
 
 FoodCritic::Rake::LintTask.new do |t|
-  t.options = { fail_tags: ['correctness'] }
+  t.options = {
+    fail_tags: %w( correctness ),
+    tags: %w( ~FC004 )
+  }
 end
+
+RuboCop::RakeTask.new
 
 begin
   require 'kitchen/rake_tasks'

@@ -195,7 +195,7 @@ class Chef
       def run_template_name(arg = nil)
         set_or_return(:run_template_name, arg, kind_of: [String])
       end
-      alias_method :template_name, :run_template_name
+      alias template_name run_template_name
 
       def log_template_name(arg = nil)
         set_or_return(:log_template_name, arg, kind_of: [String])

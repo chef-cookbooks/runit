@@ -40,3 +40,7 @@ Style/GuardClause:
 # TODO: remove override for ModuleLength once RunitCookbook::Helpers has been refactored
 Metrics/ModuleLength:
   Max: 150
+
+# TODO: remove override for BlockNesting after revising `#nil?` usage added in 55f964863a3cf69b6749a30744611904890eccee
+Metrics/BlockNesting:
+  Max: 4

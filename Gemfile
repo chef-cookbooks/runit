@@ -3,8 +3,8 @@ source 'https://rubygems.org'
 gem 'rake'
 
 group :lint do
-  gem 'foodcritic', '~> 5.0'
-  gem 'rubocop', '~> 0.34'
+  gem 'foodcritic', '~> 6.0'
+  gem 'rubocop', '~> 0.39.0'
 end
 
 group :unit do
@@ -22,7 +22,7 @@ group :librarian do
 end
 
 group :berkshelf do
-  gem 'berkshelf',  '~> 4.0'
+  gem 'berkshelf', '~> 4.0'
 end
 
 group :release do
