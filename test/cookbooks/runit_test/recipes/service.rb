@@ -28,11 +28,8 @@ end
 
 package 'binutils'
 package 'file'
+package 'lsof'
 package 'socat'
-
-package 'lsof' do
-  package_name 'lsof' if platform_family?('rhel', 'fedora')
-end
 
 # Create a normal user to run services later
 group 'floyd'
