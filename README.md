@@ -420,6 +420,30 @@ end
 For more examples, see the `runit_test` cookbook's `service` recipe in the [git repository](https://github.com/hw-cookbooks/runit).
 
 
+Development
+-----------
+
+You may use test kitchen with either the vagrant or docker drivers to run integration tests.
+
+**Note:** When using the docker driver please ensure that the container you are using has a working init system, as runit expects to be started by init. In some cases, systemd may need to be run in privileged mode.
+
+For instance, for ubuntu with upstart:
+
+```
+    driver_config:
+      image: ubuntu-upstart:14.04
+      run_command: /sbin/init
+```
+
+For redhat derivatives:
+
+```
+    driver_config:
+      image: dockerhub/image-with-systemd
+      run_command: /usr/sbin/init
+      privileged: true
+```
+
 License & Authors
 -----------------
 - Author:: Adam Jacob <adam@chef.io>
