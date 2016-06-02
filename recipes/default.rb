@@ -2,7 +2,7 @@
 # Cookbook Name:: runit
 # Recipe:: default
 #
-# Copyright 2008-2010, Chef Software, Inc.
+# Copyright 2008-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -22,24 +22,20 @@ service 'runit' do
 end
 
 execute 'start-runsvdir' do
-  command value_for_platform(
-    'debian' => { 'default' => 'runsvdir-start' },
-    'ubuntu' => { 'default' => 'start runsvdir' },
-    'gentoo' => { 'default' => '/etc/init.d/runit-start start' }
-  )
-  action :nothing
-end
-
-execute 'runit-hup-init' do
-  command 'telinit q'
-  only_if 'grep ^SV /etc/inittab'
+  command '/etc/init.d/runit-start start'
   action :nothing
 end
 
 case node['platform_family']
 when 'rhel', 'fedora'
 
-  packagecloud_repo 'imeyer/runit' unless node['runit']['prefer_local_yum']
+  # add the necessary repos unless prefer_local_yum is set
+  unless node['runit']['prefer_local_yum']
+    include_recipe 'yum-epel' if node['platform_version'].to_i < 7
+
+    packagecloud_repo 'imeyer/runit'
+  end
+
   package 'runit'
 
   service 'runsvdir-start' do
@@ -52,7 +48,7 @@ when 'debian', 'gentoo'
   if platform?('gentoo')
     template '/etc/init.d/runit-start' do
       source 'runit-start.sh.erb'
-      mode 0755
+      mode '0755'
     end
 
     service 'runit-start' do
@@ -63,28 +59,7 @@ when 'debian', 'gentoo'
   package 'runit' do
     action :install
     response_file 'runit.seed' if platform?('ubuntu', 'debian')
-    notifies value_for_platform(
-      'debian' => { '4.0' => :run, 'default' => :nothing },
-      'ubuntu' => {
-        'default' => :nothing,
-        '9.04' => :run,
-        '8.10' => :run,
-        '8.04' => :run },
-      'gentoo' => { 'default' => :run }
-    ), 'execute[start-runsvdir]', :immediately
-    notifies value_for_platform(
-      'debian' => { 'squeeze/sid' => :run, 'default' => :nothing },
-      'default' => :nothing
-    ), 'execute[runit-hup-init]', :immediately
+    notifies :run, 'execute[start-runsvdir]', :immediately if platform?('gentoo')
     notifies :enable, 'service[runit-start]' if platform?('gentoo')
-  end
-
-  if node['platform'] =~ /ubuntu/i && node['platform_version'].to_f <= 8.04
-    cookbook_file '/etc/event.d/runsvdir' do
-      source 'runsvdir'
-      mode 0644
-      notifies :run, 'execute[start-runsvdir]', :immediately
-      only_if { ::File.directory?('/etc/event.d') }
-    end
   end
 end

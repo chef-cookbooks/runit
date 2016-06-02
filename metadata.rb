@@ -13,6 +13,7 @@ recipe 'runit', 'Installs and configures runit'
 end
 
 depends 'packagecloud'
+depends 'yum-epel'
 
-issues_url 'https://github.com/hw-cookbooks/runit/issues'
-source_url 'https://github.com/hw-cookbooks/runit'
+source_url 'https://github.com/hw-cookbooks/runit' if respond_to?(:source_url)
+issues_url 'https://github.com/hw-cookbooks/runit/issues' if respond_to?(:issues_url)
