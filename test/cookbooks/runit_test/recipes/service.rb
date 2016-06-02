@@ -26,6 +26,8 @@ link '/usr/local/bin/sv' do
   )
 end
 
+package 'binutils'
+package 'file'
 package 'socat'
 
 package 'lsof' do
