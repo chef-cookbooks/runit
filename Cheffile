@@ -4,6 +4,7 @@ site 'https://supermarket.chef.io/api/v1'
 
 # loosely coupled prerequisites for test-kitchen
 cookbook 'apt'
+cookbook 'yum'
 cookbook 'yum-epel'
 
 cookbook 'runit', path: '.'
