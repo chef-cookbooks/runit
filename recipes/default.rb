@@ -65,11 +65,7 @@ when 'debian', 'gentoo'
     response_file 'runit.seed' if platform?('ubuntu', 'debian')
     notifies value_for_platform(
       'debian' => { '4.0' => :run, 'default' => :nothing },
-      'ubuntu' => {
-        'default' => :nothing,
-        '9.04' => :run,
-        '8.10' => :run,
-        '8.04' => :run },
+      'ubuntu' => { 'default' => :nothing },
       'gentoo' => { 'default' => :run }
     ), 'execute[start-runsvdir]', :immediately
     notifies value_for_platform(
@@ -79,12 +75,4 @@ when 'debian', 'gentoo'
     notifies :enable, 'service[runit-start]' if platform?('gentoo')
   end
 
-  if node['platform'] =~ /ubuntu/i && node['platform_version'].to_f <= 8.04
-    cookbook_file '/etc/event.d/runsvdir' do
-      source 'runsvdir'
-      mode 0644
-      notifies :run, 'execute[start-runsvdir]', :immediately
-      only_if { ::File.directory?('/etc/event.d') }
-    end
-  end
 end
