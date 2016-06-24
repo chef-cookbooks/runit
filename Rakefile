@@ -15,8 +15,7 @@ end
 
 FoodCritic::Rake::LintTask.new do |t|
   t.options = {
-    fail_tags: %w( correctness ),
-    tags: %w( ~FC004 )
+    fail_tags: %w( correctness )
   }
 end
 
