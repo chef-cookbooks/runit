@@ -1,35 +1,39 @@
-require 'rubygems'
-require 'bundler'
-Bundler.setup
-
-require 'rake'
-require 'foodcritic'
 require 'rspec/core/rake_task'
+require 'cookstyle'
 require 'rubocop/rake_task'
+require 'foodcritic'
+require 'kitchen'
 
-task default: [:rubocop, :foodcritic, :spec]
+# # Style tests. cookstyle (rubocop) and Foodcritic
+namespace :style do
+  desc 'Run Ruby style checks'
+  RuboCop::RakeTask.new(:ruby)
 
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.pattern = './test/unit{,/*/**}/*_spec.rb'
+  desc 'Run Chef style checks'
+  FoodCritic::Rake::LintTask.new(:chef) do |t|
+    t.options = {
+      fail_tags: ['any']
+    }
+  end
 end
 
-FoodCritic::Rake::LintTask.new do |t|
-  t.options = {
-    fail_tags: %w( correctness )
-  }
+desc 'Run all style checks'
+task style: ['style:chef', 'style:ruby']
+
+# Rspec and ChefSpec
+desc 'Run ChefSpec examples'
+RSpec::Core::RakeTask.new(:spec)
+
+# Integration tests. Kitchen.ci
+namespace :integration do
+  desc 'Run Test Kitchen with Vagrant'
+  task :vagrant do
+    Kitchen.logger = Kitchen.default_file_logger
+    Kitchen::Config.new.instances.each do |instance|
+      instance.test(:always)
+    end
+  end
 end
 
-RuboCop::RakeTask.new
-
-begin
-  require 'kitchen/rake_tasks'
-  Kitchen::RakeTasks.new
-rescue LoadError
-  puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
-end
-
-begin
-  require 'emeril/rake'
-rescue LoadError
-  puts '>>>>> Emeril gem not loaded, omitting tasks' unless ENV['CI']
-end
+# Default
+task default: %w(style spec)
