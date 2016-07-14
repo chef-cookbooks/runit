@@ -12,7 +12,7 @@ platforms:
     run_list: apt::default
   - name: debian-8.4
     run_list: apt::default
-  - name: fedora-21
+  - name: fedora-23
     run_list: yum::dnf_yum_compat
   - name: ubuntu-12.04
     run_list: apt::default

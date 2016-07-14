@@ -100,7 +100,3 @@ Strainerfile
 ###########
 .vagrant
 Vagrantfile
-
-# Travis #
-##########
-.travis.yml
