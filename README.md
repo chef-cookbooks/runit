@@ -447,7 +447,7 @@ For redhat derivatives:
 
 - Author:: Adam Jacob [adam@chef.io](mailto:adam@chef.io)
 - Author:: Joshua Timberman [joshua@chef.io](mailto:joshua@chef.io)
-- Author:: Sean OMeara [sean@chef.io](mailto:sean@chef.io)
+- Author:: Sean OMeara [sean@sean.io](mailto:sean@chef.io)
 
 ```text
 Copyright:: 2008-2016, Chef Software, Inc
