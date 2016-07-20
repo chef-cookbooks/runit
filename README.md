@@ -1,5 +1,8 @@
 # runit Cookbook
 
+[![Build Status](https://travis-ci.org/chef-cookbooks/runit.svg?branch=master)](https://travis-ci.org/chef-cookbooks/runit) [![Cookbook Version](https://img.shields.io/cookbook/v/runit.svg)](https://supermarket.chef.io/cookbooks/runit)
+
+
 Installs runit and provides the `runit_service` service resource for managing processes (services) under runit.
 
 This cookbook does not use runit to replace system init, nor are there plans to do so.
