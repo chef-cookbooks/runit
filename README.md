@@ -2,25 +2,18 @@
 
 Installs runit and provides the `runit_service` service resource for managing processes (services) under runit.
 
-This cookbook does not use runit to replace system init, nor are ther plans to do so.
+This cookbook does not use runit to replace system init, nor are there plans to do so.
 
 For more information about runit:
 
 - <http://smarden.org/runit/>
-
-## A note regarding versions 1.7.0 and 1.7.2
-
-With the benefit of hindsight we can say that the changes contained version 1.7.0 merited a major version number change, and that version 1.7.2 contains some still unresolved regressions compared to 1.6.0\. Please be sure to test this new version for compatibility with your systems before upgrading to version 1.7.
-
-See [issue #144](https://github.com/hw-cookbooks/runit/issues/144) for some notes on how these versions behaved unexpectedly in one user's environment.
 
 ## Requirements
 
 ### Platforms
 
 - Debian/Ubuntu
-- Gentoo
-- RHEL
+- RHEL and derivatives
 
 ### Chef
 
