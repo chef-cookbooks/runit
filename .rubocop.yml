@@ -1,46 +1,4 @@
-AlignParameters:
-  Enabled: false
-
-Encoding:
-  Enabled: false
-
-ClassLength:
-  Enabled: false
-
-MethodLength:
-  Enabled: false
-
-LineLength:
-  Enabled: false
-
-Documentation:
-  Enabled: false
-
-PerceivedComplexity:
-  Enabled: false
-
-CyclomaticComplexity:
-  Enabled: false
-
-Style/FileName:
-  Enabled: false
-
-Metrics/AbcSize:
-  Enabled: false
-
-AllCops:
-  Exclude:
-    - 'Guardfile'
-    - 'tmp/**/*'
-    - 'cookbooks/**/*'
-
-Style/GuardClause:
-  Enabled: false
-
-# TODO: remove override for ModuleLength once RunitCookbook::Helpers has been refactored
-Metrics/ModuleLength:
-  Max: 150
-
-# TODO: remove override for BlockNesting after revising `#nil?` usage added in 55f964863a3cf69b6749a30744611904890eccee
+# rubocop todo
+#
 Metrics/BlockNesting:
   Max: 4
