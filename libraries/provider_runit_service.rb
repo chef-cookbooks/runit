@@ -85,7 +85,13 @@ class Chef
             source "sv-#{new_resource.run_template_name}-run.erb"
             cookbook template_cookbook
             mode '0755'
-            variables(options: new_resource.options)
+            variables(
+              lazy do
+                {
+                  options: new_resource.options
+                }
+              end
+            )
             action :create
             notifies :run, 'ruby_block[restart_service]', :delayed
           end
@@ -146,7 +152,13 @@ class Chef
                 mode '00755'
                 source "sv-#{new_resource.log_template_name}-log-run.erb"
                 cookbook template_cookbook
-                variables(options: new_resource.options)
+                variables(
+                  lazy do
+                    {
+                      options: new_resource.options
+                    }
+                  end
+                )
                 action :create
                 notifies :run, 'ruby_block[restart_log_service]', :delayed
               end
@@ -166,7 +178,7 @@ class Chef
             file "#{sv_dir_name}/env/#{var}" do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
-              content value
+              content lazy { value }
               sensitive true if Chef::Resource.instance_methods(false).include?(:sensitive)
               mode 00640
               action :create
@@ -186,7 +198,13 @@ class Chef
             mode '00755'
             cookbook template_cookbook
             source "sv-#{new_resource.check_script_template_name}-check.erb"
-            variables(options: new_resource.options)
+            variables(
+              lazy do
+                {
+                  options: new_resource.options
+                }
+              end
+            )
             action :create
             only_if { new_resource.check }
           end
@@ -197,7 +215,13 @@ class Chef
             mode '00755'
             source "sv-#{new_resource.finish_script_template_name}-finish.erb"
             cookbook template_cookbook
-            variables(options: new_resource.options) if new_resource.options.respond_to?(:has_key?)
+            variables(
+              lazy do
+                {
+                  options: new_resource.options
+                }
+              end
+            ) if new_resource.options.respond_to?(:has_key?)
             action :create
             only_if { new_resource.finish }
           end
@@ -216,7 +240,13 @@ class Chef
               mode '0755'
               source "sv-#{new_resource.control_template_names[signal]}-#{signal}.erb"
               cookbook template_cookbook
-              variables(options: new_resource.options)
+              variables(
+                lazy do
+                  {
+                    options: new_resource.options
+                  }
+                end
+              )
               action :create
             end
           end
