@@ -8,7 +8,7 @@ version '1.8.0'
 
 recipe 'runit', 'Installs and configures runit'
 
-%w(ubuntu debian gentoo centos redhat amazon scientific oracle enterpriseenterprise oracle zlinux).each do |os|
+%w(ubuntu debian gentoo centos redhat amazon scientific oracle enterpriseenterprise zlinux).each do |os|
   supports os
 end
 
