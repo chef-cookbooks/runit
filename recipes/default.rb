@@ -33,7 +33,9 @@ when 'rhel', 'fedora'
   unless node['runit']['prefer_local_yum']
     include_recipe 'yum-epel' if node['platform_version'].to_i < 7
 
-    packagecloud_repo 'imeyer/runit'
+    packagecloud_repo 'imeyer/runit' do
+      force_os 'rhel' if node['platform'].eql?('oracle')
+    end
   end
 
   package 'runit'
