@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 1.8.1 (2016-08-30)
+
+- Enable runit installation in Oracle Linux systems
+- Remove double oracle in the metadata
+
 ## 1.8.0
 
 - Breaking change: Removed support for EOL Ubuntu platforms (i.e. versions 6.10, 7.04, 7.10, 8.04) (#194)
