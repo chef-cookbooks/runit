@@ -7,7 +7,7 @@ describe 'runit_test::service on centos-5.8' do
       version: '5.8',
     # step_into: 'runit_service'
     ) do |node|
-      node.set['runit']['version'] = '0.0'
+      node.normal['runit']['version'] = '0.0'
     end.converge('runit_test::service')
   end
 

@@ -8,7 +8,7 @@ describe 'runit::default' do
       platform: 'oracle',
       version: '6.5'
     ) do |node|
-      node.set['runit']['version'] = '0.0'
+      node.normal['runit']['version'] = '0.0'
     end.converge(described_recipe)
   end
 
