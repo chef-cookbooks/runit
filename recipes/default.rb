@@ -45,23 +45,9 @@ when 'rhel', 'fedora'
     only_if { node['platform_version'].to_i == 7 }
   end
 
-when 'debian', 'gentoo'
-
-  if platform?('gentoo')
-    template '/etc/init.d/runit-start' do
-      source 'runit-start.sh.erb'
-      mode '0755'
-    end
-
-    service 'runit-start' do
-      action :nothing
-    end
-  end
-
+when 'debian'
   package 'runit' do
     action :install
-    response_file 'runit.seed' if platform?('ubuntu', 'debian')
-    notifies :run, 'execute[start-runsvdir]', :immediately if platform?('gentoo')
-    notifies :enable, 'service[runit-start]' if platform?('gentoo')
+    response_file 'runit.seed'
   end
 end
