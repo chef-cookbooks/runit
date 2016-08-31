@@ -4,11 +4,11 @@ maintainer_email 'cookbooks@chef.io'
 license 'Apache 2.0'
 description 'Installs runit and provides runit_service definition'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version '1.8.1'
+version '2.0.0'
 
 recipe 'runit', 'Installs and configures runit'
 
-%w(ubuntu debian gentoo centos redhat amazon scientific oracle enterpriseenterprise zlinux).each do |os|
+%w(ubuntu debian centos redhat amazon scientific oracle enterpriseenterprise zlinux).each do |os|
   supports os
 end
 

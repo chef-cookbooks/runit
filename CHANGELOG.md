@@ -2,6 +2,14 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 2.0.0 (2016-08-30)
+
+- Remove support for Gentoo as we have no way to test this
+- Remove the empty library file
+- Run specs against the latest RHEL 5
+- Basic convergence testing in Travis CI
+- Remove the need for apt in test kitchen
+
 ## 1.8.1 (2016-08-30)
 
 - Enable runit installation in Oracle Linux systems
