@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/chef-cookbooks/runit.svg?branch=master)](https://travis-ci.org/chef-cookbooks/runit) [![Cookbook Version](https://img.shields.io/cookbook/v/runit.svg)](https://supermarket.chef.io/cookbooks/runit)
 
-
 Installs runit and provides the `runit_service` service resource for managing processes (services) under runit.
 
 This cookbook does not use runit to replace system init, nor are there plans to do so.
@@ -53,8 +52,6 @@ The default recipe installs runit and starts `runsvdir` to supervise the service
 On RHEL-family systems, it will install the runit RPM using [Ian Meyer's Package Cloud repository](https://packagecloud.io/imeyer/runit) for runit. This replaces the previous functionality where the RPM was build using his [runit RPM SPEC](https://github.com/imeyer/runit-rpm). However, if the attribute `node['runit']['prefer_local_yum']` is set to `true`, the packagecloud repository creation will be skipped and it is assumed that a `runit` package is available on an otherwise configured (outside this cookbook) local repository.
 
 On Debian family systems, the runit packages are maintained by the runit author, Gerrit Pape, and the recipe will use that for installation.
-
-On Gentoo, the runit ebuild package is installed.
 
 ## Resource/Provider
 

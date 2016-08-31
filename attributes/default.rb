@@ -47,16 +47,4 @@ when 'rhel', 'fedora'
   default['runit']['start'] = '/etc/init.d/runit-start start'
   default['runit']['stop'] = '/etc/init.d/runit-start stop'
   default['runit']['reload'] = '/etc/init.d/runit-start reload'
-
-when 'gentoo'
-  default['runit']['sv_bin'] = '/usr/bin/sv'
-  default['runit']['chpst_bin'] = '/usr/bin/chpst'
-  default['runit']['service_dir'] = '/var/service'
-  default['runit']['sv_dir'] = '/etc/sv'
-  default['runit']['lsb_init_dir'] = '/etc/init.d'
-  default['runit']['executable'] = '/sbin/runit'
-  default['runit']['start'] = '/etc/init.d/runit-start start'
-  default['runit']['stop'] = '/etc/init.d/runit-start stop'
-  default['runit']['reload'] = '/etc/init.d/runit-start reload'
-
 end
