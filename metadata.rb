@@ -15,7 +15,7 @@ end
 depends 'packagecloud'
 depends 'yum-epel'
 
-source_url 'https://github.com/chef-cookbooks/runit' if respond_to?(:source_url)
-issues_url 'https://github.com/chef-cookbooks/runit/issues' if respond_to?(:issues_url)
+source_url 'https://github.com/chef-cookbooks/runit'
+issues_url 'https://github.com/chef-cookbooks/runit/issues'
 
-chef_version '>= 11.0' if respond_to?(:chef_version)
+chef_version '>= 12.1'
