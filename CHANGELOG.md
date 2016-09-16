@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 3.0.0 (2016-09-16)
+- Testing updates
+- Require Chef 12.1+
+
 ## 2.0.0 (2016-08-30)
 
 - Remove support for Gentoo as we have no way to test this
