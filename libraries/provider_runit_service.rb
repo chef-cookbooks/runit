@@ -110,7 +110,7 @@ class Chef
             directory new_resource.log_dir do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
-              mode '00755'
+              mode '0755'
               recursive true
               action :create
             end
@@ -118,7 +118,7 @@ class Chef
             template "#{sv_dir_name}/log/config" do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
-              mode '00644'
+              mode '0644'
               cookbook 'runit'
               source 'log-config.erb'
               variables(config: new_resource)
@@ -135,7 +135,7 @@ class Chef
                 content default_logger_content
                 owner new_resource.owner unless new_resource.owner.nil?
                 group new_resource.group unless new_resource.group.nil?
-                mode '00755'
+                mode '0755'
                 action :create
                 notifies :run, 'ruby_block[restart_log_service]', :delayed
               end
@@ -143,7 +143,7 @@ class Chef
               template "#{sv_dir_name}/log/run" do
                 owner new_resource.owner unless new_resource.owner.nil?
                 group new_resource.group unless new_resource.group.nil?
-                mode '00755'
+                mode '0755'
                 source "sv-#{new_resource.log_template_name}-log-run.erb"
                 cookbook template_cookbook
                 variables(options: new_resource.options)
@@ -158,7 +158,7 @@ class Chef
           directory "#{sv_dir_name}/env" do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
-            mode '00755'
+            mode '0755'
             action :create
           end
 
@@ -168,7 +168,7 @@ class Chef
               group new_resource.group unless new_resource.group.nil?
               content value
               sensitive true if Chef::Resource.instance_methods(false).include?(:sensitive)
-              mode 00640
+              mode '0640'
               action :create
             end
           end
@@ -183,7 +183,7 @@ class Chef
           template "#{sv_dir_name}/check" do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
-            mode '00755'
+            mode '0755'
             cookbook template_cookbook
             source "sv-#{new_resource.check_script_template_name}-check.erb"
             variables(options: new_resource.options)
@@ -194,7 +194,7 @@ class Chef
           template "#{sv_dir_name}/finish" do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
-            mode '00755'
+            mode '0755'
             source "sv-#{new_resource.finish_script_template_name}-finish.erb"
             cookbook template_cookbook
             variables(options: new_resource.options) if new_resource.options.respond_to?(:has_key?)
@@ -205,7 +205,7 @@ class Chef
           directory "#{sv_dir_name}/control" do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
-            mode '00755'
+            mode '0755'
             action :create
           end
 
@@ -231,7 +231,7 @@ class Chef
             template "#{parsed_lsb_init_dir}/#{new_resource.service_name}" do
               owner 'root'
               group 'root'
-              mode '00755'
+              mode '0755'
               cookbook 'runit'
               source 'init.d.erb'
               variables(
@@ -260,7 +260,7 @@ class Chef
           end
 
           file down_file do
-            mode 00644
+            mode '0644'
             backup false
             content '# File created and managed by chef!'
             action df_action

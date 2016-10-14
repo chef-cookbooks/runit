@@ -4,7 +4,7 @@ describe 'runit_service' do
   let(:chef_run) do
     ChefSpec::SoloRunner.new(
       platform: 'ubuntu',
-      version: '14.04',
+      version: '16.04',
       step_into: 'runit_service'
     ) do |node|
       node.normal['runit']['version'] = '0.0'
@@ -100,7 +100,7 @@ describe 'runit_service' do
 
     it 'renders logger config into service log configuration directory' do
       expect(chef_run).to create_template(::File.join(service_svdir, 'log', 'config')).with(
-        mode: '00644',
+        mode: '0644',
         owner: nil,
         group: nil,
         cookbook: 'runit',
@@ -194,7 +194,7 @@ describe 'runit_service' do
 
     it 'renders a check script into the service configuration directory' do
       expect(chef_run).to create_template(::File.join(service_svdir, 'check')).with(
-        mode: '00755',
+        mode: '0755',
         cookbook: 'runit_test',
         owner: nil,
         group: nil,
@@ -220,7 +220,7 @@ describe 'runit_service' do
       expect(chef_run).to create_template(::File.join(service_svdir, 'finish')).with(
         owner: nil,
         group: nil,
-        mode: '00755',
+        mode: '0755',
         source: "sv-#{service.name}-finish.erb",
         cookbook: 'runit_test',
         variables: { options: {} }
