@@ -170,6 +170,7 @@ class Chef
               sensitive true if Chef::Resource.instance_methods(false).include?(:sensitive)
               mode '0640'
               action :create
+              notifies :run, 'ruby_block[restart_service]', :delayed
             end
           end
 
@@ -178,6 +179,7 @@ class Chef
             only_if { extra_env_files? }
             not_if { new_resource.env.empty? }
             action :run
+            notifies :run, 'ruby_block[restart_service]', :delayed
           end
 
           template "#{sv_dir_name}/check" do
