@@ -174,8 +174,8 @@ class Chef
             end
           end
 
-          ruby_block "zap extra env files for #{new_resource.name} service" do
-            block { zap_extra_env_files }
+          ruby_block "Delete unmanaged env files for #{new_resource.name} service" do
+            block { delete_extra_env_files }
             only_if { extra_env_files? }
             not_if { new_resource.env.empty? }
             action :run

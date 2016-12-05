@@ -66,7 +66,7 @@ module RunitCookbook
       false
     end
 
-    def zap_extra_env_files
+    def delete_extra_env_files
       Dir.glob("#{sv_dir_name}/env/*").each do |f|
         unless new_resource.env.key?(File.basename(f))
           File.unlink(f)
