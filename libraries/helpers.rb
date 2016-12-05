@@ -76,6 +76,8 @@ module RunitCookbook
     end
 
     def wait_for_service
+      raise 'Runit does not appear to be installed. Include runit::default before using the resource!' unless binary_exists?
+
       sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
 
       if new_resource.log
@@ -141,6 +143,15 @@ module RunitCookbook
 #!/bin/sh
 exec svlogd -tt #{new_resource.log_dir}
       EOS
+    end
+
+    def binary_exists?
+      begin
+        shell_out!(new_resource.sv_bin.to_s, returns: [0, 100])
+      rescue Errno::ENOENT
+        return false
+      end
+      true
     end
 
     def disable_service
