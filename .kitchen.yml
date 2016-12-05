@@ -12,10 +12,7 @@ platforms:
   - name: debian-8.6
   - name: fedora-25
     run_list: yum::dnf_yum_compat
-  - name: oel-6.6
-    driver:
-      box: oel-6.6
-      box_url: https://atlas.hashicorp.com/rafacas/boxes/oel66-plain/versions/1.0.1/providers/virtualbox.box
+  - name: oracle-6.8
   - name: ubuntu-12.04
   - name: ubuntu-14.04
   - name: ubuntu-16.04
