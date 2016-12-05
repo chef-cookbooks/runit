@@ -88,19 +88,19 @@ module RunitCookbook
     def runit_send_signal(signal, friendly_name = nil)
       friendly_name ||= signal
       converge_by("send #{friendly_name} to #{new_resource}") do
-        shell_out!("#{sv_bin} #{sv_args}#{signal} #{service_dir_name}")
+        safe_sv_shellout("#{sv_args}#{signal} #{service_dir_name}")
         Chef::Log.info("#{new_resource} sent #{friendly_name}")
       end
     end
 
     def running?
-      cmd = shell_out("#{sv_bin} #{sv_args}status #{service_dir_name}")
-      (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
+      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}")
+      cmd.stdout =~ /^run:/
     end
 
     def log_running?
-      cmd = shell_out("#{sv_bin} #{sv_args}status #{service_dir_name}/log")
-      (cmd.stdout =~ /^run:/ && cmd.exitstatus == 0)
+      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}/log")
+      cmd.stdout =~ /^run:/
     end
 
     def enabled?
@@ -154,6 +154,15 @@ exec svlogd -tt #{new_resource.log_dir}
       true
     end
 
+    def safe_sv_shellout(command)
+      begin
+        cmd = shell_out!("#{sv_bin} #{command}")
+      rescue Errno::ENOENT
+        raise 'Runit does not appear to be installed. You must install runit before using the runit_service resource!' unless binary_exists?
+      end
+      cmd
+    end
+
     def disable_service
       shell_out("#{new_resource.sv_bin} #{sv_args}down #{service_dir_name}")
       FileUtils.rm(service_dir_name)
@@ -168,28 +177,28 @@ exec svlogd -tt #{new_resource.log_dir}
     end
 
     def start_service
-      shell_out!("#{new_resource.sv_bin} #{sv_args}start #{service_dir_name}")
+      safe_sv_shellout("#{sv_args}start #{service_dir_name}")
     end
 
     def stop_service
-      shell_out!("#{new_resource.sv_bin} #{sv_args}stop #{service_dir_name}")
+      safe_sv_shellout("#{sv_args}stop #{service_dir_name}")
     end
 
     def restart_service
-      shell_out!("#{new_resource.sv_bin} #{sv_args}restart #{service_dir_name}")
+      safe_sv_shellout("#{sv_args}restart #{service_dir_name}")
     end
 
     def restart_log_service
-      shell_out!("#{new_resource.sv_bin} #{sv_args}restart #{service_dir_name}/log")
+      safe_sv_shellout("#{sv_args}restart #{service_dir_name}/log")
     end
 
     def reload_service
-      shell_out!("#{new_resource.sv_bin} #{sv_args}force-reload #{service_dir_name}")
+      safe_sv_shellout("#{sv_args}force-reload #{service_dir_name}")
     end
 
     def reload_log_service
       if log_running?
-        shell_out!("#{new_resource.sv_bin} #{sv_args}force-reload #{service_dir_name}/log")
+        safe_sv_shellout("#{sv_args}force-reload #{service_dir_name}/log")
       end
     end
   end
