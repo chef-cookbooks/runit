@@ -2,6 +2,9 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 3.0.1 (2016-12-05)
+- Set service to restart on env changes
+
 ## 3.0.0 (2016-09-16)
 - Testing updates
 - Require Chef 12.1+
