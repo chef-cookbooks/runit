@@ -83,11 +83,6 @@ module RunitCookbook
       end
     end
 
-    def runit_sv_works?
-      sv = shell_out("#{sv_bin} --help")
-      sv.exitstatus == 100 && sv.stderr =~ /usage: sv .* command service/
-    end
-
     def runit_send_signal(signal, friendly_name = nil)
       friendly_name ||= signal
       converge_by("send #{friendly_name} to #{new_resource}") do
