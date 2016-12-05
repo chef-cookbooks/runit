@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: runit_test
+# Cookbook:: runit_test
 # Recipe:: service
 #
-# Copyright 2012-2016, Chef Software, Inc.
+# Copyright:: 2012-2016, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,7 +40,6 @@ user 'floyd' do
   shell '/bin/bash'
   home '/home/floyd'
   manage_home true
-  supports manage_home: true
 end
 
 %w(sv service).each do |dir|
