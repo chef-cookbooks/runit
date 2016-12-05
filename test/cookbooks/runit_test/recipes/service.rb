@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe 'runit::default'
+#include_recipe 'runit::default'
 
 link '/usr/local/bin/sv' do
   to value_for_platform_family(
