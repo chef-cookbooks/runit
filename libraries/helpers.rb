@@ -154,7 +154,7 @@ exec svlogd -tt #{new_resource.log_dir}
       true
     end
 
-    def safe_sv_shellout(command, options = {} )
+    def safe_sv_shellout(command, options = {})
       begin
         cmd = shell_out!("#{sv_bin} #{command}", options)
       rescue Errno::ENOENT

@@ -2,6 +2,14 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 3.0.2 (2016-12-05)
+- Remove unused helper method runit_sv_works?
+- Use our new official Oracle images in Test Kitchen
+- Update wording to clarify that we’re deleting not ‘zapping’ files
+- Don’t hang forever if Runit isn’t installed when using the provider
+- Check for the runit binary before every shellout
+- Remove Fedora support since it doesn’t work
+
 ## 3.0.1 (2016-12-05)
 - Set service to restart on env changes
 
