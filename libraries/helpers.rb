@@ -94,12 +94,12 @@ module RunitCookbook
     end
 
     def running?
-      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}")
+      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}", returns: [0, 100])
       cmd.stdout =~ /^run:/
     end
 
     def log_running?
-      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}/log")
+      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}/log", returns: [0, 100])
       cmd.stdout =~ /^run:/
     end
 
@@ -154,9 +154,9 @@ exec svlogd -tt #{new_resource.log_dir}
       true
     end
 
-    def safe_sv_shellout(command)
+    def safe_sv_shellout(command, options = {} )
       begin
-        cmd = shell_out!("#{sv_bin} #{command}")
+        cmd = shell_out!("#{sv_bin} #{command}", options)
       rescue Errno::ENOENT
         raise 'Runit does not appear to be installed. You must install runit before using the runit_service resource!' unless binary_exists?
       end
