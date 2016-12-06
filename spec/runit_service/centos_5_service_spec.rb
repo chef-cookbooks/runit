@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'runit_test::service on centos-5.8' do
+describe 'runit_test::service on centos-5.11' do
   cached(:centos_5_service) do
     ChefSpec::SoloRunner.new(
       platform: 'centos',
