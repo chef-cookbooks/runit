@@ -253,8 +253,8 @@ describe 'runit_service' do
         .with(sensitive: true)
     end
 
-    it 'zaps any extra env files' do
-      expect(chef_run).to run_ruby_block('zap extra env files for env-files service')
+    it 'deletes any extra env files' do
+      expect(chef_run).to run_ruby_block('Delete unmanaged env files for env-files service')
     end
   end
 
