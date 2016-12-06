@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require 'spec_helper'
-
 describe 'runit::default' do
   cached(:oel_65_default) do
     ChefSpec::SoloRunner.new(
