@@ -27,7 +27,7 @@ execute 'start-runsvdir' do
 end
 
 case node['platform_family']
-when 'rhel', 'fedora'
+when 'rhel'
 
   # add the necessary repos unless prefer_local_yum is set
   unless node['runit']['prefer_local_yum']
