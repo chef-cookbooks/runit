@@ -147,10 +147,10 @@ exec svlogd -tt #{new_resource.log_dir}
 
     def binary_exists?
       begin
-        Chef::Log.debug("Checking to see if the runit binary exists by running #{new_resource.sv_bin.to_s}")
+        Chef::Log.debug("Checking to see if the runit binary exists by running #{new_resource.sv_bin}")
         shell_out!(new_resource.sv_bin.to_s, returns: [0, 100])
       rescue Errno::ENOENT
-        Chef::Log.debug("Failed to return 0 or 100 running #{new_resource.sv_bin.to_s}")
+        Chef::Log.debug("Failed to return 0 or 100 running #{new_resource.sv_bin}")
         return false
       end
       true
@@ -174,7 +174,7 @@ exec svlogd -tt #{new_resource.log_dir}
       # per the documentation, a service should be removed from supervision
       # within 5 seconds of removing the service dir symlink, so we'll sleep for 6.
       # otherwise, runit recreates the 'ok' named pipe too quickly
-      Chef::Log.debug("Sleeping 6 seconds to allow the disable to take effect")
+      Chef::Log.debug('Sleeping 6 seconds to allow the disable to take effect')
       sleep(6)
       # runit will recreate the supervise directory and
       # pipes when the service is reenabled
@@ -206,7 +206,7 @@ exec svlogd -tt #{new_resource.log_dir}
       if log_running?
         safe_sv_shellout("#{sv_args}force-reload #{service_dir_name}/log")
       else
-        Chef::Log.debug("Logging not running so doing nothing")
+        Chef::Log.debug('Logging not running so doing nothing')
       end
     end
   end
