@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 3.0.3 (2016-12-07)
+
+- Convert main suite test spec to inspec
+- Add a number of debug statements to the provider to make debugging failed runs easier
+- Fix faulty shell outs in the status commands that caused silent failures introduced in the 3.0.2 release
+
 ## 3.0.2 (2016-12-05)
 - Remove unused helper method runit_sv_works?
 - Use our new official Oracle images in Test Kitchen
