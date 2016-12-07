@@ -147,8 +147,10 @@ exec svlogd -tt #{new_resource.log_dir}
 
     def binary_exists?
       begin
+        Chef::Log.debug("Checking to see if the runit binary exists by running #{new_resource.sv_bin.to_s}")
         shell_out!(new_resource.sv_bin.to_s, returns: [0, 100])
       rescue Errno::ENOENT
+        Chef::Log.debug("Failed to return 0 or 100 running #{new_resource.sv_bin.to_s}")
         return false
       end
       true
@@ -156,6 +158,7 @@ exec svlogd -tt #{new_resource.log_dir}
 
     def safe_sv_shellout(command, options = {})
       begin
+        Chef::Log.debug("Attempting to run runit command: #{sv_bin} #{command}")
         cmd = shell_out!("#{sv_bin} #{command}", options)
       rescue Errno::ENOENT
         raise 'Runit does not appear to be installed. You must install runit before using the runit_service resource!' unless binary_exists?
@@ -164,15 +167,18 @@ exec svlogd -tt #{new_resource.log_dir}
     end
 
     def disable_service
+      Chef::Log.debug("Attempting to disable runit service with: #{new_resource.sv_bin} #{sv_args}down #{service_dir_name}")
       shell_out("#{new_resource.sv_bin} #{sv_args}down #{service_dir_name}")
       FileUtils.rm(service_dir_name)
 
       # per the documentation, a service should be removed from supervision
       # within 5 seconds of removing the service dir symlink, so we'll sleep for 6.
       # otherwise, runit recreates the 'ok' named pipe too quickly
+      Chef::Log.debug("Sleeping 6 seconds to allow the disable to take effect")
       sleep(6)
       # runit will recreate the supervise directory and
       # pipes when the service is reenabled
+      Chef::Log.debug("Removing #{sv_dir_name}/supervise/ok")
       FileUtils.rm("#{sv_dir_name}/supervise/ok")
     end
 
@@ -199,6 +205,8 @@ exec svlogd -tt #{new_resource.log_dir}
     def reload_log_service
       if log_running?
         safe_sv_shellout("#{sv_args}force-reload #{service_dir_name}/log")
+      else
+        Chef::Log.debug("Logging not running so doing nothing")
       end
     end
   end
