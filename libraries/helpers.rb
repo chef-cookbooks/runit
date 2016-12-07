@@ -94,12 +94,12 @@ module RunitCookbook
     end
 
     def running?
-      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}", returns: [0, 100])
+      cmd = safe_sv_shellout("#{sv_args}status #{service_dir_name}", returns: [0, 100])
       cmd.stdout =~ /^run:/
     end
 
     def log_running?
-      cmd = safe_sv_shellout("#{sv_bin} #{sv_args}status #{service_dir_name}/log", returns: [0, 100])
+      cmd = safe_sv_shellout("#{sv_args}status #{service_dir_name}/log", returns: [0, 100])
       cmd.stdout =~ /^run:/
     end
 
