@@ -150,6 +150,12 @@ runit_service 'ayahuasca' do
   cookbook 'runit_other_test'
 end
 
+# Create a service with different svlogd flags
+runit_service 'ayahuasca' do
+  default_logger true
+  log_flags '-t'
+end
+
 # Note: this won't update the run script for the above due to
 # http://tickets.chef.io/browse/COOK-2353
 # runit_service 'the other name for yerba-alt' do

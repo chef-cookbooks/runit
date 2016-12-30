@@ -68,6 +68,7 @@ class Chef
         @sv_timeout = nil
         @sv_verbose = false
         @log_dir = ::File.join('/var/log/', @service_name)
+        @log_flags = '-tt'
         @log_size = nil
         @log_num = nil
         @log_min = nil
@@ -231,6 +232,10 @@ class Chef
 
       def log_dir(arg = nil)
         set_or_return(:log_dir, arg, kind_of: [String])
+      end
+
+      def log_flags(arg = nil)
+        set_or_return(:log_flags, arg, kind_of: [String])
       end
 
       def log_size(arg = nil)
