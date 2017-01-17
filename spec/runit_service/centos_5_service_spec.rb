@@ -5,7 +5,7 @@ describe 'runit_test::service on centos-5.11' do
     ChefSpec::SoloRunner.new(
       platform: 'centos',
       version: '5.11',
-    # step_into: 'runit_service'
+      # step_into: 'runit_service'
     ) do |node|
       node.normal['runit']['version'] = '0.0'
     end.converge('runit_test::service')
