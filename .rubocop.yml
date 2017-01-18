@@ -1,4 +1,11 @@
 # rubocop todo
 #
+
 Metrics/BlockNesting:
   Max: 4
+
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Exclude:
+    - 'libraries/helpers.rb'
+    - 'libraries/resource_runit_service.rb'
