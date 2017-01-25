@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 3.0.5 (2017-01-25)
+
+- Don’t mask errors from shellout helper if the binary is present.
+- Don't error stopping a service that doesn't exist
+
 ## 3.0.4 (2017-01-24)
 
 - Cookstyle fixes
