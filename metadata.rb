@@ -2,7 +2,7 @@ name 'runit'
 maintainer 'Chef Software, Inc.'
 maintainer_email 'cookbooks@chef.io'
 license 'Apache 2.0'
-description 'Installs runit and provides runit_service definition'
+description 'Installs runit and provides runit_service resource'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '3.0.3'
 
