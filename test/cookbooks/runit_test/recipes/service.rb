@@ -256,3 +256,9 @@ actions.each do |test_action|
     action test_action
   end
 end
+
+# Try to stop a service that doesn't exist, just to make sure this doesn't
+# fail with an exception
+runit_service 'non-existent stopper' do
+  action :stop
+end

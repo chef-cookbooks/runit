@@ -88,19 +88,19 @@ module RunitCookbook
     def runit_send_signal(signal, friendly_name = nil)
       friendly_name ||= signal
       converge_by("send #{friendly_name} to #{new_resource}") do
-        safe_sv_shellout("#{sv_args}#{signal} #{service_dir_name}")
+        safe_sv_shellout!("#{sv_args}#{signal} #{service_dir_name}")
         Chef::Log.info("#{new_resource} sent #{friendly_name}")
       end
     end
 
     def running?
       cmd = safe_sv_shellout("#{sv_args}status #{service_dir_name}", returns: [0, 100])
-      cmd.stdout =~ /^run:/
+      !cmd.error? && cmd.stdout =~ /^run:/
     end
 
     def log_running?
       cmd = safe_sv_shellout("#{sv_args}status #{service_dir_name}/log", returns: [0, 100])
-      cmd.stdout =~ /^run:/
+      !cmd.error? && cmd.stdout =~ /^run:/
     end
 
     def enabled?
@@ -159,11 +159,19 @@ exec svlogd -tt #{new_resource.log_dir}
     def safe_sv_shellout(command, options = {})
       begin
         Chef::Log.debug("Attempting to run runit command: #{sv_bin} #{command}")
-        cmd = shell_out!("#{sv_bin} #{command}", options)
+        cmd = shell_out("#{sv_bin} #{command}", options)
       rescue Errno::ENOENT
-        raise 'Runit does not appear to be installed. You must install runit before using the runit_service resource!' unless binary_exists?
+        if binary_exists?
+          raise # Some other cause
+        else
+          raise 'Runit does not appear to be installed. You must install runit before using the runit_service resource!'
+        end
       end
       cmd
+    end
+
+    def safe_sv_shellout!(command, options = {})
+      safe_sv_shellout(command, options).tap(&:error!)
     end
 
     def disable_service
@@ -183,28 +191,28 @@ exec svlogd -tt #{new_resource.log_dir}
     end
 
     def start_service
-      safe_sv_shellout("#{sv_args}start #{service_dir_name}")
+      safe_sv_shellout!("#{sv_args}start #{service_dir_name}")
     end
 
     def stop_service
-      safe_sv_shellout("#{sv_args}stop #{service_dir_name}")
+      safe_sv_shellout!("#{sv_args}stop #{service_dir_name}")
     end
 
     def restart_service
-      safe_sv_shellout("#{sv_args}restart #{service_dir_name}")
+      safe_sv_shellout!("#{sv_args}restart #{service_dir_name}")
     end
 
     def restart_log_service
-      safe_sv_shellout("#{sv_args}restart #{service_dir_name}/log")
+      safe_sv_shellout!("#{sv_args}restart #{service_dir_name}/log")
     end
 
     def reload_service
-      safe_sv_shellout("#{sv_args}force-reload #{service_dir_name}")
+      safe_sv_shellout!("#{sv_args}force-reload #{service_dir_name}")
     end
 
     def reload_log_service
       if log_running?
-        safe_sv_shellout("#{sv_args}force-reload #{service_dir_name}/log")
+        safe_sv_shellout!("#{sv_args}force-reload #{service_dir_name}/log")
       else
         Chef::Log.debug('Logging not running so doing nothing')
       end

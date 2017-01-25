@@ -22,6 +22,7 @@ describe 'runit_service' do
     allow(shellout).to receive(:live_stream).and_return(STDOUT)
     allow(shellout).to receive(:run_command).and_return(sv_action_result)
     allow(shellout).to receive(:error!).and_return(nil)
+    allow(shellout).to receive(:error?).and_return(false)
   end
 
   shared_examples_for 'runit_service' do
