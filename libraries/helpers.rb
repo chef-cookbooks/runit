@@ -171,9 +171,7 @@ exec svlogd -tt #{new_resource.log_dir}
     end
 
     def safe_sv_shellout!(command, options = {})
-      safe_sv_shellout(command, options).tap do |cmd|
-        cmd.error!
-      end
+      safe_sv_shellout(command, options).tap(&:error!)
     end
 
     def disable_service
