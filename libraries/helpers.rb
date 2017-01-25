@@ -161,7 +161,11 @@ exec svlogd -tt #{new_resource.log_dir}
         Chef::Log.debug("Attempting to run runit command: #{sv_bin} #{command}")
         cmd = shell_out("#{sv_bin} #{command}", options)
       rescue Errno::ENOENT
-        raise 'Runit does not appear to be installed. You must install runit before using the runit_service resource!' unless binary_exists?
+        if binary_exists?
+          raise # Some other cause
+        else
+          raise 'Runit does not appear to be installed. You must install runit before using the runit_service resource!'
+        end
       end
       cmd
     end
