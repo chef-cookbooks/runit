@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 3.0.4 (2017-01-24)
+
+- Cookstyle fixes
+- Update the cookbook description
+- Check that chef_version exists before declaring it
+
 ## 3.0.3 (2016-12-07)
 
 - Convert main suite test spec to inspec
