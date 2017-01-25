@@ -261,4 +261,3 @@ end
 runit_service 'non-existent stopper' do
   action :stop
 end
-
