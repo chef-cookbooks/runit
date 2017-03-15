@@ -46,6 +46,7 @@ when 'rhel'
   end
 
 when 'debian'
+  include_recipe 'apt'
   package 'runit' do
     action :install
     response_file 'runit.seed'
