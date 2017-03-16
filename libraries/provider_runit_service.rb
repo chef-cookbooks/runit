@@ -52,8 +52,13 @@ class Chef
       action :create do
         ruby_block 'restart_service' do
           block do
+            previously_enabled = enabled?
             action_enable
-            restart_service
+
+            # Only restart the service if it was previously enabled. If the service was disabled
+            # or not running, then the enable action will start the service, and it's unnecessary
+            # to restart the service again.
+            restart_service if previously_enabled
           end
           action :nothing
           only_if { new_resource.restart_on_update && !new_resource.start_down }
