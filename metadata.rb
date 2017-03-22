@@ -14,6 +14,7 @@ end
 
 depends 'packagecloud'
 depends 'yum-epel'
+depends 'apt'
 
 source_url 'https://github.com/chef-cookbooks/runit'
 issues_url 'https://github.com/chef-cookbooks/runit/issues'
