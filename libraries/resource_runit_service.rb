@@ -58,6 +58,7 @@ class Chef
         @running = false
         @default_logger = false
         @restart_on_update = true
+        @restart_log_on_update = false
         @run_template_name = @service_name
         @log_template_name = @service_name
         @check_script_template_name = @service_name
@@ -190,6 +191,10 @@ class Chef
 
       def restart_on_update(arg = nil)
         set_or_return(:restart_on_update, arg, kind_of: [TrueClass, FalseClass])
+      end
+
+      def restart_log_on_update(arg = nil)
+        set_or_return(:restart_log_on_update, arg, kind_of: [TrueClass, FalseClass])
       end
 
       def run_template_name(arg = nil)
