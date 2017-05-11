@@ -11,7 +11,7 @@ platforms:
   - name: centos-6.8
   - name: centos-7.3
   - name: debian-7.11
-  - name: debian-8.6
+  - name: debian-8.7
   - name: oracle-6.8
   - name: oracle-7.3
   - name: ubuntu-14.04
