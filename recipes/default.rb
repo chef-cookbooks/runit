@@ -27,14 +27,16 @@ execute 'start-runsvdir' do
 end
 
 case node['platform_family']
-when 'rhel'
+when 'rhel', 'amazon'
 
   # add the necessary repos unless prefer_local_yum is set
   unless node['runit']['prefer_local_yum']
     include_recipe 'yum-epel' if node['platform_version'].to_i < 7
 
     packagecloud_repo 'imeyer/runit' do
-      force_os 'rhel' if node['platform'].eql?('oracle')
+      force_os 'rhel' if platform?('oracle', 'amazon')
+      force_dist '6' if platform?('amazon')
+      type 'rpm' if platform?('amazon')
     end
   end
 
