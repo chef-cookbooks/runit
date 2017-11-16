@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 3.0.6 (2017-11-16)
+
+- Test with Local Delivery instead of Rake
+- Update apache2 license string
+- Fully support Amazon Linux
+
 ## 3.0.5 (2017-01-25)
 
 - Don’t mask errors from shellout helper if the binary is present.
