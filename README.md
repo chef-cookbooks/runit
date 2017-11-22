@@ -53,9 +53,9 @@ On RHEL-family systems, it will install the runit RPM using [Ian Meyer's Package
 
 On Debian family systems, the runit packages are maintained by the runit author, Gerrit Pape, and the recipe will use that for installation.
 
-## Resource/Provider
+## Resource
 
-This cookbook has a resource, `runit_service`, for managing services under runit. This service subclasses the Chef `service` resource.
+This cookbook has a resource, `runit_service`, for managing services under runit.
 
 **This resource replaces the runit_service definition. See the CHANGELOG.md file in this cookbook for breaking change information and any actions you may need to take to update cookbooks using runit_service.**
 
