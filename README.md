@@ -82,9 +82,9 @@ Service management actions are taken with runit's "`sv`" program.
 
 Read the `sv(8)` [man page](http://smarden.org/runit/sv.8.html) for more information on the `sv` program.
 
-### Parameter Attributes
+### Properties
 
-The first three parameters, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the corresponding node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
+The first three properties, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the corresponding node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
 
 Many of these parameters are only used in the `:enable` action.
 
