@@ -56,7 +56,7 @@ class Chef
             restart_service
           end
           action :nothing
-          only_if { new_resource.restart_on_update && !new_resource.start_down }
+          only_if { (new_resource.restart_on_update ) && !new_resource.start_down }
         end
 
         ruby_block 'restart_log_service' do
@@ -65,7 +65,7 @@ class Chef
             restart_log_service
           end
           action :nothing
-          only_if { new_resource.restart_on_update && !new_resource.start_down }
+          only_if { (new_resource.restart_on_update || new_resource.restart_log_on_update ) && !new_resource.start_down }
         end
 
         # sv_templates
