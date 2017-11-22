@@ -34,7 +34,7 @@ when 'rhel', 'amazon'
     include_recipe 'yum-epel' if node['platform_version'].to_i < 7
 
     packagecloud_repo 'imeyer/runit' do
-      force_os 'rhel' if platform?('oracle', 'amazon')
+      force_os 'rhel' if platform?('oracle', 'amazon') # ~FC024
       force_dist '6' if platform?('amazon')
       type 'rpm' if platform?('amazon')
     end
