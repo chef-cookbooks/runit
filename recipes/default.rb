@@ -21,7 +21,7 @@ service 'runit' do
   action :nothing
 end
 
-execute 'start-runsvdir' do
+execute 'start-runsvdir' do # ~FC004
   command '/etc/init.d/runit-start start'
   action :nothing
 end
