@@ -26,10 +26,7 @@ link '/usr/local/bin/sv' do
   )
 end
 
-package 'binutils'
-package 'file'
-package 'lsof'
-package 'socat'
+package %w(binutils file lsof socat)
 
 # Create a normal user to run services later
 group 'floyd'
