@@ -48,14 +48,10 @@ when 'rhel', 'amazon'
   end
 
 when 'debian'
-  package 'runit' do
+  pkg_name = platform?('debian') && node['platform_version'].to_i >= 9 ? 'runit-systemd' : 'runit'
+
+  package pkg_name do
     action :install
     response_file 'runit.seed'
-  end
-
-  execute 'runsvdir-start' do
-    command '/etc/runit/2 &'
-    not_if 'ps -ef | grep -v grep | grep "runsvdir"'
-    only_if { platform?('debian') && node['platform_version'].to_i >= 9 }
   end
 end
