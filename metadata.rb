@@ -3,7 +3,6 @@ maintainer 'Chef Software, Inc.'
 maintainer_email 'cookbooks@chef.io'
 license 'Apache-2.0'
 description 'Installs runit and provides runit_service resource'
-long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '3.0.6'
 
 recipe 'runit', 'Installs and configures runit'
@@ -17,4 +16,4 @@ depends 'yum-epel'
 
 source_url 'https://github.com/chef-cookbooks/runit'
 issues_url 'https://github.com/chef-cookbooks/runit/issues'
-chef_version '>= 12.1' if respond_to?(:chef_version)
+chef_version '>= 12.7' if respond_to?(:chef_version)
