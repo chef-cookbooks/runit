@@ -48,6 +48,8 @@ when 'rhel', 'amazon'
   end
 
 when 'debian'
+  # debian 9+ ship with runit-systemd which includes only what you need for process supervision and not
+  # what is necessary for running runit as pid 1, which we don't care about.
   pkg_name = platform?('debian') && node['platform_version'].to_i >= 9 ? 'runit-systemd' : 'runit'
 
   package pkg_name do
