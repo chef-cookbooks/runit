@@ -22,7 +22,7 @@ include_recipe 'runit::default'
 link '/usr/local/bin/sv' do
   to value_for_platform_family(
     'default' => '/usr/bin/sv',
-    %w(rhel fedora amazon) => '/sbin/sv'
+    %w(rhel amazon) => '/sbin/sv'
   )
 end
 
