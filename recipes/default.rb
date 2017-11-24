@@ -56,4 +56,7 @@ when 'debian'
     action :install
     response_file 'runit.seed'
   end
+else
+  raise 'The cookbook only supports Debian/RHEL based Linux distributions. If you believe further platform support is possible pleae open a pull request.'
+end
 end
