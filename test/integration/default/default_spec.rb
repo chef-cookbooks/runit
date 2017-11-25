@@ -1,10 +1,15 @@
+if os[:family] == 'debian' && os[:release].to_i == 9
+  describe package('runit-systemd') do
+    it { should be_installed }
+  end
+end
+
 describe package('runit') do
   it { should be_installed }
 end
 
-describe command('ps -ef | grep -v grep | grep "runsvdir"') do
-  its(:exit_status) { should eq 0 }
-  its(:stdout) { should match(/runsvdir/) }
+describe processes('runsvdir') do
+  it { should exist }
 end
 
 describe file('/etc/service') do

@@ -16,16 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-service 'runit' do
-  action :nothing
-end
-
-execute 'start-runsvdir' do
-  command '/etc/init.d/runit-start start'
-  action :nothing
-end
-
 case node['platform_family']
 when 'rhel', 'amazon'
 
@@ -41,21 +31,38 @@ when 'rhel', 'amazon'
   end
 
   package 'runit'
-
-  service 'runsvdir-start' do
-    action [:start, :enable]
-    only_if { node['platform_version'].to_i == 7 }
-  end
-
 when 'debian'
-  package 'runit' do
+  # debian 9+ ship with runit-systemd which includes only what you need for process supervision and not
+  # what is necessary for running runit as pid 1, which we don't care about.
+  pkg_name = platform?('debian') && node['platform_version'].to_i >= 9 ? 'runit-systemd' : 'runit'
+
+  package pkg_name do
     action :install
     response_file 'runit.seed'
   end
+else
+  raise 'The cookbook only supports Debian/RHEL based Linux distributions. If you believe further platform support is possible pleae open a pull request.'
+end
 
-  execute 'runsvdir-start' do
-    command '/etc/runit/2 &'
-    not_if 'ps -ef | grep -v grep | grep "runsvdir"'
-    only_if { platform?('debian') && node['platform_version'].to_i >= 9 }
-  end
+# we need to make sure we start the runit service so that runit services can be started up at boot
+# or when they fail
+service_name = case node['platform_family']
+               when 'debian'
+                 if platform?('ubuntu') && node['platform_version'].to_f < 16.04
+                   'runsvdir'
+                 else
+                   'runit'
+                 end
+               when 'rhel'
+                 if node['platform_version'].to_i >= 7
+                   'runsvdir-start'
+                 else
+                   'runsvdir'
+                 end
+               end
+
+service service_name do
+  action [:start, :enable]
+  # this might seem crazy, but RHEL 6 is in fact Upstart and the runit service is upstart there
+  provider Chef::Provider::Service::Upstart if platform?('amazon') || platform_family?('rhel') && node['platform_version'].to_i == 6
 end

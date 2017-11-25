@@ -36,7 +36,7 @@ when 'debian'
     default['runit']['reload'] = 'reload runsvdir'
   end
 
-when 'rhel', 'fedora', 'amazon'
+when 'rhel', 'amazon'
   default['runit']['sv_bin'] = '/sbin/sv'
   default['runit']['chpst_bin'] = '/sbin/chpst'
   default['runit']['service_dir'] = '/etc/service'
