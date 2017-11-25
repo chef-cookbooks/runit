@@ -2,6 +2,17 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.0.0 (2017-11-24)
+
+- Fail if we're on an unsupported platform in the main recipe instead of silently continuing
+- Manage the actual runit service. Without this the runit service may not actually be started which means any service using runit won't actually start at boot
+- Update the readme to not refer to providers and properly call the resource's property actual proeprties
+- Add Debian testing to Travis
+- Move file and templates out of the default dir since only Chef 11 needs this
+- Use runit-systemd on Debian 9+ since runit package is actually designed for using runit as the main system init system
+- Remove extra files from the test recipes
+- Add a test for runit-systemd and use the process inspec resource
+
 ## 3.0.6 (2017-11-16)
 
 - Test with Local Delivery instead of Rake
