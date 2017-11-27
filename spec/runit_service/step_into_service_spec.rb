@@ -119,7 +119,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('plain-defaults') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
 
     it_behaves_like 'runit_service with default_logger set to false'
 
@@ -132,7 +132,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('no-svlog') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
 
     it_behaves_like 'runit_service'
 
@@ -150,7 +150,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('default-svlog') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
     let(:log_run_script) { chef_run.file(::File.join(service_svdir, 'log', 'run')) }
 
     it_behaves_like 'runit_service with default logging'
@@ -185,7 +185,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('checker') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
 
     it_behaves_like 'runit_service with default_logger set to false'
 
@@ -209,7 +209,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('finisher') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
 
     it_behaves_like 'runit_service with default_logger set to false'
 
@@ -278,7 +278,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('control-signals') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
     let(:service_signal) { 'u' }
 
     it_behaves_like 'runit_service with default_logger set to false'
@@ -299,7 +299,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('supervisor_owner') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
     let(:supervise_files) { %w(ok status control) }
 
     it_behaves_like 'runit_service with default logging'
@@ -325,7 +325,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('supervisor_group') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
     let(:supervise_files) { %w(ok status control) }
 
     it_behaves_like 'runit_service with default logging'
@@ -351,7 +351,7 @@ describe 'runit_service' do
     let(:service) { chef_run.runit_service('supervisor_owner_and_group') }
     let(:service_svdir) { ::File.join(sv_dir, service.name) }
     let(:service_servicedir) { ::File.join(service_dir, service.name) }
-    let(:service_options) { Hash.new }
+    let(:service_options) { {} }
     let(:supervise_files) { %w(ok status control) }
 
     it_behaves_like 'runit_service with default logging'

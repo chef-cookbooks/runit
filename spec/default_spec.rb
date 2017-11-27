@@ -4,7 +4,7 @@ describe 'runit::default' do
   cached(:oel_65_default) do
     ChefSpec::SoloRunner.new(
       platform: 'oracle',
-      version: '6.5'
+      version: '6.8'
     ) do |node|
       node.normal['runit']['version'] = '0.0'
     end.converge(described_recipe)
