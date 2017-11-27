@@ -22,14 +22,11 @@ include_recipe 'runit::default'
 link '/usr/local/bin/sv' do
   to value_for_platform_family(
     'default' => '/usr/bin/sv',
-    %w(rhel fedora) => '/sbin/sv'
+    %w(rhel amazon) => '/sbin/sv'
   )
 end
 
-package 'binutils'
-package 'file'
-package 'lsof'
-package 'socat'
+package %w(binutils file lsof socat)
 
 # Create a normal user to run services later
 group 'floyd'

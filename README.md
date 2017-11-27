@@ -53,9 +53,9 @@ On RHEL-family systems, it will install the runit RPM using [Ian Meyer's Package
 
 On Debian family systems, the runit packages are maintained by the runit author, Gerrit Pape, and the recipe will use that for installation.
 
-## Resource/Provider
+## Resource
 
-This cookbook has a resource, `runit_service`, for managing services under runit. This service subclasses the Chef `service` resource.
+This cookbook has a resource, `runit_service`, for managing services under runit.
 
 **This resource replaces the runit_service definition. See the CHANGELOG.md file in this cookbook for breaking change information and any actions you may need to take to update cookbooks using runit_service.**
 
@@ -82,11 +82,11 @@ Service management actions are taken with runit's "`sv`" program.
 
 Read the `sv(8)` [man page](http://smarden.org/runit/sv.8.html) for more information on the `sv` program.
 
-### Parameter Attributes
+### Properties
 
-The first three parameters, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the corresponding node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
+The first three properties, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the corresponding node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
 
-Many of these parameters are only used in the `:enable` action.
+Many of these properties are only used in the `:enable` action.
 
 - **sv_dir** - The base "service directory" for the services managed by the resource. By default, this will attempt to use the `node['runit']['sv_dir']` attribute, and falls back to `/etc/sv`.
 - **service_dir** - The directory where services are symlinked to be supervised by `runsvdir`. By default, this will attempt to use the `node['runit']['service_dir']` attribute, and falls back to `/etc/service`.
@@ -133,7 +133,7 @@ Unlike previous versions of the cookbook using the `runit_service` definition, t
 
 To get runit installed on supported platforms, use `recipe[runit]`. Once it is installed, use the `runit_service` resource to set up services to be managed by runit.
 
-In order to use the `runit_service` resource in your cookbook(s), each service managed will also need to have `sv-service_name-run.erb` and `sv-service_name-log-run.erb` templates created. If the `log` parameter is false, the log run script isn't created. If the `log` parameter is true, and `default_logger` is also true, the log run script will be created with the default content:
+In order to use the `runit_service` resource in your cookbook(s), each service managed will also need to have `sv-service_name-run.erb` and `sv-service_name-log-run.erb` templates created. If the `log` property is false, the log run script isn't created. If the `log` property is true, and `default_logger` is also true, the log run script will be created with the default content:
 
 ```bash
 #!/bin/sh
@@ -193,7 +193,7 @@ end
 
 **Check Script**
 
-To create a service that has a check script in its service directory, set the `check` parameter to `true`, and create a `sv-checker-check.erb` template.
+To create a service that has a check script in its service directory, set the `check` property to `true`, and create a `sv-checker-check.erb` template.
 
 ```ruby
 runit_service "checker" do
@@ -205,7 +205,7 @@ This will create `/etc/sv/checker/check`.
 
 **Finish Script**
 
-To create a service that has a finish script in its service directory, set the `finish` parameter to `true`, and create a `sv-finisher-finish.erb` template.
+To create a service that has a finish script in its service directory, set the `finish` property to `true`, and create a `sv-finisher-finish.erb` template.
 
 ```ruby
 runit_service "finisher" do
@@ -283,7 +283,7 @@ run: /home/floyd/service/floyds-app/: (pid 5287) 13s; run: log: (pid 4691) 726s
 
 **Options**
 
-Next, let's set up memcached under runit with some additional options using the `options` parameter. First, the `memcached/templates/default/sv-memcached-run.erb` template:
+Next, let's set up memcached under runit with some additional options using the `options` property. First, the `memcached/templates/default/sv-memcached-run.erb` template:
 
 ```bash
 #!/bin/sh
