@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.0.1 (2017-11-29)
+
+- Fix compile failures that caused chefspec and runtime failures
+- Enable amazon linux testing of the default recipe in Travis
+
 ## 4.0.0 (2017-11-24)
 
 - Fail if we're on an unsupported platform in the main recipe instead of silently continuing
