@@ -19,6 +19,7 @@ services: docker
 
 env:
   matrix:
+  - INSTANCE=default-amazonlinux
   - INSTANCE=default-ubuntu-1404
   - INSTANCE=default-ubuntu-1604
   - INSTANCE=default-debian-8
