@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.0.2 (2017-11-29)
+
+- Don't fail on Debian 7 where the runsvdir init script doesn't exist
+
 ## 4.0.1 (2017-11-29)
 
 - Fix compile failures that caused chefspec and runtime failures
