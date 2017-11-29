@@ -46,22 +46,24 @@ end
 
 # we need to make sure we start the runit service so that runit services can be started up at boot
 # or when they fail
-service_name = case node['platform_family']
-               when 'debian'
-                 if platform?('ubuntu') && node['platform_version'].to_f < 16.04
-                   'runsvdir'
-                 else
-                   'runit'
-                 end
-               when 'rhel'
-                 if node['platform_version'].to_i >= 7
-                   'runsvdir-start'
-                 else
-                   'runsvdir'
-                 end
-               end
+plat_specific_sv_name = case node['platform_family']
+                        when 'debian'
+                          if platform?('ubuntu') && node['platform_version'].to_f < 16.04
+                            'runsvdir'
+                          else
+                            'runit'
+                          end
+                        when 'rhel'
+                          if node['platform_version'].to_i >= 7
+                            'runsvdir-start'
+                          else
+                            'runsvdir'
+                          end
+                        else
+                          'runsvdir'
+                        end
 
-service service_name do
+service plat_specific_sv_name do
   action [:start, :enable]
   # this might seem crazy, but RHEL 6 is in fact Upstart and the runit service is upstart there
   provider Chef::Provider::Service::Upstart if platform?('amazon') || platform_family?('rhel') && node['platform_version'].to_i == 6
