@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.0.3 (2017-11-29)
+
+- Remove the custom resource implementation that leaked in and was causing chefspec failures on Chef 12
+- Convert all the service suite integration tests to inspec
+
 ## 4.0.2 (2017-11-29)
 
 - Don't fail on Debian 7 where the runsvdir init script doesn't exist
