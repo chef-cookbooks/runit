@@ -26,16 +26,6 @@ when 'debian'
   default['runit']['lsb_init_dir'] = '/etc/init.d'
   default['runit']['executable'] = '/sbin/runit'
 
-  if node['platform'] == 'debian'
-    default['runit']['start'] = 'runsvdir-start'
-    default['runit']['stop'] = ''
-    default['runit']['reload'] = ''
-  elsif node['platform'] == 'ubuntu'
-    default['runit']['start'] = 'start runsvdir'
-    default['runit']['stop'] = 'stop runsvdir'
-    default['runit']['reload'] = 'reload runsvdir'
-  end
-
 when 'rhel', 'amazon'
   default['runit']['sv_bin'] = '/sbin/sv'
   default['runit']['chpst_bin'] = '/sbin/chpst'
@@ -44,7 +34,4 @@ when 'rhel', 'amazon'
   default['runit']['lsb_init_dir'] = '/etc/init.d'
   default['runit']['executable'] = '/sbin/runit'
   default['runit']['prefer_local_yum'] = node['runit']['use_package_from_yum'] || false
-  default['runit']['start'] = '/etc/init.d/runit-start start'
-  default['runit']['stop'] = '/etc/init.d/runit-start stop'
-  default['runit']['reload'] = '/etc/init.d/runit-start reload'
 end
