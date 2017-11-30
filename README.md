@@ -35,9 +35,6 @@ See `attributes/default.rb` for defaults generated per platform.
 - `node['runit']['service_dir']` - Full path to the default "services" directory where enabled services are linked.
 - `node['runit']['sv_dir']` - Full path to the directory where service lives, which gets linked to `service_dir`.
 - `node['runit']['lsb_init_dir']` - Full path to the directory where the LSB-compliant init script interface will be created.
-- `node['runit']['start']` - Command to start the runsvdir service
-- `node['runit']['stop]` - Command to stop the runsvdir service
-- `node['runit']['reload']` - Command to reload the runsvdir service
 
 ### Optional Attributes for RHEL systems
 
