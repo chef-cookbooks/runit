@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.0.4 (2017-12-20)
+
+- Amazon on Chef 12 fix and additional testing
+- Add unit tests for each platform we support
+- Remove the old attributes for controlling the service
+
 ## 4.0.3 (2017-11-29)
 
 - Remove the custom resource implementation that leaked in and was causing chefspec failures on Chef 12
