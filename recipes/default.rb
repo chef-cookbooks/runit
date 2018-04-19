@@ -34,7 +34,13 @@ when 'rhel', 'amazon'
 when 'debian'
   # debian 9+ ship with runit-systemd which includes only what you need for process supervision and not
   # what is necessary for running runit as pid 1, which we don't care about.
-  pkg_name = platform?('debian') && node['platform_version'].to_i >= 9 ? 'runit-systemd' : 'runit'
+  pv = node['platform_version']
+  pkg_name = if (platform?('debian') && pv.to_i >= 9) || \
+                (platform?('ubuntu') && Gem::Version.new(pv) >= Gem::Version.new('17.10'))
+               'runit-systemd'
+             else
+               'runit'
+             end
 
   package pkg_name do
     action :install
