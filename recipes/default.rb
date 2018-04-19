@@ -40,8 +40,13 @@ when 'debian'
     action :install
     response_file 'runit.seed'
   end
+when 'suse'
+  # SUSE doesn't have a package for runit; this only works if we have the package provided by another
+  if !File.executable?(node['runit']['sv_bin'])
+    raise "The cookbook requires an externally provided runit package. You may need to override the sv_bin, svlogd_bin and chpst_bin variables (sv_bin is currently #{node['runit']['sv_bin']}) to point to the installed binaries"
+  end
 else
-  raise 'The cookbook only supports Debian/RHEL based Linux distributions. If you believe further platform support is possible pleae open a pull request.'
+  raise "The cookbook only supports Debian/RHEL/SUSE based Linux distributions. If you believe further platform support is possible please open a pull request"
 end
 
 # we need to make sure we start the runit service so that runit services can be started up at boot

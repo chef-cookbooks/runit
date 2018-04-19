@@ -26,7 +26,7 @@ when 'debian'
   default['runit']['lsb_init_dir'] = '/etc/init.d'
   default['runit']['executable'] = '/sbin/runit'
 
-when 'rhel', 'amazon'
+when 'rhel', 'amazon', 'suse'
   default['runit']['sv_bin'] = '/sbin/sv'
   default['runit']['chpst_bin'] = '/sbin/chpst'
   default['runit']['service_dir'] = '/etc/service'
