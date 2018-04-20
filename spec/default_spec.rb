@@ -114,6 +114,24 @@ describe 'runit::default on ubuntu 16.04' do
   end
 end
 
+describe 'runit::default on ubuntu 18.04' do
+  cached(:ubuntu18_default) do
+    ChefSpec::SoloRunner.new(
+      platform: 'ubuntu',
+      version: '18.04'
+    ).converge('runit::default')
+  end
+
+  it 'installs the runit-systemd package' do
+    expect(ubuntu18_default).to install_package('runit-systemd')
+  end
+
+  it 'starts and enabled the correct runit service' do
+    expect(ubuntu18_default).to enable_service('runit')
+    expect(ubuntu18_default).to start_service('runit')
+  end
+end
+
 describe 'runit::default on debian 7' do
   cached(:debian7_default) do
     ChefSpec::SoloRunner.new(
