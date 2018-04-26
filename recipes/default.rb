@@ -32,7 +32,7 @@ when 'rhel', 'amazon'
 
   package 'runit'
 when 'debian'
-  # debian 9+ ship with runit-systemd which includes only what you need for process supervision and not
+  # debian 9+ ships with runit-systemd which includes only what you need for process supervision and not
   # what is necessary for running runit as pid 1, which we don't care about.
   pv = node['platform_version']
   pkg_name = if (platform?('debian') && pv.to_i >= 9) || \
@@ -47,7 +47,7 @@ when 'debian'
     response_file 'runit.seed'
   end
 else
-  raise 'The cookbook only supports Debian/RHEL based Linux distributions. If you believe further platform support is possible pleae open a pull request.'
+  raise 'The cookbook only supports Debian/RHEL based Linux distributions. If you believe further platform support is possible please open a pull request.'
 end
 
 # we need to make sure we start the runit service so that runit services can be started up at boot
