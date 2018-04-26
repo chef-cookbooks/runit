@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.1.1 (2018-04-26)
+
+- Fix typo in an error message
+
 ## 4.1.0 (2018-04-19)
 
 - Also install the runit-systemd package on newer Ubuntus
