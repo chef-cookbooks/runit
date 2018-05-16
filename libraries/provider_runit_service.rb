@@ -39,7 +39,7 @@ class Chef
         )
       end
 
-      use_inline_resources
+      use_inline_resources # ~FC113
 
       def whyrun_supported?
         true
