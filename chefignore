@@ -52,7 +52,7 @@ test/*
 features/*
 examples/*
 Procfile
-.kitchen*
+kitchen*
 .rubocop.yml
 spec/*
 .travis.yml

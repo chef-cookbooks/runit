@@ -22,7 +22,6 @@ env:
   - INSTANCE=default-amazonlinux CHEF_VERSION=12.7.2
   - INSTANCE=default-ubuntu-1404 CHEF_VERSION=12.7.2
   - INSTANCE=default-ubuntu-1604 CHEF_VERSION=12.7.2
-  - INSTANCE=default-debian-7 CHEF_VERSION=12.7.2
   - INSTANCE=default-debian-8 CHEF_VERSION=12.7.2
   - INSTANCE=default-debian-9 CHEF_VERSION=12.7.2
   - INSTANCE=default-centos-6 CHEF_VERSION=12.7.2
@@ -30,7 +29,6 @@ env:
   - INSTANCE=default-amazonlinux
   - INSTANCE=default-ubuntu-1404
   - INSTANCE=default-ubuntu-1604
-  - INSTANCE=default-debian-7
   - INSTANCE=default-debian-8
   - INSTANCE=default-debian-9
   - INSTANCE=default-centos-6
@@ -43,7 +41,7 @@ before_script:
   - cookstyle --version
   - foodcritic --version
 
-script: KITCHEN_LOCAL_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
+script: KITCHEN_LOCAL_YAML=kitchen.dokken.yml kitchen verify ${INSTANCE}
 
 matrix:
   include:

@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.1.2 (2018-07-18)
+
+- Make Ubuntu the same as Debian where we template out a script instead of symlinking /etc/init.d/servicename to sv
+
 ## 4.1.1 (2018-04-26)
 
 - Fix typo in an error message
