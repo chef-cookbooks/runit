@@ -224,7 +224,7 @@ class Chef
           end
 
           # lsb_init
-          if node['platform'] == 'debian'
+          if node['platform'] == 'debian' || node['platform'] == 'ubuntu'
             ruby_block "unlink #{parsed_lsb_init_dir}/#{new_resource.service_name}" do
               block { ::File.unlink("#{parsed_lsb_init_dir}/#{new_resource.service_name}") }
               only_if { ::File.symlink?("#{parsed_lsb_init_dir}/#{new_resource.service_name}") }
