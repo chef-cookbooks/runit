@@ -1,0 +1,64 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          <%= @name %>
+# Required-Start:
+# Required-Stop:
+# Default-Start:
+# Default-Stop:
+# Short-Description: initscript for runit-managed <%= @name %> service
+### END INIT INFO
+
+# Author: Chef Software, Inc. <cookbooks@chef.io>
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="runit-managed <%= @name %>"
+NAME=<%= @name %>
+RUNIT=<%= @sv_bin %>
+RUNIT_ARGS="<%= @sv_args %>"
+SCRIPTNAME=<%= @init_dir %>$NAME
+
+# Exit if runit is not installed
+[ -x $RUNIT ] || exit 0
+
+case "$1" in
+  start)
+        $RUNIT $RUNIT_ARGS start $NAME
+        ;;
+  stop)
+        $RUNIT $RUNIT_ARGS stop $NAME
+        ;;
+  status)
+        $RUNIT $RUNIT_ARGS status $NAME && exit 0 || exit $?
+        ;;
+  reload)
+        $RUNIT $RUNIT_ARGS reload $NAME
+        ;;
+  force-reload)
+        $RUNIT $RUNIT_ARGS force-reload $NAME
+        ;;
+  force-stop)
+        $RUNIT $RUNIT_ARGS force-stop $NAME
+        ;;
+  force-restart)
+        $RUNIT $RUNIT_ARGS force-restart $NAME
+        ;;
+  force-shutdown)
+        $RUNIT $RUNIT_ARGS force-shutdown $NAME
+        ;;
+  restart)
+        $RUNIT $RUNIT_ARGS restart $NAME
+        ;;
+  shutdown)
+        $RUNIT $RUNIT_ARGS shutdown $NAME
+        ;;
+  try-restart)
+        $RUNIT $RUNIT_ARGS try-restart $NAME
+        ;;
+  *)
+        echo "Usage: $SCRIPTNAME {start|stop|status|reload|force-reload|force-restart|force-shutdown|force-stop|restart|shutdown|try-restart}" >&2
+        exit 3
+        ;;
+esac
+
+:
+
