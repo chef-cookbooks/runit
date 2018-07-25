@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.2.0 (2018-07-24)
+
+- Don't double start when creating new services
+- Quoting the timeout value prevents it being cast to an unsigned long.
+- Add a new log_flags property for changing the default -tt logging flag
+
 ## 4.1.2 (2018-07-18)
 
 - Make Ubuntu the same as Debian where we template out a script instead of symlinking /etc/init.d/servicename to sv

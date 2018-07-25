@@ -138,13 +138,6 @@ module RunitCookbook
       new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
     end
 
-    def default_logger_content
-      <<-EOS
-#!/bin/sh
-exec svlogd -tt #{new_resource.log_dir}
-      EOS
-    end
-
     def binary_exists?
       begin
         Chef::Log.debug("Checking to see if the runit binary exists by running #{new_resource.sv_bin}")

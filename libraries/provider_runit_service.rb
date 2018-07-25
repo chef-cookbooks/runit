@@ -52,8 +52,13 @@ class Chef
       action :create do
         ruby_block 'restart_service' do
           block do
+            previously_enabled = enabled?
             action_enable
-            restart_service
+
+            # Only restart the service if it was previously enabled. If the service was disabled
+            # or not running, then the enable action will start the service, and it's unnecessary
+            # to restart the service again.
+            restart_service if previously_enabled
           end
           action :nothing
           only_if { new_resource.restart_on_update && !new_resource.start_down }
@@ -131,13 +136,15 @@ class Chef
             end
 
             if new_resource.default_logger
-              file "#{sv_dir_name}/log/run" do
-                content default_logger_content
+              template "#{sv_dir_name}/log/run" do
                 owner new_resource.owner unless new_resource.owner.nil?
                 group new_resource.group unless new_resource.group.nil?
                 mode '0755'
-                action :create
+                cookbook 'runit'
+                source 'log-run.erb'
+                variables(config: new_resource)
                 notifies :run, 'ruby_block[restart_log_service]', :delayed
+                action :create
               end
             else
               template "#{sv_dir_name}/log/run" do

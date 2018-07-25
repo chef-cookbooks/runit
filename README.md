@@ -98,6 +98,7 @@ Many of these properties are only used in the `:enable` action.
 - **log** - Whether to start the service's logger with svlogd, requires a template `sv-service_name-log-run.erb` to configure the log's run script. Default is true.
 - **default_logger** - Whether a default `log/run` script should be set up. If true, the default content of the run script will use `svlogd` to write logs to `/var/log/service_name`. Default is false.
 - **log_dir** - The directory where the `svlogd` log service will run. Used when `default_logger` is `true`. Default is `/var/log/service_name`
+- **log_flags** - The flags to pass to the `svlogd` command. Used when `default_logger` is `true`. Default is `-tt`
 - **log_size** - The maximum size a log file can grow to before it is automatically rotated. See svlogd(8) for the default value.
 - **log_num** - The maximum number of log files that will be retained after rotation. See svlogd(8) for the default value.
 - **log_min** - The minimum number of log files that will be retained after rotation (if svlogd cannot create a new file and the minimum has not been reached, it will block). Default is no minimum.
