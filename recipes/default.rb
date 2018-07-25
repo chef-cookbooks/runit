@@ -26,6 +26,7 @@ when 'rhel', 'amazon'
     packagecloud_repo 'imeyer/runit' do
       force_os 'rhel' if platform?('oracle', 'amazon') # ~FC024
       force_dist '6' if platform?('amazon')
+      force_dist '7' if platform?('amazon') && node['platform_version'].to_i == 2
       type 'rpm' if platform?('amazon')
     end
   end
@@ -62,6 +63,8 @@ plat_specific_sv_name = case node['platform_family']
                         when 'rhel'
                           if node['platform_version'].to_i >= 7 && !platform?('amazon')
                             'runsvdir-start'
+                          elsif node['platform_version'].to_i == 2 && platform?('amazon')
+                            'runsvdir-start'
                           else
                             'runsvdir'
                           end
@@ -72,6 +75,6 @@ plat_specific_sv_name = case node['platform_family']
 service plat_specific_sv_name do
   action [:start, :enable]
   # this might seem crazy, but RHEL 6 is in fact Upstart and the runit service is upstart there
-  provider Chef::Provider::Service::Upstart if platform?('amazon') || platform_family?('rhel') && node['platform_version'].to_i == 6
+  provider Chef::Provider::Service::Upstart if (platform?('amazon') || platform_family?('rhel')) && node['platform_version'].to_i == 6
   not_if { platform?('debian') && node['platform_version'].to_i < 8 } # there's no init script on debian 7...for reasons
 end
