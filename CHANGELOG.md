@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.3.0 (2018-07-24)
+
+- Fixing plat_specific_sv_name logic to work with Amazon Linux 2
+- Fixing upstart logic to work with older Amazon versions
+
 ## 4.2.0 (2018-07-24)
 
 - Don't double start when creating new services
