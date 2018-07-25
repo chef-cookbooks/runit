@@ -75,6 +75,6 @@ plat_specific_sv_name = case node['platform_family']
 service plat_specific_sv_name do
   action [:start, :enable]
   # this might seem crazy, but RHEL 6 is in fact Upstart and the runit service is upstart there
-  provider Chef::Provider::Service::Upstart if (platform?('amazon') && node['platform_version'].to_i > 2) || (platform_family?('rhel') && node['platform_version'].to_i == 6)
+  provider Chef::Provider::Service::Upstart if (platform?('amazon') && node['platform_version'].to_i != 2) || (platform_family?('rhel') && node['platform_version'].to_i == 6)
   not_if { platform?('debian') && node['platform_version'].to_i < 8 } # there's no init script on debian 7...for reasons
 end
