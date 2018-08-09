@@ -10,7 +10,7 @@
 
 # Author: Chef Software, Inc. <cookbooks@chef.io>
 
-PATH=/sbin:/usr/sbin:/bin:/usr/bin
+PATH="$PATH:/sbin:/usr/sbin:/bin:/usr/bin"
 DESC="runit-managed <%= @name %>"
 NAME=<%= @name %>
 RUNIT=<%= @sv_bin %>
