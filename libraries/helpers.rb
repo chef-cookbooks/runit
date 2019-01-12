@@ -50,16 +50,16 @@ module RunitCookbook
     end
 
     def down_file
-      "#{sv_dir_name}/down"
+      ::File.join(sv_dir_name, 'down')
     end
 
     def env_dir
-      "#{sv_dir_name}/env"
+      ::File.join(sv_dir_name, 'env')
     end
 
     def extra_env_files?
       files = []
-      Dir.glob("#{sv_dir_name}/env/*").each do |f|
+      Dir.glob(::File.join(sv_dir_name, 'env', '*')).each do |f|
         files << File.basename(f)
       end
       return true if files.sort != new_resource.env.keys.sort
@@ -67,7 +67,7 @@ module RunitCookbook
     end
 
     def delete_extra_env_files
-      Dir.glob("#{sv_dir_name}/env/*").each do |f|
+      Dir.glob(::File.join(sv_dir_name, 'env', '*')).each do |f|
         unless new_resource.env.key?(File.basename(f))
           File.unlink(f)
           Chef::Log.info("removing file #{f}")
@@ -78,10 +78,10 @@ module RunitCookbook
     def wait_for_service
       raise 'Runit does not appear to be installed. Include runit::default before using the resource!' unless binary_exists?
 
-      sleep 1 until ::FileTest.pipe?("#{service_dir_name}/supervise/ok")
+      sleep 1 until ::FileTest.pipe?(::File.join(service_dir_name, 'supervise', 'ok'))
 
       if new_resource.log
-        sleep 1 until ::FileTest.pipe?("#{service_dir_name}/log/supervise/ok")
+        sleep 1 until ::FileTest.pipe?(::File.join(service_dir_name, 'log', 'supervise', 'ok'))
       end
     end
 
@@ -99,20 +99,20 @@ module RunitCookbook
     end
 
     def log_running?
-      cmd = safe_sv_shellout("#{sv_args}status #{service_dir_name}/log", returns: [0, 100])
+      cmd = safe_sv_shellout("#{sv_args}status #{::File.join(service_dir_name, 'log')}", returns: [0, 100])
       !cmd.error? && cmd.stdout =~ /^run:/
     end
 
     def enabled?
-      ::File.exist?("#{service_dir_name}/run")
+      ::File.exist?(::File.join(service_dir_name, 'run'))
     end
 
     def log_service_name
-      "#{new_resource.service_name}/log"
+      ::File.join(new_resource.service_name, 'log')
     end
 
     def sv_dir_name
-      "#{parsed_sv_dir}/#{new_resource.service_name}"
+      ::File.join(parsed_sv_dir, new_resource.service_name)
     end
 
     def sv_args
@@ -127,11 +127,11 @@ module RunitCookbook
     end
 
     def service_dir_name
-      "#{new_resource.service_dir}/#{new_resource.service_name}"
+      ::File.join(new_resource.service_dir, new_resource.service_name)
     end
 
     def log_dir_name
-      "#{new_resource.service_dir}/#{new_resource.service_name}/log"
+      ::File.join(new_resource.service_dir, new_resource.service_name, log)
     end
 
     def template_cookbook
@@ -179,8 +179,8 @@ module RunitCookbook
       sleep(6)
       # runit will recreate the supervise directory and
       # pipes when the service is reenabled
-      Chef::Log.debug("Removing #{sv_dir_name}/supervise/ok")
-      FileUtils.rm("#{sv_dir_name}/supervise/ok")
+      Chef::Log.debug("Removing #{::File.join(sv_dir_name, 'supervise', 'ok')}")
+      FileUtils.rm(::File.join(sv_dir_name, 'supervise', 'ok'))
     end
 
     def start_service
@@ -196,7 +196,7 @@ module RunitCookbook
     end
 
     def restart_log_service
-      safe_sv_shellout!("#{sv_args}restart #{service_dir_name}/log")
+      safe_sv_shellout!("#{sv_args}restart #{::File.join(service_dir_name, 'log')}")
     end
 
     def reload_service
@@ -205,7 +205,7 @@ module RunitCookbook
 
     def reload_log_service
       if log_running?
-        safe_sv_shellout!("#{sv_args}force-reload #{service_dir_name}/log")
+        safe_sv_shellout!("#{sv_args}force-reload #{::File.join(service_dir_name, 'log')}")
       else
         Chef::Log.debug('Logging not running so doing nothing')
       end

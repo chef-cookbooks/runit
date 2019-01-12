@@ -84,7 +84,7 @@ class Chef
             action :create
           end
 
-          template "#{sv_dir_name}/run" do
+          template ::File.join(sv_dir_name, 'run') do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             source "sv-#{new_resource.run_template_name}-run.erb"
@@ -97,14 +97,14 @@ class Chef
 
           # log stuff
           if new_resource.log
-            directory "#{sv_dir_name}/log" do
+            directory ::File.join(sv_dir_name, 'log') do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               recursive true
               action :create
             end
 
-            directory "#{sv_dir_name}/log/main" do
+            directory ::File.join(sv_dir_name, 'log', 'main') do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               mode '0755'
@@ -120,7 +120,7 @@ class Chef
               action :create
             end
 
-            template "#{sv_dir_name}/log/config" do
+            template ::File.join(sv_dir_name, 'log', 'config') do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               mode '0644'
@@ -131,12 +131,12 @@ class Chef
               action :create
             end
 
-            link "#{new_resource.log_dir}/config" do
-              to "#{sv_dir_name}/log/config"
+            link ::File.join(new_resource.log_dir, 'config') do
+              to ::File.join(sv_dir_name, 'log', 'config')
             end
 
             if new_resource.default_logger
-              template "#{sv_dir_name}/log/run" do
+              template ::File.join(sv_dir_name, 'log', 'run') do
                 owner new_resource.owner unless new_resource.owner.nil?
                 group new_resource.group unless new_resource.group.nil?
                 mode '0755'
@@ -147,7 +147,7 @@ class Chef
                 action :create
               end
             else
-              template "#{sv_dir_name}/log/run" do
+              template ::File.join(sv_dir_name, 'log', 'run') do
                 owner new_resource.owner unless new_resource.owner.nil?
                 group new_resource.group unless new_resource.group.nil?
                 mode '0755'
@@ -162,7 +162,7 @@ class Chef
           end
 
           # environment stuff
-          directory "#{sv_dir_name}/env" do
+          directory ::File.join(sv_dir_name, 'env') do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
@@ -170,7 +170,7 @@ class Chef
           end
 
           new_resource.env.map do |var, value|
-            file "#{sv_dir_name}/env/#{var}" do
+            file ::File.join(sv_dir_name, 'env', var) do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               content value
@@ -189,7 +189,7 @@ class Chef
             notifies :run, 'ruby_block[restart_service]', :delayed
           end
 
-          template "#{sv_dir_name}/check" do
+          template ::File.join(sv_dir_name, 'check') do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
@@ -200,7 +200,7 @@ class Chef
             only_if { new_resource.check }
           end
 
-          template "#{sv_dir_name}/finish" do
+          template ::File.join(sv_dir_name, 'finish') do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
@@ -211,7 +211,7 @@ class Chef
             only_if { new_resource.finish }
           end
 
-          directory "#{sv_dir_name}/control" do
+          directory ::File.join(sv_dir_name, 'control') do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
@@ -219,7 +219,7 @@ class Chef
           end
 
           new_resource.control.map do |signal|
-            template "#{sv_dir_name}/control/#{signal}" do
+            template ::File.join(sv_dir_name, 'control', 'signal') do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               mode '0755'
@@ -232,12 +232,12 @@ class Chef
 
           # lsb_init
           if node['platform'] == 'debian' || node['platform'] == 'ubuntu'
-            ruby_block "unlink #{parsed_lsb_init_dir}/#{new_resource.service_name}" do
-              block { ::File.unlink("#{parsed_lsb_init_dir}/#{new_resource.service_name}") }
-              only_if { ::File.symlink?("#{parsed_lsb_init_dir}/#{new_resource.service_name}") }
+            ruby_block "unlink #{::File.join(parsed_lsb_init_dir, new_resource.service_name)}" do
+              block { ::File.unlink(::File.join(parsed_lsb_init_dir, new_resource.service_name)) }
+              only_if { ::File.symlink?(::File.join(parsed_lsb_init_dir, new_resource.service_name)) }
             end
 
-            template "#{parsed_lsb_init_dir}/#{new_resource.service_name}" do
+            template ::File.join(parsed_lsb_init_dir, new_resource.service_name) do
               owner 'root'
               group 'root'
               mode '0755'
@@ -252,7 +252,7 @@ class Chef
               action :create
             end
           else
-            link "#{parsed_lsb_init_dir}/#{new_resource.service_name}" do
+            link ::File.join(parsed_lsb_init_dir, new_resource.service_name) do
               to sv_bin
               action :create
             end
@@ -304,12 +304,12 @@ class Chef
 
         # Support supervisor owner and groups http://smarden.org/runit/faq.html#user
         if new_resource.supervisor_owner || new_resource.supervisor_group
-          directory "#{service_dir_name}/supervise" do
+          directory ::File.join(service_dir_name, 'supervise') do
             mode '0755'
             action :create
           end
           %w(ok status control).each do |target|
-            file "#{service_dir_name}/supervise/#{target}" do
+            file ::File.join(service_dir_name, 'supervise', target) do
               owner new_resource.supervisor_owner || 'root'
               group new_resource.supervisor_group || 'root'
               action :touch
