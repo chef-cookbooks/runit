@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 4.3.1 (2019-01-14)
+
+- Fixing plat_specific_sv_name logic to work with Amazon Linux 2 - [@mbaitelman](https://github.com/mbaitelman)
+
 ## 4.3.0 (2018-07-24)
 
 - Fixing plat_specific_sv_name logic to work with Amazon Linux 2
