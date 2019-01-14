@@ -93,7 +93,7 @@ Many of these properties are only used in the `:enable` action.
 - **sv_timeout** - Override the default `sv` timeout of 7 seconds.
 - **sv_verbose** - Whether to enable `sv` verbose mode. Default is `false`.
 - **sv_templates** - If true, the `:enable` action will create the service directory with the appropriate templates. Default is `true`. Set this to `false` if the service has a package that provides its own service directory. See **Usage** examples.
-- **options** - Options passed as variables to templates, for compatibility with legacy runit service definition. Default is an empty hash.
+- **options** - DEPRECATED - Options passed as variables to templates, for compatibility with legacy runit service definition. Default is an empty hash.
 - **env** - A hash of environment variables with their values as content used in the service's `env` directory. Default is an empty hash. When this hash is non-empty, the contents of the runit service's `env` directory will be managed by Chef in order to conform to the declared state.
 - **log** - Whether to start the service's logger with svlogd, requires a template `sv-service_name-log-run.erb` to configure the log's run script. Default is true.
 - **default_logger** - Whether a default `log/run` script should be set up. If true, the default content of the run script will use `svlogd` to write logs to `/var/log/service_name`. Default is false.

@@ -228,12 +228,12 @@ class Chef
 
           # lsb_init
           if node['platform'] == 'debian' || node['platform'] == 'ubuntu'
-            ruby_block "unlink #{::File.join(parsed_lsb_init_dir, new_resource.service_name)}" do
-              block { ::File.unlink(::File.join(parsed_lsb_init_dir, new_resource.service_name)) }
-              only_if { ::File.symlink?(::File.join(parsed_lsb_init_dir, new_resource.service_name)) }
+            ruby_block "unlink #{::File.join(new_resource.lsb_init_dir, new_resource.service_name)}" do
+              block { ::File.unlink("#{::File.join(new_resource.lsb_init_dir, new_resource.service_name)}") }
+              only_if { ::File.symlink?("#{::File.join(new_resource.lsb_init_dir, new_resource.service_name)}") }
             end
 
-            template ::File.join(parsed_lsb_init_dir, new_resource.service_name) do
+            template ::File.join(new_resource.lsb_init_dir, new_resource.service_name) do
               owner 'root'
               group 'root'
               mode '0755'
@@ -243,12 +243,12 @@ class Chef
                 name: new_resource.service_name,
                 sv_bin: new_resource.sv_bin,
                 sv_args: sv_args,
-                init_dir: ::File.join(parsed_lsb_init_dir, '')
+                init_dir: ::File.join(new_resource.lsb_init_dir, '')
               )
               action :create
             end
           else
-            link ::File.join(parsed_lsb_init_dir, new_resource.service_name) do
+            link ::File.join(new_resource.lsb_init_dir, new_resource.service_name) do
               to sv_bin
               action :create
             end

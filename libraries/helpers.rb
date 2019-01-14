@@ -28,27 +28,6 @@ module RunitCookbook
       end
     end
 
-    # Default settings for resource properties.
-    def parsed_sv_bin
-      return new_resource.sv_bin if new_resource.sv_bin
-      '/usr/bin/sv'
-    end
-
-    def parsed_sv_dir
-      return new_resource.sv_dir if new_resource.sv_dir
-      '/etc/sv'
-    end
-
-    def parsed_service_dir
-      return new_resource.service_dir if new_resource.service_dir
-      '/etc/service'
-    end
-
-    def parsed_lsb_init_dir
-      return new_resource.lsb_init_dir if new_resource.lsb_init_dir
-      '/etc/init.d'
-    end
-
     def down_file
       ::File.join(sv_dir_name, 'down')
     end
@@ -122,10 +101,6 @@ module RunitCookbook
       sv_args
     end
 
-    def sv_bin
-      parsed_sv_bin
-    end
-
     def service_dir_name
       ::File.join(new_resource.service_dir, new_resource.service_name)
     end
@@ -151,8 +126,8 @@ module RunitCookbook
 
     def safe_sv_shellout(command, options = {})
       begin
-        Chef::Log.debug("Attempting to run runit command: #{sv_bin} #{command}")
-        cmd = shell_out("#{sv_bin} #{command}", options)
+        Chef::Log.debug("Attempting to run runit command: #{new_resource.sv_bin} #{command}")
+        cmd = shell_out("#{new_resource.sv_bin} #{command}", options)
       rescue Errno::ENOENT
         if binary_exists?
           raise # Some other cause
