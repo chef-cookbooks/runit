@@ -4,7 +4,7 @@
 #
 # Author:: Joshua Timberman <jtimberman@chef.io>
 # Author:: Sean OMeara <sean@sean.io>
-# Copyright:: 2011-2016, Chef Software, Inc.
+# Copyright:: 2011-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@
 class Chef
   class Provider
     class RunitService < Chef::Provider::LWRPBase
+      provides :runit_service
+
       unless defined?(VALID_SIGNALS)
         # Mapping of valid signals with optional friendly name
         VALID_SIGNALS = Mash.new(
@@ -37,12 +39,6 @@ class Chef
           1 => :usr1,
           2 => :usr2
         )
-      end
-
-      use_inline_resources # ~FC113
-
-      def whyrun_supported?
-        true
       end
 
       # Mix in helpers from libraries/helpers.rb
