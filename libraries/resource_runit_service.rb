@@ -37,7 +37,7 @@ class Chef
       property :lsb_init_dir, String, default: lazy { node['runit']['lsb_init_dir'] || '/etc/init.d' }
 
       property :control, Array, default: []
-      property :options, Hash, default: lazy {default_options}
+      property :options, Hash, default: lazy { default_options }, coerce: proc { |r| default_options.merge(r) if r.respond_to?(:merge) }
       property :env, Hash, default: {}
       property :log, [TrueClass, FalseClass], default: true
       property :cookbook, String
@@ -86,7 +86,7 @@ class Chef
       #
       # @return [Hash] an empty hash if env property is set. Otherwise it's env_dir
       def default_options
-        env.empty? ? {} : {env_dir: ::File.join(sv_dir, service_name, 'env')}
+        env.empty? ? {} : { env_dir: ::File.join(sv_dir, service_name, 'env') }
       end
 
       def initialize(name, run_context = nil)
@@ -112,19 +112,6 @@ class Chef
           run_context.resource_collection.insert(@service_mirror)
         end
       end
-
-      # def options(arg = nil)
-      #   default_opts = @env.empty? ? @options : @options.merge(env_dir: ::File.join(@sv_dir, @service_name, 'env'))
-      #
-      #   merged_opts = arg.respond_to?(:merge) ? default_opts.merge(arg) : default_opts
-      #
-      #   set_or_return(
-      #     :options,
-      #     merged_opts,
-      #     kind_of: [Hash],
-      #     default: default_opts
-      #   )
-      # end
     end
   end
 end
