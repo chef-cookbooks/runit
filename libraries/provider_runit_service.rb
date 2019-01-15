@@ -281,7 +281,6 @@ class Chef
       end
 
       action :enable do
-        # FIXME: remove action_create in next major version
         action_create
 
         directory new_resource.service_dir
