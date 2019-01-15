@@ -326,9 +326,6 @@ class Chef
         end
       end
 
-      action :nothing do
-      end
-
       action :restart do
         restart_service
       end
