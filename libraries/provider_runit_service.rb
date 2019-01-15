@@ -1,6 +1,6 @@
 #
 # Cookbook:: runit
-# Provider:: service
+# Provider:: runit_service
 #
 # Author:: Joshua Timberman <jtimberman@chef.io>
 # Author:: Sean OMeara <sean@sean.io>

@@ -1,9 +1,9 @@
 #
 # Cookbook:: runit
-# Libraries:: helpers
+# Library:: helpers
 #
-# Author: Joshua Timberman <joshua@chef.io>
-# Author: Sean OMeara <sean@sean.io>
+# Author:: Joshua Timberman <joshua@chef.io>
+# Author:: Sean OMeara <sean@sean.io>
 # Copyright:: 2008-2016, Chef Software, Inc. <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

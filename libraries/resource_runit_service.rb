@@ -1,8 +1,8 @@
 #
 # Cookbook:: runit
-# Provider:: service
+# resource:: runit_service
 #
-# Copyright:: 2011-2016, Joshua Timberman
+# Author:: Joshua Timberman <jtimberman@chef.io>
 # Copyright:: 2011-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,7 @@ class Chef
       property :lsb_init_dir, String, default: lazy { node['runit']['lsb_init_dir'] || '/etc/init.d' }
 
       property :control, Array, default: []
-      property :options, Hash, default: {}
+      property :options, Hash, default: lazy {default_options}
       property :env, Hash, default: {}
       property :log, [TrueClass, FalseClass], default: true
       property :cookbook, String
@@ -80,6 +80,13 @@ class Chef
           control_template_names[signal] ||= service_name
         end
         control_template_names
+      end
+
+      # the default legacy options kept for compatibility with the definition
+      #
+      # @return [Hash] an empty hash if env property is set. Otherwise it's env_dir
+      def default_options
+        env.empty? ? {} : {env_dir: ::File.join(sv_dir, service_name, 'env')}
       end
 
       def initialize(name, run_context = nil)
