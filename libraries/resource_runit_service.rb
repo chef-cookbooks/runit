@@ -76,10 +76,11 @@ class Chef
       alias template_name run_template_name
 
       def set_control_template_names
+        template_names = {}
         control.each do |signal|
-          control_template_names[signal] ||= service_name
+          template_names[signal] ||= service_name
         end
-        control_template_names
+        template_names
       end
 
       # the default legacy options kept for compatibility with the definition
