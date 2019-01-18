@@ -153,13 +153,6 @@ runit_service 'ayahuasca' do
   log_flags '-t'
 end
 
-# Note: this won't update the run script for the above due to
-# http://tickets.chef.io/browse/COOK-2353
-# runit_service 'the other name for yerba-alt' do
-#   service_name 'yerba-alt'
-#   default_logger true
-# end
-
 runit_service 'exist-disabled' do
   action [:create, :disable]
 end
