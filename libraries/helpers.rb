@@ -23,9 +23,7 @@ module RunitCookbook
   module Helpers
     # include Chef::Mixin::ShellOut if it is not already included in the calling class
     def self.included(klass)
-      unless klass.ancestors.include?(Chef::Mixin::ShellOut)
-        klass.class_eval { include Chef::Mixin::ShellOut }
-      end
+      klass.class_eval { include Chef::Mixin::ShellOut } unless klass.ancestors.include?(Chef::Mixin::ShellOut)
     end
 
     def down_file
