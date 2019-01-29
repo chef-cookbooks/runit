@@ -46,6 +46,8 @@ class Chef
 
       # actions
       action :create do
+        declare_service_resource
+
         ruby_block 'restart_service' do
           block do
             previously_enabled = enabled?
@@ -281,6 +283,8 @@ class Chef
       end
 
       action :enable do
+        declare_service_resource
+
         action_create
 
         directory new_resource.service_dir
@@ -326,10 +330,13 @@ class Chef
       end
 
       action :restart do
+        declare_service_resource
         restart_service
       end
 
       action :start do
+        declare_service_resource
+
         if running?
           Chef::Log.debug "#{new_resource} already running - nothing to do"
         else
@@ -358,6 +365,30 @@ class Chef
 
       action :status do
         running?
+      end
+
+      #
+      # Backward Compat Hack
+      #
+      # This ensures a 'service' resource exists for all 'runit_service' resources.
+      # This should allow all recipes using the previous 'runit_service' definition to
+      # continue operating.
+      #
+      def declare_service_resource
+        service_dir_name = ::File.join(new_resource.service_dir, new_resource.service_name)
+
+        Chef::Log.warn(new_resource.service_name)
+        with_run_context(:parent) do
+          service new_resource.service_name do
+            provider Chef::Provider::Service::Simple
+            supports new_resource.supports
+            start_command "#{new_resource.sv_bin} start #{service_dir_name}"
+            stop_command "#{new_resource.sv_bin} stop #{service_dir_name}"
+            restart_command "#{new_resource.sv_bin} restart #{service_dir_name}"
+            status_command "#{new_resource.sv_bin} status #{service_dir_name}"
+            action :nothing
+          end
+        end
       end
     end
   end
