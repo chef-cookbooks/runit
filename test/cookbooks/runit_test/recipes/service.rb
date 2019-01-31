@@ -151,6 +151,7 @@ end
 runit_service 'ayahuasca' do
   default_logger true
   log_flags '-t'
+  cookbook 'runit_other_test'
 end
 
 runit_service 'exist-disabled' do
