@@ -158,14 +158,14 @@ runit_service 'exist-disabled' do
   action [:create, :disable]
 end
 
-# unless platform_family?('rhel', 'fedora')
-#   # Create a service that has a package with its own service directory
-#   package 'git-daemon-run'
+unless platform_family?('rhel', 'fedora', 'amazon')
+  # Create a service that has a package with its own service directory
+  package 'git-daemon-run'
 
-#   runit_service 'git-daemon' do
-#     sv_templates false
-#   end
-# end
+  runit_service 'git-daemon' do
+    sv_templates false
+  end
+end
 
 # Despite waiting for runit to create supervise/ok, sometimes services
 # are supervised, but not actually fully started
