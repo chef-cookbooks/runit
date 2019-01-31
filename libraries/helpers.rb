@@ -107,10 +107,6 @@ module RunitCookbook
       ::File.join(new_resource.service_dir, new_resource.service_name, log)
     end
 
-    def template_cookbook
-      new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
-    end
-
     def binary_exists?
       begin
         Chef::Log.debug("Checking to see if the runit binary exists by running #{new_resource.sv_bin}")

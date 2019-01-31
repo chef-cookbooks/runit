@@ -86,7 +86,7 @@ class Chef
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             source "sv-#{new_resource.run_template_name}-run.erb"
-            cookbook template_cookbook
+            cookbook new_resource.cookbook
             mode '0755'
             variables(options: new_resource.options)
             action :create
@@ -150,7 +150,7 @@ class Chef
                 group new_resource.group unless new_resource.group.nil?
                 mode '0755'
                 source "sv-#{new_resource.log_template_name}-log-run.erb"
-                cookbook template_cookbook
+                cookbook new_resource.cookbook
                 variables(options: new_resource.options)
                 action :create
                 notifies :run, 'ruby_block[restart_log_service]', :delayed
@@ -191,7 +191,7 @@ class Chef
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
-            cookbook template_cookbook
+            cookbook new_resource.cookbook
             source "sv-#{new_resource.check_script_template_name}-check.erb"
             variables(options: new_resource.options)
             action :create
@@ -203,7 +203,7 @@ class Chef
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
             source "sv-#{new_resource.finish_script_template_name}-finish.erb"
-            cookbook template_cookbook
+            cookbook new_resource.cookbook
             variables(options: new_resource.options) if new_resource.options.respond_to?(:has_key?)
             action :create
             only_if { new_resource.finish }
@@ -222,7 +222,7 @@ class Chef
               group new_resource.group unless new_resource.group.nil?
               mode '0755'
               source "sv-#{new_resource.control_template_names[signal]}-#{signal}.erb"
-              cookbook template_cookbook
+              cookbook new_resource.cookbook
               variables(options: new_resource.options)
               action :create
             end
