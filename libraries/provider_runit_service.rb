@@ -231,8 +231,8 @@ class Chef
           # lsb_init
           if node['platform'] == 'debian' || node['platform'] == 'ubuntu'
             ruby_block "unlink #{::File.join(new_resource.lsb_init_dir, new_resource.service_name)}" do
-              block { ::File.unlink("#{::File.join(new_resource.lsb_init_dir, new_resource.service_name)}") }
-              only_if { ::File.symlink?("#{::File.join(new_resource.lsb_init_dir, new_resource.service_name)}") }
+              block { ::File.unlink(::File.join(new_resource.lsb_init_dir, new_resource.service_name).to_s) }
+              only_if { ::File.symlink?(::File.join(new_resource.lsb_init_dir, new_resource.service_name).to_s) }
             end
 
             template ::File.join(new_resource.lsb_init_dir, new_resource.service_name) do
