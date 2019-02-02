@@ -3,7 +3,7 @@
 # resource:: runit_service
 #
 # Author:: Joshua Timberman <jtimberman@chef.io>
-# Copyright:: 2011-2019, Chef Software, Inc.
+# Copyright:: 2011-2019, Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -74,30 +74,6 @@ class Chef
       property :log_config_append, String
 
       alias template_name run_template_name
-
-      def initialize(name, run_context = nil)
-        super
-        #
-        # Backward Compat Hack
-        #
-        # This ensures a 'service' resource exists for all 'runit_service' resources.
-        # This should allow all recipes using the previous 'runit_service' definition to
-        # continue operating.
-        #
-        unless run_context.nil?
-          service_dir_name = ::File.join(service_dir, service_name)
-          @service_mirror = Chef::Resource::Service.new(name, run_context)
-          @service_mirror.provider(Chef::Provider::Service::Simple)
-          @service_mirror.supports(supports)
-          @service_mirror.start_command("#{sv_bin} start #{service_dir_name}")
-          @service_mirror.stop_command("#{sv_bin} stop #{service_dir_name}")
-          @service_mirror.restart_command("#{sv_bin} restart #{service_dir_name}")
-          @service_mirror.status_command("#{sv_bin} status #{service_dir_name}")
-          @service_mirror.action(:nothing)
-          run_context.resource_collection.insert(@service_mirror)
-        end
-      end
-
 
       def set_control_template_names
         template_names = {}

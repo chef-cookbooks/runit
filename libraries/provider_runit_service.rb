@@ -4,7 +4,7 @@
 #
 # Author:: Joshua Timberman <jtimberman@chef.io>
 # Author:: Sean OMeara <sean@sean.io>
-# Copyright:: 2011-2019, Chef Software, Inc.
+# Copyright:: 2011-2019, Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -44,8 +44,23 @@ class Chef
       # Mix in helpers from libraries/helpers.rb
       include RunitCookbook::Helpers
 
+      def create_service_mirror
+        with_run_context(:parent) do
+          find_resource(:service, new_resource.name) do # creates if it does not exist
+            provider Chef::Provider::Service::Simple
+            supports new_resource.supports
+            start_command "#{new_reource.sv_bin} start #{new_resource.service_dir_name}"
+            stop_command "#{new_resource.sv_bin} stop #{new_resource.service_dir_name}"
+            restart_command "#{new_resource.sv_bin} restart #{new_resource.service_dir_name}"
+            status_command "#{new_resource.sv_bin} status #{new_resource.service_dir_name}"
+            action :nothing
+          end
+        end
+      end
+
       # actions
       action :create do
+        create_service_mirror
         ruby_block 'restart_service' do
           block do
             previously_enabled = enabled?
@@ -274,6 +289,7 @@ class Chef
       end
 
       action :disable do
+        create_service_mirror
         ruby_block "disable #{new_resource.service_name}" do
           block { disable_service }
           only_if { enabled? }
@@ -281,6 +297,7 @@ class Chef
       end
 
       action :enable do
+        create_service_mirror
         action_create
 
         directory new_resource.service_dir
@@ -326,10 +343,12 @@ class Chef
       end
 
       action :restart do
+        create_service_mirror
         restart_service
       end
 
       action :start do
+        create_service_mirror
         if running?
           Chef::Log.debug "#{new_resource} already running - nothing to do"
         else
@@ -339,6 +358,7 @@ class Chef
       end
 
       action :stop do
+        create_service_mirror
         if running?
           stop_service
           Chef::Log.info "#{new_resource} stopped"
@@ -348,6 +368,7 @@ class Chef
       end
 
       action :reload do
+        create_service_mirror
         if running?
           reload_service
           Chef::Log.info "#{new_resource} reloaded"
@@ -357,6 +378,7 @@ class Chef
       end
 
       action :status do
+        create_service_mirror
         running?
       end
     end
