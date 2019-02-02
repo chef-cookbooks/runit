@@ -19,7 +19,6 @@ services: docker
 env:
   matrix:
   - INSTANCE=default-amazonlinux CHEF_VERSION=13.0.118
-  - INSTANCE=default-amazonlinux-2 CHEF_VERSION=13.0.118
   - INSTANCE=default-ubuntu-1404 CHEF_VERSION=13.0.118
   - INSTANCE=default-ubuntu-1604 CHEF_VERSION=13.0.118
   - INSTANCE=default-ubuntu-1804 CHEF_VERSION=13.0.118
