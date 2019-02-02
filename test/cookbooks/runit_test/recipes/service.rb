@@ -186,15 +186,6 @@ file '/tmp/notifier-2' do
   notifies :restart, 'runit_service[plain-defaults]', :immediately
 end
 
-# # Test for COOK-2867
-# link '/etc/init.d/cook-2867' do
-#   to '/usr/bin/sv'
-# end
-
-# runit_service 'cook-2867' do
-#   default_logger true
-# end
-
 # create a service using an alternate sv binary
 runit_service 'alternative-sv-bin' do
   sv_bin '/usr/local/bin/sv'
