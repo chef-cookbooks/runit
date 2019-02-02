@@ -61,7 +61,7 @@ plat_specific_sv_name = case node['platform_family']
                             'runit'
                           end
                         when 'rhel', 'amazon'
-                          if node['platform_version'].to_i >= 7 && !platform?('amazon')
+                          if node['platform_version'].to_i >= 7 && platform_family?('rhel')
                             'runsvdir-start'
                           elsif node['platform_version'].to_i == 2 && platform?('amazon')
                             'runsvdir-start'
