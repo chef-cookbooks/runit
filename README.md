@@ -19,7 +19,7 @@ For more information about runit:
 
 ### Chef
 
-- Chef 12.1+
+- Chef 13.0+
 
 ### Cookbooks
 
