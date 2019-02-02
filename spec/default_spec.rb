@@ -51,7 +51,7 @@ describe 'runit::default' do
     end
 
     it 'adds packagecloud_repo[imeyer/runit]' do
-      is_expected.to add_packagecloud_repo('imeyer/runit')
+      is_expected.to add_packagecloud_repo('imeyer/runit').with(force_os: 'rhel', force_dist: '6', type: 'rpm')
     end
 
     it 'installs the runit package' do
@@ -72,7 +72,7 @@ describe 'runit::default' do
     end
 
     it 'adds packagecloud_repo[imeyer/runit]' do
-      is_expected.to add_packagecloud_repo('imeyer/runit')
+      is_expected.to add_packagecloud_repo('imeyer/runit').with(force_os: 'rhel', force_dist: '7', type: 'rpm')
     end
 
     it 'installs the runit package' do
