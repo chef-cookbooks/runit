@@ -246,7 +246,7 @@ end
 # Use a service with all the fixin's to ensure all actions are
 # available and working
 
-actions = (runit_service('plain-defaults').allowed_actions - [:enable, :disable]) + [:disable, :enable]
+actions = (runit_service('plain-defaults').allowed_actions - [:enable, :disable, :mask, :unmask]) + [:disable, :enable]
 
 actions.each do |test_action|
   runit_service 'plain-defaults' do
