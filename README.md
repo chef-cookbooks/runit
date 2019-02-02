@@ -28,16 +28,6 @@ For more information about runit:
 
 ## Attributes
 
-See `attributes/default.rb` for defaults generated per platform.
-
-- `node['runit']['sv_bin']` - Full path to the `sv` binary.
-- `node['runit']['chpst_bin']` - Full path to the `chpst` binary.
-- `node['runit']['service_dir']` - Full path to the default "services" directory where enabled services are linked.
-- `node['runit']['sv_dir']` - Full path to the directory where service lives, which gets linked to `service_dir`.
-- `node['runit']['lsb_init_dir']` - Full path to the directory where the LSB-compliant init script interface will be created.
-
-### Optional Attributes for RHEL systems
-
 - `node['runit']['prefer_local_yum']` - If `true`, assumes that a `runit` package is available on an already configured local yum repository. By default, the recipe installs the `runit` package from a Package Cloud repository (see below). This is set to the value of `node['runit']['use_package_from_yum']` for backwards compatibility, but otherwise defaults to `false`.
 
 ## Recipes
@@ -53,8 +43,6 @@ On Debian family systems, the runit packages are maintained by the runit author,
 ## Resource
 
 This cookbook has a resource, `runit_service`, for managing services under runit.
-
-**This resource replaces the runit_service definition. See the CHANGELOG.md file in this cookbook for breaking change information and any actions you may need to take to update cookbooks using runit_service.**
 
 ### Actions
 
@@ -81,7 +69,7 @@ Read the `sv(8)` [man page](http://smarden.org/runit/sv.8.html) for more informa
 
 ### Properties
 
-The first three properties, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the corresponding node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
+The first three properties, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the legacy node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
 
 Many of these properties are only used in the `:enable` action.
 
