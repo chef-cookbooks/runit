@@ -89,7 +89,7 @@ module RunitCookbook
     end
 
     def sv_dir_name
-      ::File.join(parsed_sv_dir, new_resource.service_name)
+      ::File.join(new_resource.sv_dir, new_resource.service_name)
     end
 
     def sv_args
