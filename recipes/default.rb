@@ -21,7 +21,7 @@ when 'rhel', 'amazon'
 
   # add the necessary repos unless prefer_local_yum is set
   unless node['runit']['prefer_local_yum']
-    include_recipe 'yum-epel' if node['platform_version'].to_i < 7 && !platform?('amazon')
+    include_recipe 'yum-epel' if node['platform_version'].to_i < 7 && platform_family?('rhel')
 
     packagecloud_repo 'imeyer/runit' do
       force_os 'rhel' if platform?('oracle', 'amazon') # ~FC024
