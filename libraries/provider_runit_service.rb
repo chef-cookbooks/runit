@@ -44,6 +44,8 @@ class Chef
       # Mix in helpers from libraries/helpers.rb
       include RunitCookbook::Helpers
 
+      # this exists to allow folks to notify to a service resource instead of a runit_service resource
+      # almost everyone has written cookbooks notifying to service so we need to continue this behavior
       def create_service_mirror
         with_run_context(:parent) do
           find_resource(:service, new_resource.name) do # creates if it does not exist
@@ -61,6 +63,7 @@ class Chef
       # actions
       action :create do
         create_service_mirror
+
         ruby_block 'restart_service' do
           block do
             previously_enabled = enabled?
@@ -86,7 +89,6 @@ class Chef
 
         # sv_templates
         if new_resource.sv_templates
-
           directory sv_dir_name do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
@@ -169,7 +171,6 @@ class Chef
                 notifies :run, 'ruby_block[restart_log_service]', :delayed
               end
             end
-
           end
 
           # environment stuff
@@ -290,6 +291,7 @@ class Chef
 
       action :disable do
         create_service_mirror
+
         ruby_block "disable #{new_resource.service_name}" do
           block { disable_service }
           only_if { enabled? }
@@ -349,6 +351,7 @@ class Chef
 
       action :start do
         create_service_mirror
+
         if running?
           Chef::Log.debug "#{new_resource} already running - nothing to do"
         else
@@ -369,6 +372,7 @@ class Chef
 
       action :reload do
         create_service_mirror
+
         if running?
           reload_service
           Chef::Log.info "#{new_resource} reloaded"
