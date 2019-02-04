@@ -50,12 +50,12 @@ end
 # drop off environment files outside of the runit_service resources
 # so we can test manage_env_dir behavior
 %w(plain-defaults env-files).each do |svc|
-  directory "#{node['runit']['sv_dir']}/#{svc}/env" do
+  directory "/etc/sv/#{svc}/env" do
     recursive true
     action :nothing
   end.run_action(:create)
 
-  file "#{node['runit']['sv_dir']}/#{svc}/env/ZAP_TEST" do
+  file "/etc/sv/#{svc}/env/ZAP_TEST" do
     content '1'
     action :nothing
   end.run_action(:create)

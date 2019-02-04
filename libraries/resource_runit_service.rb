@@ -31,7 +31,7 @@ class Chef
       allowed_actions :nothing, :start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2, :create
 
       # For legacy reasons we allow setting these via attribute
-      property :sv_bin, String, default: lazy { node['runit']['sv_bin'] || '/usr/bin/sv' }
+      property :sv_bin, String, default: lazy { node['runit']['sv_bin'] || ( platform_family?('debian') ? '/usr/bin/sv' : '/sbin/sv' ) }
       property :sv_dir, [String, FalseClass], default: lazy { node['runit']['sv_dir'] || '/etc/sv' }
       property :service_dir, String, default: lazy { node['runit']['service_dir'] || '/etc/service' }
       property :lsb_init_dir, String, default: lazy { node['runit']['lsb_init_dir'] || '/etc/init.d' }

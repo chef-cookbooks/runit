@@ -17,9 +17,4 @@
 # limitations under the License.
 #
 
-  default['runit']['sv_bin'] = '/usr/bin/sv'
-  default['runit']['chpst_bin'] = '/usr/bin/chpst'
-  default['runit']['service_dir'] = '/etc/service'
-  default['runit']['sv_dir'] = '/etc/sv'
-  default['runit']['lsb_init_dir'] = '/etc/init.d'
-  default['runit']['executable'] = '/sbin/runit'
+default['runit']['prefer_local_yum'] = node['runit']['use_package_from_yum'] || false
