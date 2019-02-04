@@ -2,7 +2,7 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
-## UNRELEASED
+## 5.0.0 (2019-02-04)
 
 - This cookbook now requires Chef 13 or later. If you are still using Chef 12 please pin to the 4.3.1 release, and also seriously consider upgrading to the latest Chef to receive new features, bug fixes, and security updates in Chef.
 - Performed a large-scale refactor of the resource to use the Chef resource DSL which resolves multiple edge case bugs by natively setting up properties, default values, and overrides
@@ -12,7 +12,7 @@ This file is used to list changes made in each version of the runit cookbook.
 - Removed some legacy backwards compatibility code for older Chef releases we no longer support
 - Fixed broken integratino tests so we can better test this cookbook
 - Added Amazon Linux 2 and Ubuntu 18.04 testing in Travis
-- - Consolidated mutliple helper methods into the resource itself for clarity
+- Consolidated mutliple helper methods into the resource itself for clarity
 
 ## 4.3.1 (2019-01-14)
 
