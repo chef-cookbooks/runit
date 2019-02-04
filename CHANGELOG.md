@@ -2,6 +2,18 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## UNRELEASED
+
+- This cookbook now requires Chef 13 or later. If you are still using Chef 12 please pin to the 4.3.1 release, and also seriously consider upgrading to the latest Chef to receive new features, bug fixes, and security updates in Chef.
+- Performed a large-scale refactor of the resource to use the Chef resource DSL which resolves multiple edge case bugs by natively setting up properties, default values, and overrides
+- Updated the default recipe to support Amazon Linux 2
+- Default attributes used by the resource have been removed from the attributes file. They will continue to work, but their usage should be heavily discouraged as this mixed attributes + properties and results in confusion on where values come from.
+- Formally deprecated the legacy `options` property in the readme
+- Removed some legacy backwards compatibility code for older Chef releases we no longer support
+- Fixed broken integratino tests so we can better test this cookbook
+- Added Amazon Linux 2 and Ubuntu 18.04 testing in Travis
+- - Consolidated mutliple helper methods into the resource itself for clarity
+
 ## 4.3.1 (2019-01-14)
 
 - Fixing plat_specific_sv_name logic to work with Amazon Linux 2 - [@mbaitelman](https://github.com/mbaitelman)
