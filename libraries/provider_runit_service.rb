@@ -1,10 +1,10 @@
 #
 # Cookbook:: runit
-# Provider:: service
+# Provider:: runit_service
 #
 # Author:: Joshua Timberman <jtimberman@chef.io>
 # Author:: Sean OMeara <sean@sean.io>
-# Copyright:: 2011-2016, Chef Software, Inc.
+# Copyright:: 2011-2019, Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@
 class Chef
   class Provider
     class RunitService < Chef::Provider::LWRPBase
+      provides :runit_service
+
       unless defined?(VALID_SIGNALS)
         # Mapping of valid signals with optional friendly name
         VALID_SIGNALS = Mash.new(
@@ -37,12 +39,6 @@ class Chef
           1 => :usr1,
           2 => :usr2
         )
-      end
-
-      use_inline_resources # ~FC113
-
-      def whyrun_supported?
-        true
       end
 
       # Mix in helpers from libraries/helpers.rb
@@ -75,7 +71,6 @@ class Chef
 
         # sv_templates
         if new_resource.sv_templates
-
           directory sv_dir_name do
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
@@ -88,7 +83,7 @@ class Chef
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             source "sv-#{new_resource.run_template_name}-run.erb"
-            cookbook template_cookbook
+            cookbook new_resource.cookbook
             mode '0755'
             variables(options: new_resource.options)
             action :create
@@ -152,13 +147,12 @@ class Chef
                 group new_resource.group unless new_resource.group.nil?
                 mode '0755'
                 source "sv-#{new_resource.log_template_name}-log-run.erb"
-                cookbook template_cookbook
+                cookbook new_resource.cookbook
                 variables(options: new_resource.options)
                 action :create
                 notifies :run, 'ruby_block[restart_log_service]', :delayed
               end
             end
-
           end
 
           # environment stuff
@@ -174,7 +168,7 @@ class Chef
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               content value
-              sensitive true if Chef::Resource.instance_methods(false).include?(:sensitive)
+              sensitive true
               mode '0640'
               action :create
               notifies :run, 'ruby_block[restart_service]', :delayed
@@ -193,7 +187,7 @@ class Chef
             owner new_resource.owner unless new_resource.owner.nil?
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
-            cookbook template_cookbook
+            cookbook new_resource.cookbook
             source "sv-#{new_resource.check_script_template_name}-check.erb"
             variables(options: new_resource.options)
             action :create
@@ -205,7 +199,7 @@ class Chef
             group new_resource.group unless new_resource.group.nil?
             mode '0755'
             source "sv-#{new_resource.finish_script_template_name}-finish.erb"
-            cookbook template_cookbook
+            cookbook new_resource.cookbook
             variables(options: new_resource.options) if new_resource.options.respond_to?(:has_key?)
             action :create
             only_if { new_resource.finish }
@@ -224,7 +218,7 @@ class Chef
               group new_resource.group unless new_resource.group.nil?
               mode '0755'
               source "sv-#{new_resource.control_template_names[signal]}-#{signal}.erb"
-              cookbook template_cookbook
+              cookbook new_resource.cookbook
               variables(options: new_resource.options)
               action :create
             end
@@ -232,12 +226,12 @@ class Chef
 
           # lsb_init
           if node['platform'] == 'debian' || node['platform'] == 'ubuntu'
-            ruby_block "unlink #{::File.join(parsed_lsb_init_dir, new_resource.service_name)}" do
-              block { ::File.unlink(::File.join(parsed_lsb_init_dir, new_resource.service_name)) }
-              only_if { ::File.symlink?(::File.join(parsed_lsb_init_dir, new_resource.service_name)) }
+            ruby_block "unlink #{::File.join(new_resource.lsb_init_dir, new_resource.service_name)}" do
+              block { ::File.unlink(::File.join(new_resource.lsb_init_dir, new_resource.service_name).to_s) }
+              only_if { ::File.symlink?(::File.join(new_resource.lsb_init_dir, new_resource.service_name).to_s) }
             end
 
-            template ::File.join(parsed_lsb_init_dir, new_resource.service_name) do
+            template ::File.join(new_resource.lsb_init_dir, new_resource.service_name) do
               owner 'root'
               group 'root'
               mode '0755'
@@ -247,12 +241,12 @@ class Chef
                 name: new_resource.service_name,
                 sv_bin: new_resource.sv_bin,
                 sv_args: sv_args,
-                init_dir: ::File.join(parsed_lsb_init_dir, '')
+                init_dir: ::File.join(new_resource.lsb_init_dir, '')
               )
               action :create
             end
           else
-            link ::File.join(parsed_lsb_init_dir, new_resource.service_name) do
+            link ::File.join(new_resource.lsb_init_dir, new_resource.service_name) do
               to sv_bin
               action :create
             end
@@ -285,7 +279,6 @@ class Chef
       end
 
       action :enable do
-        # FIXME: remove action_create in next major version
         action_create
 
         directory new_resource.service_dir
@@ -328,9 +321,6 @@ class Chef
             Chef::Log.debug "#{new_resource} not running - nothing to do"
           end
         end
-      end
-
-      action :nothing do
       end
 
       action :restart do

@@ -2,7 +2,7 @@
 # Cookbook:: runit
 # Attribute:: File:: sv_bin
 #
-# Copyright:: 2008-2016, Chef Software, Inc.
+# Copyright:: 2008-2019, Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -17,21 +17,4 @@
 # limitations under the License.
 #
 
-case node['platform_family']
-when 'debian'
-  default['runit']['sv_bin'] = '/usr/bin/sv'
-  default['runit']['chpst_bin'] = '/usr/bin/chpst'
-  default['runit']['service_dir'] = '/etc/service'
-  default['runit']['sv_dir'] = '/etc/sv'
-  default['runit']['lsb_init_dir'] = '/etc/init.d'
-  default['runit']['executable'] = '/sbin/runit'
-
-when 'rhel', 'amazon'
-  default['runit']['sv_bin'] = '/sbin/sv'
-  default['runit']['chpst_bin'] = '/sbin/chpst'
-  default['runit']['service_dir'] = '/etc/service'
-  default['runit']['sv_dir'] = '/etc/sv'
-  default['runit']['lsb_init_dir'] = '/etc/init.d'
-  default['runit']['executable'] = '/sbin/runit'
-  default['runit']['prefer_local_yum'] = node['runit']['use_package_from_yum'] || false
-end
+default['runit']['prefer_local_yum'] = node['runit']['use_package_from_yum'] || false

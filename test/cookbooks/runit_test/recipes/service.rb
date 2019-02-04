@@ -2,7 +2,7 @@
 # Cookbook:: runit_test
 # Recipe:: service
 #
-# Copyright:: 2012-2016, Chef Software, Inc.
+# Copyright:: 2012-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,12 +50,12 @@ end
 # drop off environment files outside of the runit_service resources
 # so we can test manage_env_dir behavior
 %w(plain-defaults env-files).each do |svc|
-  directory "#{node['runit']['sv_dir']}/#{svc}/env" do
+  directory "/etc/sv/#{svc}/env" do
     recursive true
     action :nothing
   end.run_action(:create)
 
-  file "#{node['runit']['sv_dir']}/#{svc}/env/ZAP_TEST" do
+  file "/etc/sv/#{svc}/env/ZAP_TEST" do
     content '1'
     action :nothing
   end.run_action(:create)
@@ -151,27 +151,21 @@ end
 runit_service 'ayahuasca' do
   default_logger true
   log_flags '-t'
+  cookbook 'runit_other_test'
 end
-
-# Note: this won't update the run script for the above due to
-# http://tickets.chef.io/browse/COOK-2353
-# runit_service 'the other name for yerba-alt' do
-#   service_name 'yerba-alt'
-#   default_logger true
-# end
 
 runit_service 'exist-disabled' do
   action [:create, :disable]
 end
 
-# unless platform_family?('rhel', 'fedora')
-#   # Create a service that has a package with its own service directory
-#   package 'git-daemon-run'
+unless platform_family?('rhel', 'fedora', 'amazon')
+  # Create a service that has a package with its own service directory
+  package 'git-daemon-run'
 
-#   runit_service 'git-daemon' do
-#     sv_templates false
-#   end
-# end
+  runit_service 'git-daemon' do
+    sv_templates false
+  end
+end
 
 # Despite waiting for runit to create supervise/ok, sometimes services
 # are supervised, but not actually fully started
@@ -191,15 +185,6 @@ file '/tmp/notifier-2' do
   content Time.now.to_s
   notifies :restart, 'runit_service[plain-defaults]', :immediately
 end
-
-# # Test for COOK-2867
-# link '/etc/init.d/cook-2867' do
-#   to '/usr/bin/sv'
-# end
-
-# runit_service 'cook-2867' do
-#   default_logger true
-# end
 
 # create a service using an alternate sv binary
 runit_service 'alternative-sv-bin' do
@@ -252,7 +237,7 @@ end
 # Use a service with all the fixin's to ensure all actions are
 # available and working
 
-actions = (runit_service('plain-defaults').allowed_actions - [:enable, :disable]) + [:disable, :enable]
+actions = (runit_service('plain-defaults').allowed_actions - [:enable, :disable, :mask, :unmask]) + [:disable, :enable]
 
 actions.each do |test_action|
   runit_service 'plain-defaults' do

@@ -1,10 +1,10 @@
 #
 # Cookbook:: runit
-# Libraries:: helpers
+# Library:: helpers
 #
-# Author: Joshua Timberman <joshua@chef.io>
-# Author: Sean OMeara <sean@sean.io>
-# Copyright:: 2008-2016, Chef Software, Inc. <legal@chef.io>
+# Author:: Joshua Timberman <joshua@chef.io>
+# Author:: Sean OMeara <sean@sean.io>
+# Copyright:: 2008-2019, Chef Software, Inc. <legal@chef.io>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,30 +23,7 @@ module RunitCookbook
   module Helpers
     # include Chef::Mixin::ShellOut if it is not already included in the calling class
     def self.included(klass)
-      unless klass.ancestors.include?(Chef::Mixin::ShellOut)
-        klass.class_eval { include Chef::Mixin::ShellOut }
-      end
-    end
-
-    # Default settings for resource properties.
-    def parsed_sv_bin
-      return new_resource.sv_bin if new_resource.sv_bin
-      '/usr/bin/sv'
-    end
-
-    def parsed_sv_dir
-      return new_resource.sv_dir if new_resource.sv_dir
-      '/etc/sv'
-    end
-
-    def parsed_service_dir
-      return new_resource.service_dir if new_resource.service_dir
-      '/etc/service'
-    end
-
-    def parsed_lsb_init_dir
-      return new_resource.lsb_init_dir if new_resource.lsb_init_dir
-      '/etc/init.d'
+      klass.class_eval { include Chef::Mixin::ShellOut } unless klass.ancestors.include?(Chef::Mixin::ShellOut)
     end
 
     def down_file
@@ -112,7 +89,7 @@ module RunitCookbook
     end
 
     def sv_dir_name
-      ::File.join(parsed_sv_dir, new_resource.service_name)
+      ::File.join(new_resource.sv_dir, new_resource.service_name)
     end
 
     def sv_args
@@ -122,20 +99,12 @@ module RunitCookbook
       sv_args
     end
 
-    def sv_bin
-      parsed_sv_bin
-    end
-
     def service_dir_name
       ::File.join(new_resource.service_dir, new_resource.service_name)
     end
 
     def log_dir_name
       ::File.join(new_resource.service_dir, new_resource.service_name, log)
-    end
-
-    def template_cookbook
-      new_resource.cookbook.nil? ? new_resource.cookbook_name.to_s : new_resource.cookbook
     end
 
     def binary_exists?
@@ -151,8 +120,8 @@ module RunitCookbook
 
     def safe_sv_shellout(command, options = {})
       begin
-        Chef::Log.debug("Attempting to run runit command: #{sv_bin} #{command}")
-        cmd = shell_out("#{sv_bin} #{command}", options)
+        Chef::Log.debug("Attempting to run runit command: #{new_resource.sv_bin} #{command}")
+        cmd = shell_out("#{new_resource.sv_bin} #{command}", options)
       rescue Errno::ENOENT
         if binary_exists?
           raise # Some other cause

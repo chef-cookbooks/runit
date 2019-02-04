@@ -2,7 +2,7 @@
 # Cookbook:: runit
 # Recipe:: default
 #
-# Copyright:: 2008-2016, Chef Software, Inc.
+# Copyright:: 2008-2019, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ when 'rhel', 'amazon'
 
   # add the necessary repos unless prefer_local_yum is set
   unless node['runit']['prefer_local_yum']
-    include_recipe 'yum-epel' if node['platform_version'].to_i < 7
+    include_recipe 'yum-epel' if node['platform_version'].to_i < 7 && platform_family?('rhel')
 
     packagecloud_repo 'imeyer/runit' do
       force_os 'rhel' if platform?('oracle', 'amazon') # ~FC024
@@ -61,7 +61,7 @@ plat_specific_sv_name = case node['platform_family']
                             'runit'
                           end
                         when 'rhel', 'amazon'
-                          if node['platform_version'].to_i >= 7 && !platform?('amazon')
+                          if node['platform_version'].to_i >= 7 && platform_family?('rhel')
                             'runsvdir-start'
                           elsif node['platform_version'].to_i == 2 && platform?('amazon')
                             'runsvdir-start'
@@ -76,5 +76,4 @@ service plat_specific_sv_name do
   action [:start, :enable]
   # this might seem crazy, but RHEL 6 is in fact Upstart and the runit service is upstart there
   provider Chef::Provider::Service::Upstart if (platform?('amazon') && node['platform_version'].to_i != 2) || (platform_family?('rhel') && node['platform_version'].to_i == 6)
-  not_if { platform?('debian') && node['platform_version'].to_i < 8 } # there's no init script on debian 7...for reasons
 end

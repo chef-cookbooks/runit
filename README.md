@@ -19,7 +19,7 @@ For more information about runit:
 
 ### Chef
 
-- Chef 12.1+
+- Chef 13.0+
 
 ### Cookbooks
 
@@ -27,16 +27,6 @@ For more information about runit:
 - yum-epel (for RHEL)
 
 ## Attributes
-
-See `attributes/default.rb` for defaults generated per platform.
-
-- `node['runit']['sv_bin']` - Full path to the `sv` binary.
-- `node['runit']['chpst_bin']` - Full path to the `chpst` binary.
-- `node['runit']['service_dir']` - Full path to the default "services" directory where enabled services are linked.
-- `node['runit']['sv_dir']` - Full path to the directory where service lives, which gets linked to `service_dir`.
-- `node['runit']['lsb_init_dir']` - Full path to the directory where the LSB-compliant init script interface will be created.
-
-### Optional Attributes for RHEL systems
 
 - `node['runit']['prefer_local_yum']` - If `true`, assumes that a `runit` package is available on an already configured local yum repository. By default, the recipe installs the `runit` package from a Package Cloud repository (see below). This is set to the value of `node['runit']['use_package_from_yum']` for backwards compatibility, but otherwise defaults to `false`.
 
@@ -53,8 +43,6 @@ On Debian family systems, the runit packages are maintained by the runit author,
 ## Resource
 
 This cookbook has a resource, `runit_service`, for managing services under runit.
-
-**This resource replaces the runit_service definition. See the CHANGELOG.md file in this cookbook for breaking change information and any actions you may need to take to update cookbooks using runit_service.**
 
 ### Actions
 
@@ -81,7 +69,7 @@ Read the `sv(8)` [man page](http://smarden.org/runit/sv.8.html) for more informa
 
 ### Properties
 
-The first three properties, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the corresponding node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
+The first three properties, `sv_dir`, `service_dir`, and `sv_bin` will attempt to use the legacy node attributes, and fall back to hardcoded default values that match the settings used on Debian platform systems.
 
 Many of these properties are only used in the `:enable` action.
 
@@ -93,7 +81,7 @@ Many of these properties are only used in the `:enable` action.
 - **sv_timeout** - Override the default `sv` timeout of 7 seconds.
 - **sv_verbose** - Whether to enable `sv` verbose mode. Default is `false`.
 - **sv_templates** - If true, the `:enable` action will create the service directory with the appropriate templates. Default is `true`. Set this to `false` if the service has a package that provides its own service directory. See **Usage** examples.
-- **options** - Options passed as variables to templates, for compatibility with legacy runit service definition. Default is an empty hash.
+- **options** - DEPRECATED - Options passed as variables to templates, for compatibility with legacy runit service definition. Default is an empty hash.
 - **env** - A hash of environment variables with their values as content used in the service's `env` directory. Default is an empty hash. When this hash is non-empty, the contents of the runit service's `env` directory will be managed by Chef in order to conform to the declared state.
 - **log** - Whether to start the service's logger with svlogd, requires a template `sv-service_name-log-run.erb` to configure the log's run script. Default is true.
 - **default_logger** - Whether a default `log/run` script should be set up. If true, the default content of the run script will use `svlogd` to write logs to `/var/log/service_name`. Default is false.
@@ -383,7 +371,7 @@ For redhat derivatives:
 - Author:: Sean OMeara [sean@sean.io](mailto:sean@sean.io)
 
 ```text
-Copyright:: 2008-2016, Chef Software, Inc
+Copyright:: 2008-2019, Chef Software, Inc
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
