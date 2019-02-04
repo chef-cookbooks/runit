@@ -46,8 +46,6 @@ class Chef
 
       # actions
       action :create do
-        create_service_mirror
-
         ruby_block 'restart_service' do
           block do
             previously_enabled = enabled?
@@ -274,8 +272,6 @@ class Chef
       end
 
       action :disable do
-        create_service_mirror
-
         ruby_block "disable #{new_resource.service_name}" do
           block { disable_service }
           only_if { enabled? }
@@ -283,7 +279,6 @@ class Chef
       end
 
       action :enable do
-        create_service_mirror
         action_create
 
         directory new_resource.service_dir
@@ -329,13 +324,10 @@ class Chef
       end
 
       action :restart do
-        create_service_mirror
         restart_service
       end
 
       action :start do
-        create_service_mirror
-
         if running?
           Chef::Log.debug "#{new_resource} already running - nothing to do"
         else
@@ -345,7 +337,6 @@ class Chef
       end
 
       action :stop do
-        create_service_mirror
         if running?
           stop_service
           Chef::Log.info "#{new_resource} stopped"
@@ -355,8 +346,6 @@ class Chef
       end
 
       action :reload do
-        create_service_mirror
-
         if running?
           reload_service
           Chef::Log.info "#{new_resource} reloaded"
@@ -366,7 +355,6 @@ class Chef
       end
 
       action :status do
-        create_service_mirror
         running?
       end
     end

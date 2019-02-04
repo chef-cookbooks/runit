@@ -93,13 +93,14 @@ class Chef
       def after_created
         unless run_context.nil?
           new_resource = self
+          service_dir_name = ::File.join(service_dir, service_name)
           find_resource(:service, new_resource.name) do # creates if it does not exist
             provider Chef::Provider::Service::Simple
             supports new_resource.supports
-            start_command "#{new_resource.sv_bin} start #{new_resource.service_dir_name}"
-            stop_command "#{new_resource.sv_bin} stop #{new_resource.service_dir_name}"
-            restart_command "#{new_resource.sv_bin} restart #{new_resource.service_dir_name}"
-            status_command "#{new_resource.sv_bin} status #{new_resource.service_dir_name}"
+            start_command "#{new_resource.sv_bin} start #{service_dir_name}"
+            stop_command "#{new_resource.sv_bin} stop #{service_dir_name}"
+            restart_command "#{new_resource.sv_bin} restart #{service_dir_name}"
+            status_command "#{new_resource.sv_bin} status #{service_dir_name}"
             action :nothing
           end
         end
