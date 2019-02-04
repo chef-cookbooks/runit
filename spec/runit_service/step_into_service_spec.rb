@@ -56,6 +56,10 @@ describe 'runit_service' do
     it 'links the config from the sv_dir into the /var/log dir' do
       is_expected.to create_link('/var/log/test_service/config')
     end
+
+    it 'templates the init.d file' do
+      is_expected.to create_template('/etc/init.d/test_service')
+    end
   end
 
   describe 'with sv_templates property set to false' do
