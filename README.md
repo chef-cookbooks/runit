@@ -10,6 +10,8 @@ For more information about runit:
 
 - <http://smarden.org/runit/>
 
+NOTE: The 5.0 release of this cookbook requires the ChefSpec, which shipped in the later versions of ChefDK 3. If you use this cookbook along with ChefSpec in your environment upgrade to the latest version of ChefDK or Workstation or your specs will break.
+
 ## Requirements
 
 ### Platforms
