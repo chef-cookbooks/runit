@@ -247,7 +247,7 @@ class Chef
             end
           else
             link ::File.join(new_resource.lsb_init_dir, new_resource.service_name) do
-              to sv_bin
+              to new_resource.sv_bin
               action :create
             end
           end
