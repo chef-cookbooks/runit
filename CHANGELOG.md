@@ -2,6 +2,11 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 5.0.1 (2019-02-11)
+
+- Resolve an undefined method error for sv_bin
+- Fix the cookbook incorrectly requiring Chef 13 when it now actually requires Chef 14 due to the use of find_resource. Sorry about this everyone.
+
 ## 5.0.0 (2019-02-04)
 
 - This cookbook now requires Chef 13 or later. If you are still using Chef 12 please pin to the 4.3.1 release, and also seriously consider upgrading to the latest Chef to receive new features, bug fixes, and security updates in Chef.
