@@ -21,7 +21,7 @@ NOTE: The 5.0 release of this cookbook requires the ChefSpec which shipped in th
 
 ### Chef
 
-- Chef 13.0+
+- Chef 14.0+
 
 ### Cookbooks
 
