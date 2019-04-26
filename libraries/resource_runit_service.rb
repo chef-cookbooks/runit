@@ -28,7 +28,7 @@ class Chef
       resource_name :runit_service
 
       default_action :enable
-      allowed_actions :nothing, :start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2, :create
+      allowed_actions :nothing, :start, :stop, :enable, :disable, :restart, :reload, :status, :once, :hup, :cont, :term, :kill, :up, :down, :usr1, :usr2, :create, :reload_log
 
       # For legacy reasons we allow setting these via attribute
       property :sv_bin, String, default: lazy { node['runit']['sv_bin'] || (platform_family?('debian') ? '/usr/bin/sv' : '/sbin/sv') }

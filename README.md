@@ -55,6 +55,7 @@ This cookbook has a resource, `runit_service`, for managing services under runit
 - **create** - create the service directory, but don't enable the service with symlink
 - **restart** - restarts the service with `sv restart`
 - **reload** - reloads the service with `sv force-reload`
+- **reload_log** - reloads the service's log service
 - **once** - starts the service with `sv once`.
 - **hup** - sends the `HUP` signal to the service with `sv hup`
 - **cont** - sends the `CONT` signal to the service
