@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 5.1.0 (2019-04-25)
+
+- Add a new reload_log action - [@tas50](https://github.com/tas50)
+
 ## 5.0.1 (2019-02-11)
 
 - Resolve an undefined method error for sv_bin

@@ -7,3 +7,7 @@
 source 'https://rubygems.org'
 
 gem 'community_cookbook_releaser'
+
+gem 'kitchen-vagrant'
+gem 'kitchen-inspec'
+gem 'berkshelf'
