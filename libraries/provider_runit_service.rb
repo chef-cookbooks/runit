@@ -359,7 +359,7 @@ class Chef
       end
 
       action :reload_log do
-        converge_by("reload log service") do
+        converge_by('reload log service') do
           reload_log_service
         end
       end
