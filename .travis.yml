@@ -16,14 +16,14 @@ services: docker
 
 env:
   matrix:
-  - INSTANCE=default-amazonlinux CHEF_VERSION=13.0.118
-  - INSTANCE=default-ubuntu-1404 CHEF_VERSION=13.0.118
-  - INSTANCE=default-ubuntu-1604 CHEF_VERSION=13.0.118
-  - INSTANCE=default-ubuntu-1804 CHEF_VERSION=13.0.118
-  - INSTANCE=default-debian-8 CHEF_VERSION=13.0.118
-  - INSTANCE=default-debian-9 CHEF_VERSION=13.0.118
-  - INSTANCE=default-centos-6 CHEF_VERSION=13.0.118
-  - INSTANCE=default-centos-7 CHEF_VERSION=13.0.118
+  - INSTANCE=default-amazonlinux CHEF_VERSION=14.0.202
+  - INSTANCE=default-ubuntu-1404 CHEF_VERSION=14.0.202
+  - INSTANCE=default-ubuntu-1604 CHEF_VERSION=14.0.202
+  - INSTANCE=default-ubuntu-1804 CHEF_VERSION=14.0.202
+  - INSTANCE=default-debian-8 CHEF_VERSION=14.0.202
+  - INSTANCE=default-debian-9 CHEF_VERSION=14.0.202
+  - INSTANCE=default-centos-6 CHEF_VERSION=14.0.202
+  - INSTANCE=default-centos-7 CHEF_VERSION=14.0.202
   - INSTANCE=default-amazonlinux
   - INSTANCE=default-amazonlinux-2
   - INSTANCE=default-ubuntu-1404
@@ -41,7 +41,7 @@ before_script:
   - cookstyle --version
   - foodcritic --version
 
-script: KITCHEN_LOCAL_YAML=kitchen.dokken.yml kitchen verify ${INSTANCE}
+script: CHEF_LICENSE=accept-no-persist KITCHEN_LOCAL_YAML=kitchen.dokken.yml kitchen verify ${INSTANCE}
 
 matrix:
   include:
