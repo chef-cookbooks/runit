@@ -213,7 +213,7 @@ class Chef
           end
 
           new_resource.control.map do |signal|
-            template ::File.join(sv_dir_name, 'control', 'signal') do
+            template ::File.join(sv_dir_name, 'control', signal) do
               owner new_resource.owner unless new_resource.owner.nil?
               group new_resource.group unless new_resource.group.nil?
               mode '0755'
