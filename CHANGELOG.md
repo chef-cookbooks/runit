@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 5.1.1 (2019-05-29)
+
+- Add a new use_init_script_sv_link property - [@tas50](https://github.com/tas50)
+- Test on Chef 14 and Chef 15 in Travis - [@tas50](https://github.com/tas50)
+- Correct pass in the signal variable for the control config - [@markan](https://github.com/markan)
+- Remove Ubuntu 14.04 Kitchen tests - [@tas50](https://github.com/tas50)
+
 ## 5.1.0 (2019-04-25)
 
 - Add a new reload_log action - [@tas50](https://github.com/tas50)
