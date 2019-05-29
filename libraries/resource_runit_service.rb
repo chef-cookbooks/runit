@@ -73,6 +73,10 @@ class Chef
       property :log_prefix, String
       property :log_config_append, String
 
+      # Use a link to sv instead of a full blown init script calling runit.
+      # This was added for omnibus projects and probably shouldn't be used elsewhere
+      property :use_init_script_sv_link, [TrueClass, FalseClass], default: false
+
       alias template_name run_template_name
 
       def set_control_template_names

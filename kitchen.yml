@@ -4,6 +4,7 @@ driver:
 provisioner:
   name: chef_zero
   deprecations_as_errors: true
+  chef_license: accept-no-persist
 
 verifier:
   name: inspec
@@ -18,7 +19,6 @@ platforms:
   - name: debian-9
   - name: oracle-6
   - name: oracle-7
-  - name: ubuntu-14.04
   - name: ubuntu-16.04
   - name: ubuntu-18.04
 
