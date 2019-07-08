@@ -89,9 +89,9 @@ class Chef
 
       # the default legacy options kept for compatibility with the definition
       #
-      # @return [Hash] an empty hash if env property is set. Otherwise it's env_dir
+      # @return [Hash] if env is the default empty hash then return env_dir value. Otherwise return an empty hash
       def default_options
-        env.empty? ? {} : { env_dir: ::File.join(sv_dir, service_name, 'env') }
+        env.empty? ? { env_dir: ::File.join(sv_dir, service_name, 'env') } : {}
       end
 
       def after_created
