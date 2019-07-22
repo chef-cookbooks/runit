@@ -58,7 +58,7 @@ class Chef
       property :check_script_template_name, String, default: lazy { service_name }
       property :finish_script_template_name, String, default: lazy { service_name }
       property :control_template_names, Hash, default: lazy { set_control_template_names }
-      property :status_command, String, default: lazy { "#{sv_bin} status #{service_dir}" }
+      property :status_command, String, default: lazy { "#{sv_bin} status #{service_name}" }
       property :sv_templates, [TrueClass, FalseClass], default: true
       property :sv_timeout, Integer
       property :sv_verbose, [TrueClass, FalseClass], default: false
@@ -104,7 +104,7 @@ class Chef
             start_command "#{new_resource.sv_bin} start #{service_dir_name}"
             stop_command "#{new_resource.sv_bin} stop #{service_dir_name}"
             restart_command "#{new_resource.sv_bin} restart #{service_dir_name}"
-            status_command "#{new_resource.sv_bin} status #{service_dir_name}"
+            status_command new_resource.status_command
             action :nothing
           end
         end
