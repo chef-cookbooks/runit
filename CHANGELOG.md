@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 5.1.2 (2019-07-22)
+
+- Fix options property not taking on the legacy default value - [@tas50](https://github.com/tas50)
+- Disable FC009 in the package resource - [@tas50](https://github.com/tas50)
+- Fix comment typo - [@tas50](https://github.com/tas50)
+- Wire up the service to actually use the status_command property - [@tas50](https://github.com/tas50)
+
 ## 5.1.1 (2019-05-29)
 
 - Add a new use_init_script_sv_link property - [@tas50](https://github.com/tas50)
