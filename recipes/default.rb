@@ -45,7 +45,7 @@ when 'debian'
 
   package pkg_name do # ~FC009
     action :install
-    response_file 'runit.seed' 
+    response_file 'runit.seed'
   end
 else
   raise 'The cookbook only supports Debian/RHEL based Linux distributions. If you believe further platform support is possible please open a pull request.'
