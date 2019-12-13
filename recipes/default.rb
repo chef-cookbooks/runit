@@ -24,7 +24,7 @@ when 'rhel', 'amazon'
     include_recipe 'yum-epel' if node['platform_version'].to_i < 7 && platform_family?('rhel')
 
     packagecloud_repo 'imeyer/runit' do
-      force_os 'rhel' if platform?('oracle', 'amazon') # ~FC024
+      force_os 'rhel' if platform?('oracle', 'amazon')
       force_dist '6' if platform?('amazon')
       force_dist '7' if platform?('amazon') && node['platform_version'].to_i == 2
       type 'rpm' if platform?('amazon')
@@ -43,7 +43,7 @@ when 'debian'
                'runit'
              end
 
-  package pkg_name do # ~FC009
+  package pkg_name do
     action :install
     response_file 'runit.seed'
   end
