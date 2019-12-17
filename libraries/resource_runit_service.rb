@@ -38,29 +38,29 @@ class Chef
       property :control, Array, default: []
       property :options, Hash, default: lazy { default_options }, coerce: proc { |r| default_options.merge(r) if r.respond_to?(:merge) }
       property :env, Hash, default: {}
-      property :log, [TrueClass, FalseClass], default: true
+      property :log, [true, false], default: true
       property :cookbook, String
-      property :check, [TrueClass, FalseClass], default: false
-      property :start_down, [TrueClass, FalseClass], default: false
-      property :delete_downfile, [TrueClass, FalseClass], default: false
-      property :finish, [TrueClass, FalseClass], default: false
+      property :check, [true, false], default: false
+      property :start_down, [true, false], default: false
+      property :delete_downfile, [true, false], default: false
+      property :finish, [true, false], default: false
       property :supervisor_owner, String, regex: [Chef::Config[:user_valid_regex]]
       property :supervisor_group, String, regex: [Chef::Config[:group_valid_regex]]
       property :owner, String, regex: [Chef::Config[:user_valid_regex]]
       property :group, String, regex: [Chef::Config[:group_valid_regex]]
-      property :enabled, [TrueClass, FalseClass], default: false
-      property :running, [TrueClass, FalseClass], default: false
-      property :default_logger, [TrueClass, FalseClass], default: false
-      property :restart_on_update, [TrueClass, FalseClass], default: true
+      property :enabled, [true, false], default: false
+      property :running, [true, false], default: false
+      property :default_logger, [true, false], default: false
+      property :restart_on_update, [true, false], default: true
       property :run_template_name, String, default: lazy { service_name }
       property :log_template_name, String, default: lazy { service_name }
       property :check_script_template_name, String, default: lazy { service_name }
       property :finish_script_template_name, String, default: lazy { service_name }
       property :control_template_names, Hash, default: lazy { set_control_template_names }
       property :status_command, String, default: lazy { "#{sv_bin} status #{service_name}" }
-      property :sv_templates, [TrueClass, FalseClass], default: true
+      property :sv_templates, [true, false], default: true
       property :sv_timeout, Integer
-      property :sv_verbose, [TrueClass, FalseClass], default: false
+      property :sv_verbose, [true, false], default: false
       property :log_dir, String, default: lazy { ::File.join('/var/log/', service_name) }
       property :log_flags, String, default: '-tt'
       property :log_size, Integer
@@ -74,7 +74,7 @@ class Chef
 
       # Use a link to sv instead of a full blown init script calling runit.
       # This was added for omnibus projects and probably shouldn't be used elsewhere
-      property :use_init_script_sv_link, [TrueClass, FalseClass], default: false
+      property :use_init_script_sv_link, [true, false], default: false
 
       alias template_name run_template_name
 
