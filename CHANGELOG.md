@@ -2,6 +2,13 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 5.1.3 (2020-02-26)
+
+- Cookstyle fixes - [@tas50](https://github.com/tas50)
+- Remove unnecessary Foodcritic comments - [@tas50](https://github.com/tas50)
+- Add github actions testing - [@tas50](https://github.com/tas50)
+- Remove Ubuntu 14.04 specs - [@tas50](https://github.com/tas50)
+
 ## 5.1.2 (2019-07-22)
 
 - Fix options property not taking on the legacy default value - [@tas50](https://github.com/tas50)
