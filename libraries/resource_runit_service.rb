@@ -57,10 +57,10 @@ class Chef
       property :check_script_template_name, String, default: lazy { service_name }
       property :finish_script_template_name, String, default: lazy { service_name }
       property :control_template_names, Hash, default: lazy { set_control_template_names }
-      property :start_command, String, default: 'start'
-      property :stop_command, String, default: 'stop'
-      property :restart_command, String, default: 'restart'
-      property :status_command, String, default: 'status'
+      property :service_start_command, String, default: 'start'
+      property :service_stop_command, String, default: 'stop'
+      property :service_restart_command, String, default: 'restart'
+      property :service_status_command, String, default: 'status'
       property :sv_templates, [true, false], default: true
       property :sv_timeout, Integer
       property :sv_verbose, [true, false], default: false
@@ -103,10 +103,10 @@ class Chef
           find_resource(:service, new_resource.name) do # creates if it does not exist
             provider Chef::Provider::Service::Simple
             supports new_resource.supports
-            start_command "#{new_resource.sv_bin} #{new_resource.start_command} #{service_dir_name}"
-            stop_command "#{new_resource.sv_bin} #{new_resource.stop_command} #{service_dir_name}"
-            restart_command "#{new_resource.sv_bin} #{new_resource.restart_command} #{service_dir_name}"
-            status_command "#{new_resource.sv_bin} #{new_resource.status_command} #{service_dir_name}"
+            start_command "#{new_resource.sv_bin} #{new_resource.service_start_command} #{service_dir_name}"
+            stop_command "#{new_resource.sv_bin} #{new_resource.service_stop_command} #{service_dir_name}"
+            restart_command "#{new_resource.sv_bin} #{new_resource.service_restart_command} #{service_dir_name}"
+            status_command "#{new_resource.sv_bin} #{new_resource.service_status_command} #{service_dir_name}"
             action :nothing
           end
         end
