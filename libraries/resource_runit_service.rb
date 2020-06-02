@@ -25,7 +25,7 @@ class Chef
   class Resource
     # Missing top-level class documentation comment
     class RunitService < Chef::Resource::Service
-      resource_name :runit_service
+      provides :runit_service
 
       default_action :enable
 
