@@ -111,8 +111,8 @@ describe 'runit::default' do
     end
   end
 
-  context 'on Debian 8' do
-    platform 'Debian', '8'
+  context 'on Debian 9' do
+    platform 'Debian', '9'
 
     it 'installs the runit package' do
       is_expected.to install_package('runit')
@@ -124,8 +124,8 @@ describe 'runit::default' do
     end
   end
 
-  context 'on Debian 9' do
-    platform 'debian', '9'
+  context 'on Debian 10' do
+    platform 'debian', '10'
 
     it 'installs the runit package' do
       is_expected.to install_package('runit-systemd')
