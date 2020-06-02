@@ -2,10 +2,9 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
-## Unreleased
+## 5.1.5 (2020-06-02)
 
-- resolved cookstyle error: libraries/resource_runit_service.rb:28:7 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
-
+- Chef Infra Client 16 compatibility fixes - [@xorimabot](https://github.com/xorimabot)
 
 ## 5.1.4 (2020-06-02)
 
