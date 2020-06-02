@@ -2,6 +2,12 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 5.1.4 (2020-06-02)
+
+- Chef Infra Client 16 compatibility
+- Standardise files with files in chef-cookbooks/repo-management - [@xorimabot](https://github.com/xorimabot)
+- Update Debian specs - [@tas50](https://github.com/tas50)
+
 ## 5.1.3 (2020-02-26)
 
 - Cookstyle fixes - [@tas50](https://github.com/tas50)
