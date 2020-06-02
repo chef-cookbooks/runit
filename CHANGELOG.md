@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## Unreleased
+
+- resolved cookstyle error: libraries/resource_runit_service.rb:28:7 warning: `ChefDeprecations/ResourceUsesOnlyResourceName`
+
 ## 5.1.3 (2020-02-26)
 
 - Cookstyle fixes - [@tas50](https://github.com/tas50)
