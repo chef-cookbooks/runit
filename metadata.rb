@@ -3,7 +3,7 @@ maintainer 'Chef Software, Inc.'
 maintainer_email 'cookbooks@chef.io'
 license 'Apache-2.0'
 description 'Installs runit and provides runit_service resource'
-version '5.1.6'
+version '5.1.7'
 
 %w(ubuntu debian centos redhat amazon scientific oracle enterpriseenterprise zlinux).each do |os|
   supports os

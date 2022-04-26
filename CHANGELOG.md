@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of the runit cookbook.
 
+## 5.1.7 (2022-04-25)
+
+- Make call to shell_out compatible with Ruby 3
+
 ## 5.1.6 (2020-06-30)
 
 - Add resource_name and allowed_actions to the resource for compatibility with more Chef Infra Client releases- [@tas50](https://github.com/tas50)
