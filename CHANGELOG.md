@@ -1,7 +1,7 @@
 # runit Cookbook CHANGELOG
 
 This file is used to list changes made in each version of the runit cookbook.
-## 5.1.7-bugsnag1 (2023-02-21)
+## 5.2.0 (2023-02-21)
 
 - Add ubuntu 22.04 support
 
