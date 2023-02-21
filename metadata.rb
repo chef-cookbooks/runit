@@ -2,7 +2,7 @@ name 'runit'
 maintainer 'SmartBear Software, Inc.'
 license 'Apache-2.0'
 description 'Installs runit and provides runit_service resource'
-version '5.1.7-bugsnag1'
+version '5.2.0'
 
 %w(ubuntu debian centos redhat amazon scientific oracle enterpriseenterprise zlinux).each do |os|
   supports os
