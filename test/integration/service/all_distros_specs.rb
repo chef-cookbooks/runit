@@ -39,7 +39,7 @@ control 'creates a service that uses the default svlog' do
   end
 
   describe command('file /var/log/default-svlog/*.s') do
-    its(:stdout) { should contain('gzip compressed data') }
+    its(:stdout) { should match(/gzip compressed data/) }
   end
 end
 

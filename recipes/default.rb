@@ -37,7 +37,7 @@ when 'debian'
   # what is necessary for running runit as pid 1, which we don't care about.
   pv = node['platform_version']
   pkg_name = if (platform?('debian') && pv.to_i >= 9) || \
-                (platform?('ubuntu') && Gem::Version.new(pv) >= Gem::Version.new('17.10'))
+                (platform?('ubuntu') && Gem::Version.new(pv) >= Gem::Version.new('17.10') && Gem::Version.new(pv) < Gem::Version.new('22.04'))
                'runit-systemd'
              else
                'runit'

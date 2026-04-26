@@ -111,6 +111,32 @@ describe 'runit::default' do
     end
   end
 
+  context 'on Ubuntu 20.04' do
+    platform 'ubuntu', '20.04'
+
+    it 'installs the runit package' do
+      is_expected.to install_package('runit-systemd')
+    end
+
+    it 'starts and enabled the correct runit service' do
+      is_expected.to enable_service('runit')
+      is_expected.to start_service('runit')
+    end
+  end
+
+  context 'on Ubuntu 22.04' do
+    platform 'ubuntu', '22.04'
+
+    it 'installs the runit package' do
+      is_expected.to install_package('runit')
+    end
+
+    it 'starts and enabled the correct runit service' do
+      is_expected.to enable_service('runit')
+      is_expected.to start_service('runit')
+    end
+  end
+
   context 'on Debian 9' do
     platform 'Debian', '9'
 
