@@ -55,11 +55,19 @@ module RunitCookbook
     def wait_for_service
       raise 'Runit does not appear to be installed. Include runit::default before using the resource!' unless binary_exists?
 
-      sleep 1 until ::FileTest.pipe?(::File.join(service_dir_name, 'supervise', 'ok'))
+      wait_for_pipe(::File.join(service_dir_name, 'supervise', 'ok'))
 
       if new_resource.log
-        sleep 1 until ::FileTest.pipe?(::File.join(service_dir_name, 'log', 'supervise', 'ok'))
+        wait_for_pipe(::File.join(service_dir_name, 'log', 'supervise', 'ok'))
       end
+    end
+
+    def wait_for_pipe(path)
+      sleep 1 until ::FileTest.pipe?(path)
+
+      # Opening the pipe for writing should block until the supervisor
+      # has opened it for reading.
+      ::File.open(path, 'w').close()
     end
 
     def runit_send_signal(signal, friendly_name = nil)
